@@ -1,0 +1,3 @@
+```release-note:feature
+Build out the beginnings of the module, allowing for providers, SDKs, and their subsystems to use an opinionated interface to log data about their execution.
+```
