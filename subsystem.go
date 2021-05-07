@@ -22,6 +22,12 @@ func setSubsystemLogger(ctx context.Context, subsystem string, logger hclog.Logg
 
 // NewSubsystem returns a new context.Context that contains a subsystem logger
 // configured with the passed options, named after the subsystem argument.
+//
+// Subsystem loggers allow different areas of a plugin codebase to use
+// different logging levels, giving developers more fine-grained control over
+// what is logging and with what verbosity. They're best utilized for logical
+// concerns that are sometimes helpful to log, but may generate unwanted noise
+// at other times.
 func NewSubsystem(ctx context.Context, subsystem string, options ...Option) context.Context {
 	logger := getProviderSpaceRootLogger(ctx)
 	if logger == nil {
