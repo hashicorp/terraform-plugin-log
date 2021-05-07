@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/go-hclog"
 )
 
+// Option defines a modification to the configuration for a logger.
 type Option func(loggerOpts) loggerOpts
 
 type loggerOpts struct {
@@ -39,6 +40,8 @@ func withOutput(output io.Writer) Option {
 	}
 }
 
+// WithLogName returns an option that will set the logger name explicitly to
+// `name`.
 func WithLogName(name string) Option {
 	return func(l loggerOpts) loggerOpts {
 		l.name = name
@@ -46,6 +49,9 @@ func WithLogName(name string) Option {
 	}
 }
 
+// WithLevelFromEnv returns an option that will set the level of the logger
+// based on the string in an environment variable. The environment variable
+// checked will be `name` and `subsystems`, joined by _ and in all caps.
 func WithLevelFromEnv(name string, subsystems ...string) Option {
 	return func(l loggerOpts) loggerOpts {
 		envVar := strings.Join(subsystems, "_")
@@ -58,6 +64,8 @@ func WithLevelFromEnv(name string, subsystems ...string) Option {
 	}
 }
 
+// WithoutLocation returns an option that disables including the location of
+// the log line in the log output, which is on by default.
 func WithoutLocation() Option {
 	return func(l loggerOpts) loggerOpts {
 		l.includeLocation = false

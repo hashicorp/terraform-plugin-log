@@ -20,6 +20,8 @@ func setSubsystemLogger(ctx context.Context, subsystem string, logger hclog.Logg
 	return context.WithValue(ctx, providerSpaceRootLoggerKey+loggerKey("."+subsystem), logger)
 }
 
+// NewSubsystem returns a new context.Context that contains a subsystem logger
+// configured with the passed options, named after the subsystem argument.
 func NewSubsystem(ctx context.Context, subsystem string, options ...Option) context.Context {
 	logger := getProviderSpaceRootLogger(ctx)
 	if logger == nil {
@@ -38,6 +40,9 @@ func NewSubsystem(ctx context.Context, subsystem string, options ...Option) cont
 	return setSubsystemLogger(ctx, subsystem, logger.Named(subsystem))
 }
 
+// SubsystemWith returns a new context.Context that has a modified logger for
+// the specified subsystem in it which will include key and value as arguments
+// in all its log output.
 func SubsystemWith(ctx context.Context, subsystem, key string, value interface{}) context.Context {
 	logger := getSubsystemLogger(ctx, subsystem)
 	if logger == nil {
@@ -47,6 +52,11 @@ func SubsystemWith(ctx context.Context, subsystem, key string, value interface{}
 	return setSubsystemLogger(ctx, subsystem, logger.With(key, value))
 }
 
+// SubsystemTrace logs `msg` at the trace level to the subsystem logger
+// specified in `ctx`, with `args` as structured arguments in the log output.
+// `args` is expected to be pairs of key and value, so SubsystemTrace(ctx,
+// "my-subsystem", "hello, world", "foo", 123) would have "foo=123" in its
+// arguments.
 func SubsystemTrace(ctx context.Context, subsystem, msg string, args ...interface{}) {
 	logger := getSubsystemLogger(ctx, subsystem)
 	if logger == nil {
@@ -56,6 +66,11 @@ func SubsystemTrace(ctx context.Context, subsystem, msg string, args ...interfac
 	logger.Trace(msg, args...)
 }
 
+// SubsystemDebug logs `msg` at the debug level to the subsystem logger
+// specified in `ctx`, with `args` as structured arguments in the log output.
+// `args` is expected to be pairs of key and value, so SubsystemDebug(ctx,
+// "my-subsystem", "hello, world", "foo", 123) would have "foo=123" in its
+// arguments.
 func SubsystemDebug(ctx context.Context, subsystem, msg string, args ...interface{}) {
 	logger := getSubsystemLogger(ctx, subsystem)
 	if logger == nil {
@@ -65,6 +80,11 @@ func SubsystemDebug(ctx context.Context, subsystem, msg string, args ...interfac
 	logger.Debug(msg, args...)
 }
 
+// SubsystemInfo logs `msg` at the info level to the subsystem logger
+// specified in `ctx`, with `args` as structured arguments in the log output.
+// `args` is expected to be pairs of key and value, so SubsystemInfo(ctx,
+// "my-subsystem", "hello, world", "foo", 123) would have "foo=123" in its
+// arguments.
 func SubsystemInfo(ctx context.Context, subsystem, msg string, args ...interface{}) {
 	logger := getSubsystemLogger(ctx, subsystem)
 	if logger == nil {
@@ -74,6 +94,11 @@ func SubsystemInfo(ctx context.Context, subsystem, msg string, args ...interface
 	logger.Info(msg, args...)
 }
 
+// SubsystemWarn logs `msg` at the warn level to the subsystem logger
+// specified in `ctx`, with `args` as structured arguments in the log output.
+// `args` is expected to be pairs of key and value, so SubsystemWarn(ctx,
+// "my-subsystem", "hello, world", "foo", 123) would have "foo=123" in its
+// arguments.
 func SubsystemWarn(ctx context.Context, subsystem, msg string, args ...interface{}) {
 	logger := getSubsystemLogger(ctx, subsystem)
 	if logger == nil {
@@ -83,6 +108,11 @@ func SubsystemWarn(ctx context.Context, subsystem, msg string, args ...interface
 	logger.Warn(msg, args...)
 }
 
+// SubsystemError logs `msg` at the error level to the subsystem logger
+// specified in `ctx`, with `args` as structured arguments in the log output.
+// `args` is expected to be pairs of key and value, so SubsystemError(ctx,
+// "my-subsystem", "hello, world", "foo", 123) would have "foo=123" in its
+// arguments.
 func SubsystemError(ctx context.Context, subsystem, msg string, args ...interface{}) {
 	logger := getSubsystemLogger(ctx, subsystem)
 	if logger == nil {
