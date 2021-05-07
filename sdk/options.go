@@ -25,6 +25,7 @@ type loggerOpts struct {
 func applyLoggerOpts(opts ...Option) loggerOpts {
 	// set some defaults
 	l := loggerOpts{
+		name:            "sdk",
 		includeLocation: true,
 		includeTime:     true,
 		output:          os.Stderr,
