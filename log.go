@@ -1,7 +1,8 @@
 // Package tflog provides helper functions for writing log output and creating
 // loggers for Terraform plugins.
 //
-// For most plugin authors, building on an SDK or framework, the SDK or framework will take care of injecting a logger using New.
+// For most plugin authors, building on an SDK or framework, the SDK or
+// framework will take care of injecting a logger using New.
 //
 // tflog also allows plugin authors to create subsystem loggers, which are
 // loggers for sufficiently distinct areas of the codebase or concerns. The
