@@ -23,7 +23,7 @@ func NewSubsystem(ctx context.Context, subsystem string, options ...Option) cont
 	if opts.level != hclog.NoLevel {
 		subLogger.SetLevel(opts.level)
 	}
-	return setSubsystemLogger(ctx, subsystem, logger.Named(subsystem))
+	return setSubsystemLogger(ctx, subsystem, subLogger)
 }
 
 func SubsystemWith(ctx context.Context, subsystem, key string, value interface{}) context.Context {
