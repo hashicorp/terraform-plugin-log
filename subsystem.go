@@ -37,7 +37,7 @@ func NewSubsystem(ctx context.Context, subsystem string, options ...Option) cont
 	if opts.level != hclog.NoLevel {
 		subLogger.SetLevel(opts.level)
 	}
-	return setSubsystemLogger(ctx, subsystem, logger.Named(subsystem))
+	return setSubsystemLogger(ctx, subsystem, subLogger)
 }
 
 // SubsystemWith returns a new context.Context that has a modified logger for
@@ -54,9 +54,7 @@ func SubsystemWith(ctx context.Context, subsystem, key string, value interface{}
 
 // SubsystemTrace logs `msg` at the trace level to the subsystem logger
 // specified in `ctx`, with `args` as structured arguments in the log output.
-// `args` is expected to be pairs of key and value, so SubsystemTrace(ctx,
-// "my-subsystem", "hello, world", "foo", 123) would have "foo=123" in its
-// arguments.
+// `args` is expected to be pairs of key and value.
 func SubsystemTrace(ctx context.Context, subsystem, msg string, args ...interface{}) {
 	logger := getSubsystemLogger(ctx, subsystem)
 	if logger == nil {
@@ -68,9 +66,7 @@ func SubsystemTrace(ctx context.Context, subsystem, msg string, args ...interfac
 
 // SubsystemDebug logs `msg` at the debug level to the subsystem logger
 // specified in `ctx`, with `args` as structured arguments in the log output.
-// `args` is expected to be pairs of key and value, so SubsystemDebug(ctx,
-// "my-subsystem", "hello, world", "foo", 123) would have "foo=123" in its
-// arguments.
+// `args` is expected to be pairs of key and value.
 func SubsystemDebug(ctx context.Context, subsystem, msg string, args ...interface{}) {
 	logger := getSubsystemLogger(ctx, subsystem)
 	if logger == nil {
@@ -82,9 +78,7 @@ func SubsystemDebug(ctx context.Context, subsystem, msg string, args ...interfac
 
 // SubsystemInfo logs `msg` at the info level to the subsystem logger
 // specified in `ctx`, with `args` as structured arguments in the log output.
-// `args` is expected to be pairs of key and value, so SubsystemInfo(ctx,
-// "my-subsystem", "hello, world", "foo", 123) would have "foo=123" in its
-// arguments.
+// `args` is expected to be pairs of key and value.
 func SubsystemInfo(ctx context.Context, subsystem, msg string, args ...interface{}) {
 	logger := getSubsystemLogger(ctx, subsystem)
 	if logger == nil {
@@ -96,9 +90,7 @@ func SubsystemInfo(ctx context.Context, subsystem, msg string, args ...interface
 
 // SubsystemWarn logs `msg` at the warn level to the subsystem logger
 // specified in `ctx`, with `args` as structured arguments in the log output.
-// `args` is expected to be pairs of key and value, so SubsystemWarn(ctx,
-// "my-subsystem", "hello, world", "foo", 123) would have "foo=123" in its
-// arguments.
+// `args` is expected to be pairs of key and value.
 func SubsystemWarn(ctx context.Context, subsystem, msg string, args ...interface{}) {
 	logger := getSubsystemLogger(ctx, subsystem)
 	if logger == nil {
@@ -110,9 +102,7 @@ func SubsystemWarn(ctx context.Context, subsystem, msg string, args ...interface
 
 // SubsystemError logs `msg` at the error level to the subsystem logger
 // specified in `ctx`, with `args` as structured arguments in the log output.
-// `args` is expected to be pairs of key and value, so SubsystemError(ctx,
-// "my-subsystem", "hello, world", "foo", 123) would have "foo=123" in its
-// arguments.
+// `args` is expected to be pairs of key and value.
 func SubsystemError(ctx context.Context, subsystem, msg string, args ...interface{}) {
 	logger := getSubsystemLogger(ctx, subsystem)
 	if logger == nil {

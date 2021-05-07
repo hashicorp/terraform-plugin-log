@@ -22,13 +22,19 @@ func setProviderSpaceRootLogger(ctx context.Context, logger hclog.Logger) contex
 // passed options.
 func New(ctx context.Context, options ...Option) context.Context {
 	opts := applyLoggerOpts(options...)
-	return setProviderSpaceRootLogger(ctx, hclog.New(&hclog.LoggerOptions{
+	if opts.level == hclog.NoLevel {
+		opts.level = hclog.Trace
+	}
+	loggerOptions := &hclog.LoggerOptions{
 		Name:              opts.name,
 		Level:             opts.level,
 		JSONFormat:        true,
 		IndependentLevels: true,
 		IncludeLocation:   opts.includeLocation,
-	}))
+		DisableTime:       !opts.includeTime,
+		Output:            opts.output,
+	}
+	return setProviderSpaceRootLogger(ctx, hclog.New(loggerOptions))
 }
 
 // With returns a new context.Context that has a modified logger in it which
@@ -48,8 +54,7 @@ func With(ctx context.Context, key string, value interface{}) context.Context {
 
 // Trace logs `msg` at the trace level to the logger in `ctx`, with `args` as
 // structured arguments in the log output. `args` is expected to be pairs of
-// key and value, so Trace(ctx, "hello, world", "foo", 123) would have
-// "foo=123" in its arguments.
+// key and value.
 func Trace(ctx context.Context, msg string, args ...interface{}) {
 	logger := getProviderSpaceRootLogger(ctx)
 	if logger == nil {
@@ -65,8 +70,7 @@ func Trace(ctx context.Context, msg string, args ...interface{}) {
 
 // Debug logs `msg` at the debug level to the logger in `ctx`, with `args` as
 // structured arguments in the log output. `args` is expected to be pairs of
-// key and value, so Debug(ctx, "hello, world", "foo", 123) would have
-// "foo=123" in its arguments.
+// key and value.
 func Debug(ctx context.Context, msg string, args ...interface{}) {
 	logger := getProviderSpaceRootLogger(ctx)
 	if logger == nil {
@@ -82,8 +86,7 @@ func Debug(ctx context.Context, msg string, args ...interface{}) {
 
 // Info logs `msg` at the info level to the logger in `ctx`, with `args` as
 // structured arguments in the log output. `args` is expected to be pairs of
-// key and value, so Info(ctx, "hello, world", "foo", 123) would have
-// "foo=123" in its arguments.
+// key and value.
 func Info(ctx context.Context, msg string, args ...interface{}) {
 	logger := getProviderSpaceRootLogger(ctx)
 	if logger == nil {
@@ -99,8 +102,7 @@ func Info(ctx context.Context, msg string, args ...interface{}) {
 
 // Warn logs `msg` at the warn level to the logger in `ctx`, with `args` as
 // structured arguments in the log output. `args` is expected to be pairs of
-// key and value, so Warn(ctx, "hello, world", "foo", 123) would have
-// "foo=123" in its arguments.
+// key and value.
 func Warn(ctx context.Context, msg string, args ...interface{}) {
 	logger := getProviderSpaceRootLogger(ctx)
 	if logger == nil {
@@ -116,8 +118,7 @@ func Warn(ctx context.Context, msg string, args ...interface{}) {
 
 // Error logs `msg` at the error level to the logger in `ctx`, with `args` as
 // structured arguments in the log output. `args` is expected to be pairs of
-// key and value, so Error(ctx, "hello, world", "foo", 123) would have
-// "foo=123" in its arguments.
+// key and value.
 func Error(ctx context.Context, msg string, args ...interface{}) {
 	logger := getProviderSpaceRootLogger(ctx)
 	if logger == nil {
