@@ -1,4 +1,4 @@
-package tflog
+package tfsdklog
 
 import (
 	"io"
