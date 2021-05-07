@@ -18,14 +18,16 @@ type loggerOpts struct {
 
 	// some private options to be used only by tflog for testing purposes
 	// we should never export an Option that sets these
-	output io.Writer
+	output      io.Writer
+	includeTime bool
 }
 
 func applyLoggerOpts(opts ...Option) loggerOpts {
 	// set some defaults
 	l := loggerOpts{
-		level:           hclog.Trace,
 		includeLocation: true,
+		includeTime:     true,
+		output:          os.Stderr,
 	}
 	for _, opt := range opts {
 		l = opt(l)
@@ -36,6 +38,13 @@ func applyLoggerOpts(opts ...Option) loggerOpts {
 func withOutput(output io.Writer) Option {
 	return func(l loggerOpts) loggerOpts {
 		l.output = output
+		return l
+	}
+}
+
+func withoutTimestamp() Option {
+	return func(l loggerOpts) loggerOpts {
+		l.includeTime = false
 		return l
 	}
 }
@@ -60,6 +69,14 @@ func WithLevelFromEnv(name string, subsystems ...string) Option {
 		}
 		envVar = strings.ToUpper(name + envVar)
 		l.level = hclog.LevelFromString(os.Getenv(envVar))
+		return l
+	}
+}
+
+// WithLevel returns an option that will set the level of the logger.
+func WithLevel(level hclog.Level) Option {
+	return func(l loggerOpts) loggerOpts {
+		l.level = level
 		return l
 	}
 }
