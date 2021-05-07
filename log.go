@@ -15,6 +15,6 @@ package tflog
 // it's a private type to make sure no other packages can override the key
 type loggerKey string
 
-var (
+const (
 	providerSpaceRootLoggerKey loggerKey = "provider"
 )
