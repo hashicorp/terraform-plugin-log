@@ -51,7 +51,7 @@ func withoutTimestamp() Option {
 }
 
 // WithLogName returns an option that will set the logger name explicitly to
-// `name`.
+// `name`. This has no effect when used with NewSubsystem.
 func WithLogName(name string) Option {
 	return func(l loggerOpts) loggerOpts {
 		l.name = name
@@ -83,7 +83,8 @@ func WithLevel(level hclog.Level) Option {
 }
 
 // WithoutLocation returns an option that disables including the location of
-// the log line in the log output, which is on by default.
+// the log line in the log output, which is on by default. This has no effect
+// when used with NewSubsystem.
 func WithoutLocation() Option {
 	return func(l loggerOpts) loggerOpts {
 		l.includeLocation = false
