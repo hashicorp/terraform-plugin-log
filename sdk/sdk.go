@@ -1,3 +1,12 @@
+// Package tfsdklog provides helper functions for logging from SDKs and
+// frameworks for building Terraform plugins.
+//
+// Plugin authors shouldn't need to use this package; it is meant for authors
+// of the frameworks and SDKs for plugins. Plugin authors should use the tflog
+// package.
+//
+// This package provides very similar functionality to tflog, except it uses a
+// separate namespace for its logs.
 package tfsdklog
 
 import (
@@ -38,13 +47,19 @@ func setSubsystemLogger(ctx context.Context, subsystem string, logger hclog.Logg
 
 func New(ctx context.Context, options ...Option) context.Context {
 	opts := applyLoggerOpts(options...)
-	return setRootLogger(ctx, hclog.New(&hclog.LoggerOptions{
-		Name:              "sdk",
+	if opts.level == hclog.NoLevel {
+		opts.level = hclog.Trace
+	}
+	loggerOptions := &hclog.LoggerOptions{
+		Name:              opts.name,
 		Level:             opts.level,
 		JSONFormat:        true,
 		IndependentLevels: true,
 		IncludeLocation:   opts.includeLocation,
-	}))
+		DisableTime:       !opts.includeTime,
+		Output:            opts.output,
+	}
+	return setRootLogger(ctx, hclog.New(loggerOptions))
 }
 
 func With(ctx context.Context, key string, value interface{}) context.Context {
