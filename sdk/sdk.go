@@ -33,18 +33,6 @@ func setRootLogger(ctx context.Context, logger hclog.Logger) context.Context {
 	return context.WithValue(ctx, rootLoggerKey, logger)
 }
 
-func getSubsystemLogger(ctx context.Context, subsystem string) hclog.Logger {
-	logger := ctx.Value(rootLoggerKey + loggerKey("."+subsystem))
-	if logger == nil {
-		return nil
-	}
-	return logger.(hclog.Logger)
-}
-
-func setSubsystemLogger(ctx context.Context, subsystem string, logger hclog.Logger) context.Context {
-	return context.WithValue(ctx, rootLoggerKey+loggerKey("."+subsystem), logger)
-}
-
 func New(ctx context.Context, options ...Option) context.Context {
 	opts := applyLoggerOpts(options...)
 	if opts.level == hclog.NoLevel {
