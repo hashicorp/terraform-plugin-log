@@ -91,3 +91,11 @@ func WithoutLocation() Option {
 		return l
 	}
 }
+
+// WithStderrFromInit returns an option that tells the logger to write to the
+// os.Stderr that was present when the program started, not the one that is
+// available at runtime. Some versions of Terraform overwrite os.Stderr with an
+// io.Writer that is never read, so any log lines written to it will be lost.
+func WithStderrFromInit() Option {
+	return withOutput(stderr)
+}
