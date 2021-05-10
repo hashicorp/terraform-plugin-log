@@ -68,6 +68,7 @@ func New(ctx context.Context, options ...Option) context.Context {
 		IncludeLocation:   opts.includeLocation,
 		DisableTime:       !opts.includeTime,
 		Output:            opts.output,
+		AdditionalLocationOffset:  1,
 	}
 	return setRootLogger(ctx, hclog.New(loggerOptions))
 }
