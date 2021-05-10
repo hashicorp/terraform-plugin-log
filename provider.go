@@ -26,14 +26,14 @@ func New(ctx context.Context, options ...Option) context.Context {
 		opts.level = hclog.Trace
 	}
 	loggerOptions := &hclog.LoggerOptions{
-		Name:              opts.name,
-		Level:             opts.level,
-		JSONFormat:        true,
-		IndependentLevels: true,
-		IncludeLocation:   opts.includeLocation,
-		DisableTime:       !opts.includeTime,
-		Output:            opts.output,
-		AdditionalLocationOffset:  1,
+		Name:                     opts.name,
+		Level:                    opts.level,
+		JSONFormat:               true,
+		IndependentLevels:        true,
+		IncludeLocation:          opts.includeLocation,
+		DisableTime:              !opts.includeTime,
+		Output:                   opts.output,
+		AdditionalLocationOffset: 1,
 	}
 	return setProviderSpaceRootLogger(ctx, hclog.New(loggerOptions))
 }
