@@ -10,9 +10,10 @@ import (
 
 type loggerKey string
 
+const rootLoggerKey loggerKey = "sdk"
+
 var (
-	rootLoggerKey loggerKey = "sdk"
-	stderr        io.Writer
+	stderr io.Writer
 )
 
 func init() {
