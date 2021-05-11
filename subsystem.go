@@ -28,6 +28,9 @@ func setSubsystemLogger(ctx context.Context, subsystem string, logger hclog.Logg
 // what is logging and with what verbosity. They're best utilized for logical
 // concerns that are sometimes helpful to log, but may generate unwanted noise
 // at other times.
+//
+// The only Options supported for subsystems are the Options for setting the
+// level of the logger.
 func NewSubsystem(ctx context.Context, subsystem string, options ...Option) context.Context {
 	logger := getProviderSpaceRootLogger(ctx)
 	if logger == nil {

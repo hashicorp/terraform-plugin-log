@@ -20,6 +20,12 @@ func setProviderSpaceRootLogger(ctx context.Context, logger hclog.Logger) contex
 
 // New returns a new context.Context that contains a logger configured with the
 // passed options.
+//
+// This function isn't usually needed by plugin developers. Typically, the SDK
+// or framework the plugin is built on will call New and configure a logger
+// before handing off to the plugin code. This function is here for SDK and
+// framework developers to do that setup work. Plugin developers should be able
+// to safely assume that the logger already exists and just start using it.
 func New(ctx context.Context, options ...Option) context.Context {
 	opts := applyLoggerOpts(options...)
 	if opts.level == hclog.NoLevel {
