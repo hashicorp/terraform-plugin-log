@@ -3,7 +3,11 @@ package tfsdklog
 import "os"
 
 func ExampleNewSubsystem() {
-	// context for example only; plugins should never need to do this
+	// this function calls new with the options it needs to be reliably
+	// tested. framework and sdk developers should call new, inject the
+	// resulting context in their framework, and then pass it around. this
+	// examplectx is a stand-in for a context you have injected a logger
+	// into and passed to the area of the codebase you need it.
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here
@@ -18,7 +22,11 @@ func ExampleNewSubsystem() {
 }
 
 func ExampleNewSubsystem_withLevel() {
-	// context for example only; plugins should never need to do this
+	// this function calls new with the options it needs to be reliably
+	// tested. framework and sdk developers should call new, inject the
+	// resulting context in their framework, and then pass it around. this
+	// examplectx is a stand-in for a context you have injected a logger
+	// into and passed to the area of the codebase you need it.
 	exampleCtx := getExampleContext()
 	os.Setenv("EXAMPLE_SUBSYSTEM_LEVEL", "WARN")
 
@@ -45,7 +53,11 @@ func ExampleNewSubsystem_withLevel() {
 }
 
 func ExampleSubsystemWith() {
-	// context for example only; plugins should never need to do this
+	// this function calls new with the options it needs to be reliably
+	// tested. framework and sdk developers should call new, inject the
+	// resulting context in their framework, and then pass it around. this
+	// examplectx is a stand-in for a context you have injected a logger
+	// into and passed to the area of the codebase you need it.
 	exampleCtx := getExampleContext()
 	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
 
@@ -61,7 +73,11 @@ func ExampleSubsystemWith() {
 }
 
 func ExampleSubsystemTrace() {
-	// context for example only; plugins should never need to do this
+	// this function calls new with the options it needs to be reliably
+	// tested. framework and sdk developers should call new, inject the
+	// resulting context in their framework, and then pass it around. this
+	// examplectx is a stand-in for a context you have injected a logger
+	// into and passed to the area of the codebase you need it.
 	exampleCtx := getExampleContext()
 	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
 
@@ -73,7 +89,11 @@ func ExampleSubsystemTrace() {
 }
 
 func ExampleSubsystemDebug() {
-	// context for example only; plugins should never need to do this
+	// this function calls new with the options it needs to be reliably
+	// tested. framework and sdk developers should call new, inject the
+	// resulting context in their framework, and then pass it around. this
+	// examplectx is a stand-in for a context you have injected a logger
+	// into and passed to the area of the codebase you need it.
 	exampleCtx := getExampleContext()
 	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
 
@@ -85,7 +105,11 @@ func ExampleSubsystemDebug() {
 }
 
 func ExampleSubsystemInfo() {
-	// context for example only; plugins should never need to do this
+	// this function calls new with the options it needs to be reliably
+	// tested. framework and sdk developers should call new, inject the
+	// resulting context in their framework, and then pass it around. this
+	// examplectx is a stand-in for a context you have injected a logger
+	// into and passed to the area of the codebase you need it.
 	exampleCtx := getExampleContext()
 	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
 
@@ -97,7 +121,11 @@ func ExampleSubsystemInfo() {
 }
 
 func ExampleSubsystemWarn() {
-	// context for example only; plugins should never need to do this
+	// this function calls new with the options it needs to be reliably
+	// tested. framework and sdk developers should call new, inject the
+	// resulting context in their framework, and then pass it around. this
+	// examplectx is a stand-in for a context you have injected a logger
+	// into and passed to the area of the codebase you need it.
 	exampleCtx := getExampleContext()
 	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
 
@@ -109,7 +137,11 @@ func ExampleSubsystemWarn() {
 }
 
 func ExampleSubsystemError() {
-	// context for example only; plugins should never need to do this
+	// this function calls new with the options it needs to be reliably
+	// tested. framework and sdk developers should call new, inject the
+	// resulting context in their framework, and then pass it around. this
+	// examplectx is a stand-in for a context you have injected a logger
+	// into and passed to the area of the codebase you need it.
 	exampleCtx := getExampleContext()
 	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
 

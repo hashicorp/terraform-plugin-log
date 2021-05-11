@@ -13,7 +13,13 @@ func getExampleContext() context.Context {
 }
 
 func ExampleWith() {
-	// context for example only; plugins should never need to do this
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here
@@ -28,7 +34,13 @@ func ExampleWith() {
 }
 
 func ExampleTrace() {
-	// context for example only; plugins should never need to do this
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here
@@ -39,7 +51,13 @@ func ExampleTrace() {
 }
 
 func ExampleDebug() {
-	// context for example only; plugins should never need to do this
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here
@@ -50,7 +68,13 @@ func ExampleDebug() {
 }
 
 func ExampleInfo() {
-	// context for example only; plugins should never need to do this
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here
@@ -61,7 +85,13 @@ func ExampleInfo() {
 }
 
 func ExampleWarn() {
-	// context for example only; plugins should never need to do this
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here
@@ -72,7 +102,13 @@ func ExampleWarn() {
 }
 
 func ExampleError() {
-	// context for example only; plugins should never need to do this
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here

@@ -13,7 +13,11 @@ func getExampleContext() context.Context {
 }
 
 func ExampleWith() {
-	// context for example only; plugins should never need to do this
+	// this function calls New with the options it needs to be reliably
+	// tested. Framework and SDK developers should call New, inject the
+	// resulting context in their framework, and then pass it around. This
+	// exampleCtx is a stand-in for a context you have injected a logger
+	// into and passed to the area of the codebase you need it.
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here
@@ -28,7 +32,11 @@ func ExampleWith() {
 }
 
 func ExampleTrace() {
-	// context for example only; plugins should never need to do this
+	// this function calls New with the options it needs to be reliably
+	// tested. Framework and SDK developers should call New, inject the
+	// resulting context in their framework, and then pass it around. This
+	// exampleCtx is a stand-in for a context you have injected a logger
+	// into and passed to the area of the codebase you need it.
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here
@@ -39,7 +47,11 @@ func ExampleTrace() {
 }
 
 func ExampleDebug() {
-	// context for example only; plugins should never need to do this
+	// this function calls New with the options it needs to be reliably
+	// tested. Framework and SDK developers should call New, inject the
+	// resulting context in their framework, and then pass it around. This
+	// exampleCtx is a stand-in for a context you have injected a logger
+	// into and passed to the area of the codebase you need it.
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here
@@ -50,7 +62,11 @@ func ExampleDebug() {
 }
 
 func ExampleInfo() {
-	// context for example only; plugins should never need to do this
+	// this function calls New with the options it needs to be reliably
+	// tested. Framework and SDK developers should call New, inject the
+	// resulting context in their framework, and then pass it around. This
+	// exampleCtx is a stand-in for a context you have injected a logger
+	// into and passed to the area of the codebase you need it.
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here
@@ -61,7 +77,11 @@ func ExampleInfo() {
 }
 
 func ExampleWarn() {
-	// context for example only; plugins should never need to do this
+	// this function calls New with the options it needs to be reliably
+	// tested. Framework and SDK developers should call New, inject the
+	// resulting context in their framework, and then pass it around. This
+	// exampleCtx is a stand-in for a context you have injected a logger
+	// into and passed to the area of the codebase you need it.
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here
@@ -72,7 +92,11 @@ func ExampleWarn() {
 }
 
 func ExampleError() {
-	// context for example only; plugins should never need to do this
+	// this function calls New with the options it needs to be reliably
+	// tested. Framework and SDK developers should call New, inject the
+	// resulting context in their framework, and then pass it around. This
+	// exampleCtx is a stand-in for a context you have injected a logger
+	// into and passed to the area of the codebase you need it.
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here

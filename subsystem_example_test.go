@@ -3,10 +3,18 @@ package tflog
 import "os"
 
 func ExampleNewSubsystem() {
-	// context for example only; plugins should never need to do this
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here
+
+	// register a new subsystem before using it
 	subCtx := NewSubsystem(exampleCtx, "my-subsystem")
 
 	// messages logged to the subsystem will carry the subsystem name with
@@ -18,8 +26,16 @@ func ExampleNewSubsystem() {
 }
 
 func ExampleNewSubsystem_withLevel() {
-	// context for example only; plugins should never need to do this
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
 	exampleCtx := getExampleContext()
+
+	// simulate the user setting a logging level for the subsystem
 	os.Setenv("EXAMPLE_SUBSYSTEM_LEVEL", "WARN")
 
 	// non-example-setup code begins here
@@ -45,11 +61,21 @@ func ExampleNewSubsystem_withLevel() {
 }
 
 func ExampleSubsystemWith() {
-	// context for example only; plugins should never need to do this
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
 	exampleCtx := getExampleContext()
+
+	// register a new subsystem before using it
 	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
 
 	// non-example-setup code begins here
+
+	// associate a key and value with all lines logged by the sub-logger
 	derivedCtx := SubsystemWith(exampleCtx, "my-subsystem", "foo", 123)
 
 	// all messages logged with derivedCtx will now have foo=123
@@ -61,8 +87,16 @@ func ExampleSubsystemWith() {
 }
 
 func ExampleSubsystemTrace() {
-	// context for example only; plugins should never need to do this
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
 	exampleCtx := getExampleContext()
+
+	// register a new subsystem before using it
 	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
 
 	// non-example-setup code begins here
@@ -73,8 +107,16 @@ func ExampleSubsystemTrace() {
 }
 
 func ExampleSubsystemDebug() {
-	// context for example only; plugins should never need to do this
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
 	exampleCtx := getExampleContext()
+
+	// register a new subsystem before using it
 	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
 
 	// non-example-setup code begins here
@@ -85,8 +127,16 @@ func ExampleSubsystemDebug() {
 }
 
 func ExampleSubsystemInfo() {
-	// context for example only; plugins should never need to do this
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
 	exampleCtx := getExampleContext()
+
+	// register a new subsystem before using it
 	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
 
 	// non-example-setup code begins here
@@ -97,8 +147,16 @@ func ExampleSubsystemInfo() {
 }
 
 func ExampleSubsystemWarn() {
-	// context for example only; plugins should never need to do this
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
 	exampleCtx := getExampleContext()
+
+	// register a new subsystem before using it
 	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
 
 	// non-example-setup code begins here
@@ -109,8 +167,16 @@ func ExampleSubsystemWarn() {
 }
 
 func ExampleSubsystemError() {
-	// context for example only; plugins should never need to do this
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
 	exampleCtx := getExampleContext()
+
+	// register a new subsystem before using it
 	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
 
 	// non-example-setup code begins here
