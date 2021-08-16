@@ -1,0 +1,6 @@
+```release-note:breaking-change
+The `tflog` package has been moved to `github.com/hashicorp/terraform-plugin-log/tflog` to make it work better with goimports and other tooling.
+```
+```release-note:breaking-change
+The `tfsdklog` package has been moved to `github.com/hashicorp/terraform-plugin-log/tfsdklog` to make it work better with goimports and other tooling.
+```
