@@ -22,7 +22,7 @@ func ExampleNewSubsystem() {
 	SubsystemTrace(subCtx, "my-subsystem", "hello, world", "foo", 123)
 
 	// Output:
-	// {"@level":"trace","@message":"hello, world","@module":"my-subsystem","foo":123}
+	// {"@level":"trace","@message":"hello, world","@module":"provider.my-subsystem","foo":123}
 }
 
 func ExampleNewSubsystem_withLevel() {
@@ -56,8 +56,8 @@ func ExampleNewSubsystem_withLevel() {
 	SubsystemWarn(subCtx, "my-subsystem", "hello, world", "foo", 123)
 
 	// Output:
-	// {"@level":"trace","@message":"hello, world","foo":123}
-	// {"@level":"warn","@message":"hello, world","@module":"my-subsystem","foo":123}
+	// {"@level":"trace","@message":"hello, world","@module":"provider","foo":123}
+	// {"@level":"warn","@message":"hello, world","@module":"provider.my-subsystem","foo":123}
 }
 
 func ExampleSubsystemWith() {
@@ -83,7 +83,7 @@ func ExampleSubsystemWith() {
 	SubsystemTrace(derivedCtx, "my-subsystem", "example log message")
 
 	// Output:
-	// {"@level":"trace","@message":"example log message","@module":"my-subsystem","foo":123}
+	// {"@level":"trace","@message":"example log message","@module":"provider.my-subsystem","foo":123}
 }
 
 func ExampleSubsystemTrace() {
@@ -103,7 +103,7 @@ func ExampleSubsystemTrace() {
 	SubsystemTrace(exampleCtx, "my-subsystem", "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
 
 	// Output:
-	// {"@level":"trace","@message":"hello, world","@module":"my-subsystem","colors":["red","blue","green"],"foo":123}
+	// {"@level":"trace","@message":"hello, world","@module":"provider.my-subsystem","colors":["red","blue","green"],"foo":123}
 }
 
 func ExampleSubsystemDebug() {
@@ -123,7 +123,7 @@ func ExampleSubsystemDebug() {
 	SubsystemDebug(exampleCtx, "my-subsystem", "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
 
 	// Output:
-	// {"@level":"debug","@message":"hello, world","@module":"my-subsystem","colors":["red","blue","green"],"foo":123}
+	// {"@level":"debug","@message":"hello, world","@module":"provider.my-subsystem","colors":["red","blue","green"],"foo":123}
 }
 
 func ExampleSubsystemInfo() {
@@ -143,7 +143,7 @@ func ExampleSubsystemInfo() {
 	SubsystemInfo(exampleCtx, "my-subsystem", "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
 
 	// Output:
-	// {"@level":"info","@message":"hello, world","@module":"my-subsystem","colors":["red","blue","green"],"foo":123}
+	// {"@level":"info","@message":"hello, world","@module":"provider.my-subsystem","colors":["red","blue","green"],"foo":123}
 }
 
 func ExampleSubsystemWarn() {
@@ -163,7 +163,7 @@ func ExampleSubsystemWarn() {
 	SubsystemWarn(exampleCtx, "my-subsystem", "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
 
 	// Output:
-	// {"@level":"warn","@message":"hello, world","@module":"my-subsystem","colors":["red","blue","green"],"foo":123}
+	// {"@level":"warn","@message":"hello, world","@module":"provider.my-subsystem","colors":["red","blue","green"],"foo":123}
 }
 
 func ExampleSubsystemError() {
@@ -183,5 +183,5 @@ func ExampleSubsystemError() {
 	SubsystemError(exampleCtx, "my-subsystem", "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
 
 	// Output:
-	// {"@level":"error","@message":"hello, world","@module":"my-subsystem","colors":["red","blue","green"],"foo":123}
+	// {"@level":"error","@message":"hello, world","@module":"provider.my-subsystem","colors":["red","blue","green"],"foo":123}
 }

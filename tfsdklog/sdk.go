@@ -11,11 +11,18 @@ import (
 // configured with the passed options.
 func NewRootSDKLogger(ctx context.Context, options ...logging.Option) context.Context {
 	opts := logging.ApplyLoggerOpts(options...)
-	if opts.Level == hclog.NoLevel {
-		opts.Level = hclog.Trace
-	}
 	if opts.Name == "" {
 		opts.Name = "sdk"
+	}
+	if sink := getSink(ctx); sink != nil {
+		logger := sink.Named(opts.Name)
+		if opts.Level != hclog.NoLevel {
+			logger.SetLevel(opts.Level)
+		}
+		return logging.SetSDKRootLogger(ctx, logger)
+	}
+	if opts.Level == hclog.NoLevel {
+		opts.Level = hclog.Trace
 	}
 	loggerOptions := &hclog.LoggerOptions{
 		Name:                     opts.Name,
@@ -34,6 +41,16 @@ func NewRootSDKLogger(ctx context.Context, options ...logging.Option) context.Co
 // logger configured with the passed options.
 func NewRootProviderLogger(ctx context.Context, options ...logging.Option) context.Context {
 	opts := logging.ApplyLoggerOpts(options...)
+	if opts.Name == "" {
+		opts.Name = "provider"
+	}
+	if sink := getSink(ctx); sink != nil {
+		logger := sink.Named(opts.Name)
+		if opts.Level != hclog.NoLevel {
+			logger.SetLevel(opts.Level)
+		}
+		return logging.SetProviderSpaceRootLogger(ctx, logger)
+	}
 	if opts.Level == hclog.NoLevel {
 		opts.Level = hclog.Trace
 	}
