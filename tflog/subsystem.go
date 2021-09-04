@@ -19,7 +19,7 @@ import (
 // The only Options supported for subsystems are the Options for setting the
 // level of the logger.
 func NewSubsystem(ctx context.Context, subsystem string, options ...logging.Option) context.Context {
-	logger := logging.GetProviderSpaceRootLogger(ctx)
+	logger := logging.GetProviderRootLogger(ctx)
 	if logger == nil {
 		// this essentially should never happen in production
 		// the root logger for provider code should be injected

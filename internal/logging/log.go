@@ -10,9 +10,9 @@ import (
 type loggerKey string
 
 const (
-	// ProviderSpaceRootLoggerKey is the loggerKey that will hold the root
+	// ProviderRootLoggerKey is the loggerKey that will hold the root
 	// logger for writing logs from within provider code.
-	ProviderSpaceRootLoggerKey loggerKey = "provider"
+	ProviderRootLoggerKey loggerKey = "provider"
 
 	// SDKRootLoggerKey is the loggerKey that will hold the root logger for
 	// writing logs from with SDKs.

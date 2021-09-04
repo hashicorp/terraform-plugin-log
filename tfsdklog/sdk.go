@@ -47,7 +47,7 @@ func NewRootProviderLogger(ctx context.Context, options ...logging.Option) conte
 		Output:                   opts.Output,
 		AdditionalLocationOffset: 1,
 	}
-	return logging.SetProviderSpaceRootLogger(ctx, hclog.New(loggerOptions))
+	return logging.SetProviderRootLogger(ctx, hclog.New(loggerOptions))
 }
 
 // With returns a new context.Context that has a modified logger in it which

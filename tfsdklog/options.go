@@ -17,14 +17,6 @@ func WithLogName(name string) logging.Option {
 	}
 }
 
-// WithStderrFromInit returns an option that tells the logger to write to the
-// os.Stderr that was present when the program started, not the one that is
-// available at runtime. Some versions of Terraform overwrite os.Stderr with an
-// io.Writer that is never read, so any log lines written to it will be lost.
-func WithStderrFromInit() logging.Option {
-	return logging.WithOutput(logging.Stderr)
-}
-
 // WithLevelFromEnv returns an option that will set the level of the logger
 // based on the string in an environment variable. The environment variable
 // checked will be `name` and `subsystems`, joined by _ and in all caps.
@@ -56,4 +48,12 @@ func WithoutLocation() logging.Option {
 		l.IncludeLocation = false
 		return l
 	}
+}
+
+// WithStderrFromInit returns an option that tells the logger to write to the
+// os.Stderr that was present when the program started, not the one that is
+// available at runtime. Some versions of Terraform overwrite os.Stderr with an
+// io.Writer that is never read, so any log lines written to it will be lost.
+func WithStderrFromInit() logging.Option {
+	return logging.WithOutput(logging.Stderr)
 }
