@@ -1,0 +1,23 @@
+```release-note:breaking-change
+`tflog.Option` has been moved to an internal package. Consumers can no longer reference the type.
+```
+
+```release-note:breaking-change
+`tflog.WithLogName` has been removed. SDK developers should use `tfsdklog.WithLogName`. Provider developers should not need this functionality.
+```
+
+```release-note:breaking-change
+`tflog.WithStderrFromInit` has been removed. SDK developers should use `tfsdklog.WithStderrFromInit`. Provider developers should not need this functionality.
+```
+
+```release-note:breaking-change
+`tflog.New` has been moved to `tfsdklog.NewRootProviderLogger`. Provider developers should not need this functionality.
+```
+
+```release-note:breaking-change
+`tfsdklog.Option` has been moved to an internal package. Consumers can no longer reference the type.
+```
+
+```release-note:breaking-change
+`tfsdklog.New` has been renamed `tfsdklog.NewRootLogger`.
+```
