@@ -8,6 +8,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/internal/logging"
 )
 
+// Options is a collection of logging options, useful for collecting arguments
+// to NewSubsystem, NewRootSDKLogger, and NewRootProviderLogger before calling
+// them.
+type Options []logging.Option
+
 // WithLogName returns an option that will set the logger name explicitly to
 // `name`. This has no effect when used with NewSubsystem.
 func WithLogName(name string) logging.Option {

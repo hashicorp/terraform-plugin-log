@@ -8,6 +8,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/internal/logging"
 )
 
+// Options are a collection of logging options, useful for collecting arguments
+// to NewSubsystem prior to calling it.
+type Options []logging.Option
+
 // WithLevelFromEnv returns an option that will set the level of the logger
 // based on the string in an environment variable. The environment variable
 // checked will be `name` and `subsystems`, joined by _ and in all caps.
