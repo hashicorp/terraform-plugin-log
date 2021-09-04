@@ -49,7 +49,7 @@ func NewRootProviderLogger(ctx context.Context, options ...logging.Option) conte
 		if opts.Level != hclog.NoLevel {
 			logger.SetLevel(opts.Level)
 		}
-		return logging.SetProviderSpaceRootLogger(ctx, logger)
+		return logging.SetProviderRootLogger(ctx, logger)
 	}
 	if opts.Level == hclog.NoLevel {
 		opts.Level = hclog.Trace
