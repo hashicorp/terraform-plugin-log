@@ -2,73 +2,58 @@ package tfsdklog
 
 import (
 	"context"
-	"io"
-	"os"
 
 	"github.com/hashicorp/go-hclog"
+	"github.com/hashicorp/terraform-plugin-log/internal/logging"
 )
 
-type loggerKey string
-
-const rootLoggerKey loggerKey = "sdk"
-
-var (
-	stderr io.Writer
-)
-
-func init() {
-	// When go-plugin.Serve is called, it overwrites our os.Stderr with a
-	// gRPC stream which Terraform ignores. This tends to be before our
-	// loggers get set up, as go-plugin has no way to pass in a base
-	// context, and our loggers are passed around via contexts. This leaves
-	// our loggers writing to an output that is never read by anything,
-	// meaning the logs get blackholed. This isn't ideal, for log output,
-	// so this is our workaround: we copy stderr on init, before Serve can
-	// be called, and offer an option to write to that instead of the
-	// os.Stderr available at runtime.
-	//
-	// Ideally, this is a short-term fix until Terraform starts reading
-	// from go-plugin's gRPC-streamed stderr channel, but for the moment it
-	// works.
-	stderr = os.Stderr
-}
-
-func getRootLogger(ctx context.Context) hclog.Logger {
-	logger := ctx.Value(rootLoggerKey)
-	if logger == nil {
-		return nil
+// NewRootSDKLogger returns a new context.Context that contains an SDK logger
+// configured with the passed options.
+func NewRootSDKLogger(ctx context.Context, options ...logging.Option) context.Context {
+	opts := logging.ApplyLoggerOpts(options...)
+	if opts.Level == hclog.NoLevel {
+		opts.Level = hclog.Trace
 	}
-	return logger.(hclog.Logger)
-}
-
-func setRootLogger(ctx context.Context, logger hclog.Logger) context.Context {
-	return context.WithValue(ctx, rootLoggerKey, logger)
-}
-
-// New returns a new context.Context that contains a logger configured with the
-// passed options.
-func New(ctx context.Context, options ...Option) context.Context {
-	opts := applyLoggerOpts(options...)
-	if opts.level == hclog.NoLevel {
-		opts.level = hclog.Trace
+	if opts.Name == "" {
+		opts.Name = "sdk"
 	}
 	loggerOptions := &hclog.LoggerOptions{
-		Name:                     opts.name,
-		Level:                    opts.level,
+		Name:                     opts.Name,
+		Level:                    opts.Level,
 		JSONFormat:               true,
 		IndependentLevels:        true,
-		IncludeLocation:          opts.includeLocation,
-		DisableTime:              !opts.includeTime,
-		Output:                   opts.output,
+		IncludeLocation:          opts.IncludeLocation,
+		DisableTime:              !opts.IncludeTime,
+		Output:                   opts.Output,
 		AdditionalLocationOffset: 1,
 	}
-	return setRootLogger(ctx, hclog.New(loggerOptions))
+	return logging.SetSDKRootLogger(ctx, hclog.New(loggerOptions))
+}
+
+// NewRootProviderLogger returns a new context.Context that contains a provider
+// logger configured with the passed options.
+func NewRootProviderLogger(ctx context.Context, options ...logging.Option) context.Context {
+	opts := logging.ApplyLoggerOpts(options...)
+	if opts.Level == hclog.NoLevel {
+		opts.Level = hclog.Trace
+	}
+	loggerOptions := &hclog.LoggerOptions{
+		Name:                     opts.Name,
+		Level:                    opts.Level,
+		JSONFormat:               true,
+		IndependentLevels:        true,
+		IncludeLocation:          opts.IncludeLocation,
+		DisableTime:              !opts.IncludeTime,
+		Output:                   opts.Output,
+		AdditionalLocationOffset: 1,
+	}
+	return logging.SetProviderRootLogger(ctx, hclog.New(loggerOptions))
 }
 
 // With returns a new context.Context that has a modified logger in it which
 // will include key and value as arguments in all its log output.
 func With(ctx context.Context, key string, value interface{}) context.Context {
-	logger := getRootLogger(ctx)
+	logger := logging.GetSDKRootLogger(ctx)
 	if logger == nil {
 		// this essentially should never happen in production the root
 		// logger for  code should be injected by the  in
@@ -76,14 +61,14 @@ func With(ctx context.Context, key string, value interface{}) context.Context {
 		// most so just making this a no-op is fine
 		return ctx
 	}
-	return setRootLogger(ctx, logger.With(key, value))
+	return logging.SetSDKRootLogger(ctx, logger.With(key, value))
 }
 
 // Trace logs `msg` at the trace level to the logger in `ctx`, with `args` as
 // structured arguments in the log output. `args` is expected to be pairs of
 // key and value.
 func Trace(ctx context.Context, msg string, args ...interface{}) {
-	logger := getRootLogger(ctx)
+	logger := logging.GetSDKRootLogger(ctx)
 	if logger == nil {
 		// this essentially should never happen in production the root
 		// logger for  code should be injected by the  in
@@ -98,7 +83,7 @@ func Trace(ctx context.Context, msg string, args ...interface{}) {
 // structured arguments in the log output. `args` is expected to be pairs of
 // key and value.
 func Debug(ctx context.Context, msg string, args ...interface{}) {
-	logger := getRootLogger(ctx)
+	logger := logging.GetSDKRootLogger(ctx)
 	if logger == nil {
 		// this essentially should never happen in production the root
 		// logger for  code should be injected by the  in
@@ -113,7 +98,7 @@ func Debug(ctx context.Context, msg string, args ...interface{}) {
 // structured arguments in the log output. `args` is expected to be pairs of
 // key and value.
 func Info(ctx context.Context, msg string, args ...interface{}) {
-	logger := getRootLogger(ctx)
+	logger := logging.GetSDKRootLogger(ctx)
 	if logger == nil {
 		// this essentially should never happen in production the root
 		// logger for  code should be injected by the  in
@@ -128,7 +113,7 @@ func Info(ctx context.Context, msg string, args ...interface{}) {
 // structured arguments in the log output. `args` is expected to be pairs of
 // key and value.
 func Warn(ctx context.Context, msg string, args ...interface{}) {
-	logger := getRootLogger(ctx)
+	logger := logging.GetSDKRootLogger(ctx)
 	if logger == nil {
 		// this essentially should never happen in production the root
 		// logger for  code should be injected by the  in
@@ -143,7 +128,7 @@ func Warn(ctx context.Context, msg string, args ...interface{}) {
 // structured arguments in the log output. `args` is expected to be pairs of
 // key and value.
 func Error(ctx context.Context, msg string, args ...interface{}) {
-	logger := getRootLogger(ctx)
+	logger := logging.GetSDKRootLogger(ctx)
 	if logger == nil {
 		// this essentially should never happen in production the root
 		// logger for  code should be injected by the  in

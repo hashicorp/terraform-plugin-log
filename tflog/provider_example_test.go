@@ -5,11 +5,14 @@ import (
 	"os"
 
 	"github.com/hashicorp/go-hclog"
+	"github.com/hashicorp/terraform-plugin-log/internal/logging"
+	"github.com/hashicorp/terraform-plugin-log/tfsdklog"
 )
 
 func getExampleContext() context.Context {
-	return New(context.Background(), withOutput(os.Stdout),
-		WithLevel(hclog.Trace), WithoutLocation(), withoutTimestamp())
+	return tfsdklog.NewRootProviderLogger(context.Background(),
+		logging.WithOutput(os.Stdout), WithLevel(hclog.Trace),
+		WithoutLocation(), logging.WithoutTimestamp())
 }
 
 func ExampleWith() {

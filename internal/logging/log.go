@@ -1,4 +1,4 @@
-package tflog
+package logging
 
 import (
 	"io"
@@ -10,10 +10,22 @@ import (
 type loggerKey string
 
 const (
-	providerSpaceRootLoggerKey loggerKey = "provider"
+	// ProviderRootLoggerKey is the loggerKey that will hold the root
+	// logger for writing logs from within provider code.
+	ProviderRootLoggerKey loggerKey = "provider"
+
+	// SDKRootLoggerKey is the loggerKey that will hold the root logger for
+	// writing logs from with SDKs.
+	SDKRootLoggerKey loggerKey = "sdk"
+
+	// SinkKey is the loggerKey that will hold the logging sink used for
+	// test frameworks.
+	SinkKey loggerKey = ""
 )
 
 var (
+	// Stderr caches the original os.Stderr when the process is started.
+	//
 	// When go-plugin.Serve is called, it overwrites our os.Stderr with a
 	// gRPC stream which Terraform ignores. This tends to be before our
 	// loggers get set up, as go-plugin has no way to pass in a base
@@ -27,9 +39,9 @@ var (
 	// Ideally, this is a short-term fix until Terraform starts reading
 	// from go-plugin's gRPC-streamed stderr channel, but for the moment it
 	// works.
-	stderr io.Writer
+	Stderr io.Writer
 )
 
 func init() {
-	stderr = os.Stderr
+	Stderr = os.Stderr
 }
