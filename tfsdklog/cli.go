@@ -9,6 +9,12 @@ import (
 	"github.com/hashicorp/go-hclog"
 )
 
+// envLogCLI is the environment variable that users can set to control the
+// least-verbose level of logs that will be forwarded from the CLI. These logs
+// are a combination of the logs for the Terraform binary _and_ for the
+// provider binaries that are not under test.
+//
+// Valid values are TRACE, DEBUG, INFO, WARN, ERROR, and OFF.
 const envLogCLI = "TF_LOG_CLI"
 
 func newCLILogger(ctx context.Context, commandID string) hclog.Logger {

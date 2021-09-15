@@ -13,7 +13,22 @@ import (
 )
 
 const (
-	envLog     = "TF_LOG"
+	// envLog is the environment variable that users can set to control the
+	// least-verbose level of logs that will be output during testing. If
+	// this environment variable is set, it will default to off. This is
+	// just the default; specific loggers and sub-loggers can set a lower
+	// or higher verbosity level without a problem right now. In theory,
+	// they should not be able to.
+	//
+	// Valid values are TRACE, DEBUG, INFO, WARN, ERROR, and OFF. A special
+	// pseudo-value, JSON, will set the value to TRACE and output the
+	// results in their JSON format.
+	envLog = "TF_LOG"
+
+	// envLogFile is the environment variable that controls where log
+	// output is written during tests. By default, logs will be written to
+	// standard error. Setting this environment variable to another file
+	// path will write logs there instead during tests.
 	envLogFile = "TF_LOG_PATH"
 )
 
