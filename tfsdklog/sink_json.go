@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"sort"
 	"time"
 
 	"github.com/hashicorp/go-hclog"
@@ -157,6 +158,10 @@ func parseJSON(input []byte) (*logEntry, error) {
 			Value: v,
 		})
 	}
+
+	sort.Slice(entry.KVPairs, func(i, j int) bool {
+		return entry.KVPairs[i].Key < entry.KVPairs[j].Key
+	})
 
 	return entry, nil
 }
