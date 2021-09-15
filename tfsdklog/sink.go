@@ -81,8 +81,7 @@ func newSink() hclog.Logger {
 	envLevel := strings.ToUpper(os.Getenv(envLog))
 	if envLevel == "" {
 		logLevel = hclog.Off
-	}
-	if envLevel == "JSON" {
+	} else if envLevel == "JSON" {
 		logLevel = hclog.Trace
 		json = true
 	} else if isValidLogLevel(envLevel) {
