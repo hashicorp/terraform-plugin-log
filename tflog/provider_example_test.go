@@ -33,7 +33,7 @@ func ExampleWith() {
 	Trace(derivedCtx, "example log message")
 
 	// Output:
-	// {"@level":"trace","@message":"example log message","foo":123}
+	// {"@level":"trace","@message":"example log message","@module":"provider","foo":123}
 }
 
 func ExampleTrace() {
@@ -50,7 +50,7 @@ func ExampleTrace() {
 	Trace(exampleCtx, "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
 
 	// Output:
-	// {"@level":"trace","@message":"hello, world","colors":["red","blue","green"],"foo":123}
+	// {"@level":"trace","@message":"hello, world","@module":"provider","colors":["red","blue","green"],"foo":123}
 }
 
 func ExampleDebug() {
@@ -67,7 +67,7 @@ func ExampleDebug() {
 	Debug(exampleCtx, "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
 
 	// Output:
-	// {"@level":"debug","@message":"hello, world","colors":["red","blue","green"],"foo":123}
+	// {"@level":"debug","@message":"hello, world","@module":"provider","colors":["red","blue","green"],"foo":123}
 }
 
 func ExampleInfo() {
@@ -84,7 +84,7 @@ func ExampleInfo() {
 	Info(exampleCtx, "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
 
 	// Output:
-	// {"@level":"info","@message":"hello, world","colors":["red","blue","green"],"foo":123}
+	// {"@level":"info","@message":"hello, world","@module":"provider","colors":["red","blue","green"],"foo":123}
 }
 
 func ExampleWarn() {
@@ -101,7 +101,7 @@ func ExampleWarn() {
 	Warn(exampleCtx, "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
 
 	// Output:
-	// {"@level":"warn","@message":"hello, world","colors":["red","blue","green"],"foo":123}
+	// {"@level":"warn","@message":"hello, world","@module":"provider","colors":["red","blue","green"],"foo":123}
 }
 
 func ExampleError() {
@@ -118,5 +118,5 @@ func ExampleError() {
 	Error(exampleCtx, "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
 
 	// Output:
-	// {"@level":"error","@message":"hello, world","colors":["red","blue","green"],"foo":123}
+	// {"@level":"error","@message":"hello, world","@module":"provider","colors":["red","blue","green"],"foo":123}
 }
