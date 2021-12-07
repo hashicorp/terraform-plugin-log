@@ -45,6 +45,7 @@ const (
 	// single %s will be replaced with the test name, and the log output
 	// for that test (and only that test) will be written to that file.
 	// Setting this environment variable will override TF_LOG_PATH.
+	// Only the logs for the provider under test are included.
 	envLogPathMask = "TF_LOG_PATH_MASK"
 )
 
