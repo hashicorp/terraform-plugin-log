@@ -1,4 +1,4 @@
-# 0.2.0 (Unreleased)
+# 0.2.0 (December 07, 2021)
 
 BREAKING CHANGES:
 * Provider log outputs now default to being named "provider" unless another name is provided. ([#9](https://github.com/hashicorp/terraform-plugin-log/issues/9))
