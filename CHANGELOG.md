@@ -1,4 +1,4 @@
-# 0.2.1 (Unreleased)
+# 0.2.1 (December 23, 2021)
 
 BUG FIXES:
 * Fixed a panic when logging to a subsystem when logging has not been set up on the context. Should only impact unit tests and other situations where an SDK isn't instantiating the logging context. ([#24](https://github.com/hashicorp/terraform-plugin-log/issues/24))
