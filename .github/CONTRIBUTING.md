@@ -129,9 +129,17 @@ submitting a patch that makes functional changes or fixes.
 
 ## Linting
 
-Coding bug and style checking is performed via [`golangci-lint`](https://golangci-lint.run/).
+GitHub Actions workflow bug and style checking is performed via [`actionlint`](https://github.com/rhysd/actionlint).
 
-To run the linters locally, install the `golangci-lint` tool, and run:
+To run the GitHub Actions linters locally, install the `actionlint` tool, and run:
+
+```shell
+actionlint
+```
+
+Go code bug and style checking is performed via [`golangci-lint`](https://golangci-lint.run/).
+
+To run the Go linters locally, install the `golangci-lint` tool, and run:
 
 ```shell
 golangci-lint run ./...
@@ -141,11 +149,35 @@ golangci-lint run ./...
 
 Code contributions should be supported by unit tests wherever possible.
 
-### Unit tests
+### GitHub Actions Tests
 
-Code testing is perfomed via Go's built-in testing functionality.
+GitHub Actions workflow testing is performed via [`act`](https://github.com/nektos/act).
 
-To run the unit testing locally:
+To run the GitHub Actions testing locally (setting appropriate event):
+
+```shell
+act --artifact-server-path /tmp --env ACTIONS_RUNTIME_TOKEN=test -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest pull_request
+```
+
+The command options can be added to a `~/.actrc` file:
+
+```text
+--artifact-server-path /tmp
+--env ACTIONS_RUNTIME_TOKEN=test
+-P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest
+```
+
+So they do not need to be specified every invocation:
+
+```shell
+act pull_request
+```
+
+### Go Unit Tests
+
+Go code unit testing is perfomed via Go's built-in testing functionality.
+
+To run the Go unit testing locally:
 
 ```shell
 go test ./...
