@@ -127,11 +127,61 @@ We belive that one should "leave the campsite cleaner than you found it", so
 you are welcome to clean up cosmetic issues in the neighbourhood when
 submitting a patch that makes functional changes or fixes.
 
+## Linting
+
+GitHub Actions workflow bug and style checking is performed via [`actionlint`](https://github.com/rhysd/actionlint).
+
+To run the GitHub Actions linters locally, install the `actionlint` tool, and run:
+
+```shell
+actionlint
+```
+
+Go code bug and style checking is performed via [`golangci-lint`](https://golangci-lint.run/).
+
+To run the Go linters locally, install the `golangci-lint` tool, and run:
+
+```shell
+golangci-lint run ./...
+```
+
 ## Testing
 
 Code contributions should be supported by unit tests wherever possible.
 
-### Unit tests
+### GitHub Actions Tests
+
+GitHub Actions workflow testing is performed via [`act`](https://github.com/nektos/act).
+
+To run the GitHub Actions testing locally (setting appropriate event):
+
+```shell
+act --artifact-server-path /tmp --env ACTIONS_RUNTIME_TOKEN=test -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest pull_request
+```
+
+The command options can be added to a `~/.actrc` file:
+
+```text
+--artifact-server-path /tmp
+--env ACTIONS_RUNTIME_TOKEN=test
+-P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest
+```
+
+So they do not need to be specified every invocation:
+
+```shell
+act pull_request
+```
+
+### Go Unit Tests
+
+Go code unit testing is perfomed via Go's built-in testing functionality.
+
+To run the Go unit testing locally:
+
+```shell
+go test ./...
+```
 
 This codebase follows Go conventions for unit testing. Some guidelines include:
 
@@ -163,3 +213,37 @@ func TestExample(t *testing.T) {
     }
 }
 ```
+
+## Maintainers Guide
+
+This section is dedicated to the maintainers of this project.
+
+### Releases
+
+Before running a release, the changelog must be constructed from unreleased entries in the `.changelog` directory.
+
+Install the latest version of the [`changelog-build`](https://pkg.go.dev/github.com/hashicorp/go-changelog/cmd/changelog-build) command, if it not already available:
+
+```shell
+go install github.com/hashicorp/go-changelog/cmd/changelog-build
+```
+
+Run the [`changelog-build`](https://pkg.go.dev/github.com/hashicorp/go-changelog/cmd/changelog-build) command from the root directory of the repository:
+
+```shell
+changelog-build -changelog-template .changelog.tmpl -entries-dir .changelog -last-release $(git describe --tags --abbrev=0) -note-template .changelog-note.tmpl -this-release HEAD
+```
+
+This will generate a section of Markdown text for the next release. Open the `CHANGELOG.md` file, add a `# X.Y.Z` header as the first line, then add the output from the `changelog-build` command.
+
+Commit, push, create a release Git tag, and push the tag:
+
+```shell
+git add CHANGELOG.md
+git commit -m "Update CHANGELOG for v1.2.3"
+git push
+git tag v1.2.3
+git push --tags
+```
+
+GitHub Actions will pick up the new release tag and kick off the release workflow.

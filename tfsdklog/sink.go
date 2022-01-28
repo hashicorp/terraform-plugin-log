@@ -133,8 +133,8 @@ func newSink(t testing.T) hclog.Logger {
 }
 
 func isValidLogLevel(level string) bool {
-	for _, l := range ValidLevels {
-		if level == string(l) {
+	for _, validLevel := range ValidLevels {
+		if level == validLevel {
 			return true
 		}
 	}
