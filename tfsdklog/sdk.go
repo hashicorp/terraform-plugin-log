@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/go-hclog"
+	"github.com/hashicorp/terraform-plugin-log/internal/hclogutils"
 	"github.com/hashicorp/terraform-plugin-log/internal/logging"
 )
 
@@ -81,10 +82,11 @@ func With(ctx context.Context, key string, value interface{}) context.Context {
 	return logging.SetSDKRootLogger(ctx, logger.With(key, value))
 }
 
-// Trace logs `msg` at the trace level to the logger in `ctx`, with `args` as
-// structured arguments in the log output. `args` is expected to be pairs of
-// key and value.
-func Trace(ctx context.Context, msg string, args ...interface{}) {
+// Trace logs `msg` at the trace level to the logger in `ctx`, with optional
+// `additionalPairs` structured key-value pairs in the log output. Pairs are
+// shallow merged with any defined on the logger, e.g. by the `With()` function,
+// and across multiple maps.
+func Trace(ctx context.Context, msg string, additionalPairs ...map[string]interface{}) {
 	logger := logging.GetSDKRootLogger(ctx)
 	if logger == nil {
 		// this essentially should never happen in production the root
@@ -93,13 +95,14 @@ func Trace(ctx context.Context, msg string, args ...interface{}) {
 		// most so just making this a no-op is fine
 		return
 	}
-	logger.Trace(msg, args...)
+	logger.Trace(msg, hclogutils.MapsToArgs(additionalPairs...)...)
 }
 
-// Debug logs `msg` at the debug level to the logger in `ctx`, with `args` as
-// structured arguments in the log output. `args` is expected to be pairs of
-// key and value.
-func Debug(ctx context.Context, msg string, args ...interface{}) {
+// Debug logs `msg` at the debug level to the logger in `ctx`, with optional
+// `additionalPairs` structured key-value pairs in the log output. Pairs are
+// shallow merged with any defined on the logger, e.g. by the `With()` function,
+// and across multiple maps.
+func Debug(ctx context.Context, msg string, additionalPairs ...map[string]interface{}) {
 	logger := logging.GetSDKRootLogger(ctx)
 	if logger == nil {
 		// this essentially should never happen in production the root
@@ -108,13 +111,14 @@ func Debug(ctx context.Context, msg string, args ...interface{}) {
 		// most so just making this a no-op is fine
 		return
 	}
-	logger.Debug(msg, args...)
+	logger.Debug(msg, hclogutils.MapsToArgs(additionalPairs...)...)
 }
 
-// Info logs `msg` at the info level to the logger in `ctx`, with `args` as
-// structured arguments in the log output. `args` is expected to be pairs of
-// key and value.
-func Info(ctx context.Context, msg string, args ...interface{}) {
+// Info logs `msg` at the info level to the logger in `ctx`, with optional
+// `additionalPairs` structured key-value pairs in the log output. Pairs are
+// shallow merged with any defined on the logger, e.g. by the `With()` function,
+// and across multiple maps.
+func Info(ctx context.Context, msg string, additionalPairs ...map[string]interface{}) {
 	logger := logging.GetSDKRootLogger(ctx)
 	if logger == nil {
 		// this essentially should never happen in production the root
@@ -123,13 +127,14 @@ func Info(ctx context.Context, msg string, args ...interface{}) {
 		// most so just making this a no-op is fine
 		return
 	}
-	logger.Info(msg, args...)
+	logger.Info(msg, hclogutils.MapsToArgs(additionalPairs...)...)
 }
 
-// Warn logs `msg` at the warn level to the logger in `ctx`, with `args` as
-// structured arguments in the log output. `args` is expected to be pairs of
-// key and value.
-func Warn(ctx context.Context, msg string, args ...interface{}) {
+// Warn logs `msg` at the warn level to the logger in `ctx`, with optional
+// `additionalPairs` structured key-value pairs in the log output. Pairs are
+// shallow merged with any defined on the logger, e.g. by the `With()` function,
+// and across multiple maps.
+func Warn(ctx context.Context, msg string, additionalPairs ...map[string]interface{}) {
 	logger := logging.GetSDKRootLogger(ctx)
 	if logger == nil {
 		// this essentially should never happen in production the root
@@ -138,13 +143,14 @@ func Warn(ctx context.Context, msg string, args ...interface{}) {
 		// most so just making this a no-op is fine
 		return
 	}
-	logger.Warn(msg, args...)
+	logger.Warn(msg, hclogutils.MapsToArgs(additionalPairs...)...)
 }
 
-// Error logs `msg` at the error level to the logger in `ctx`, with `args` as
-// structured arguments in the log output. `args` is expected to be pairs of
-// key and value.
-func Error(ctx context.Context, msg string, args ...interface{}) {
+// Error logs `msg` at the error level to the logger in `ctx`, with optional
+// `additionalPairs` structured key-value pairs in the log output. Pairs are
+// shallow merged with any defined on the logger, e.g. by the `With()` function,
+// and across multiple maps.
+func Error(ctx context.Context, msg string, additionalPairs ...map[string]interface{}) {
 	logger := logging.GetSDKRootLogger(ctx)
 	if logger == nil {
 		// this essentially should never happen in production the root
@@ -153,5 +159,5 @@ func Error(ctx context.Context, msg string, args ...interface{}) {
 		// most so just making this a no-op is fine
 		return
 	}
-	logger.Error(msg, args...)
+	logger.Error(msg, hclogutils.MapsToArgs(additionalPairs...)...)
 }

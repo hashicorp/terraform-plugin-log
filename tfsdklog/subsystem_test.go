@@ -17,11 +17,11 @@ func TestSubsystemWith(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		key            string
-		value          interface{}
-		logMessage     string
-		logArgs        []interface{}
-		expectedOutput []map[string]interface{}
+		key                string
+		value              interface{}
+		logMessage         string
+		logAdditionalPairs []map[string]interface{}
+		expectedOutput     []map[string]interface{}
 	}{
 		"no-log-pairs": {
 			key:        "test-with-key",
@@ -33,21 +33,6 @@ func TestSubsystemWith(t *testing.T) {
 					"@message":      "test message",
 					"@module":       testSubsystem,
 					"test-with-key": "test-with-value",
-				},
-			},
-		},
-		"mismatched-log-pair": {
-			key:        "test-with-key",
-			value:      "test-with-value",
-			logMessage: "test message",
-			logArgs:    []interface{}{"unpaired-test-log-key"},
-			expectedOutput: []map[string]interface{}{
-				{
-					"@level":         hclog.Trace.String(),
-					"@message":       "test message",
-					"@module":        testSubsystem,
-					"test-with-key":  "test-with-value",
-					hclog.MissingKey: "unpaired-test-log-key",
 				},
 			},
 		},
@@ -67,10 +52,12 @@ func TestSubsystemWith(t *testing.T) {
 			key:        "test-with-key",
 			value:      "test-with-value",
 			logMessage: "test message",
-			logArgs: []interface{}{
-				"test-log-key-1", "test-log-value-1",
-				"test-log-key-2", "test-log-value-2",
-				"test-log-key-3", "test-log-value-3",
+			logAdditionalPairs: []map[string]interface{}{
+				{
+					"test-log-key-1": "test-log-value-1",
+					"test-log-key-2": "test-log-value-2",
+					"test-log-key-3": "test-log-value-3",
+				},
 			},
 			expectedOutput: []map[string]interface{}{
 				{
@@ -99,7 +86,7 @@ func TestSubsystemWith(t *testing.T) {
 			ctx = tfsdklog.NewSubsystem(ctx, testSubsystem)
 			ctx = tfsdklog.SubsystemWith(ctx, testSubsystem, testCase.key, testCase.value)
 
-			tfsdklog.SubsystemTrace(ctx, testSubsystem, testCase.logMessage, testCase.logArgs...)
+			tfsdklog.SubsystemTrace(ctx, testSubsystem, testCase.logMessage, testCase.logAdditionalPairs...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -118,9 +105,9 @@ func TestSubsystemTrace(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message        string
-		args           []interface{}
-		expectedOutput []map[string]interface{}
+		message         string
+		additionalPairs []map[string]interface{}
+		expectedOutput  []map[string]interface{}
 	}{
 		"no-pairs": {
 			message: "test message",
@@ -132,24 +119,14 @@ func TestSubsystemTrace(t *testing.T) {
 				},
 			},
 		},
-		"mismatched-pair": {
+		"pairs-single-map": {
 			message: "test message",
-			args:    []interface{}{"unpaired-test-key"},
-			expectedOutput: []map[string]interface{}{
+			additionalPairs: []map[string]interface{}{
 				{
-					"@level":         hclog.Trace.String(),
-					"@message":       "test message",
-					"@module":        testSubsystem,
-					hclog.MissingKey: "unpaired-test-key",
+					"test-key-1": "test-value-1",
+					"test-key-2": "test-value-2",
+					"test-key-3": "test-value-3",
 				},
-			},
-		},
-		"pairs": {
-			message: "test message",
-			args: []interface{}{
-				"test-key-1", "test-value-1",
-				"test-key-2", "test-value-2",
-				"test-key-3", "test-value-3",
 			},
 			expectedOutput: []map[string]interface{}{
 				{
@@ -159,6 +136,33 @@ func TestSubsystemTrace(t *testing.T) {
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
+				},
+			},
+		},
+		"pairs-multiple-maps": {
+			message: "test message",
+			additionalPairs: []map[string]interface{}{
+				{
+					"test-key-1": "test-value-1-map1",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+				},
+				{
+					"test-key-4": "test-value-4-map2",
+					"test-key-1": "test-value-1-map2",
+					"test-key-5": "test-value-5-map2",
+				},
+			},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":     hclog.Trace.String(),
+					"@message":   "test message",
+					"@module":    testSubsystem,
+					"test-key-1": "test-value-1-map2",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+					"test-key-4": "test-value-4-map2",
+					"test-key-5": "test-value-5-map2",
 				},
 			},
 		},
@@ -176,7 +180,7 @@ func TestSubsystemTrace(t *testing.T) {
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
 			ctx = tfsdklog.NewSubsystem(ctx, testSubsystem)
 
-			tfsdklog.SubsystemTrace(ctx, testSubsystem, testCase.message, testCase.args...)
+			tfsdklog.SubsystemTrace(ctx, testSubsystem, testCase.message, testCase.additionalPairs...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -195,9 +199,9 @@ func TestSubsystemDebug(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message        string
-		args           []interface{}
-		expectedOutput []map[string]interface{}
+		message         string
+		additionalPairs []map[string]interface{}
+		expectedOutput  []map[string]interface{}
 	}{
 		"no-pairs": {
 			message: "test message",
@@ -209,24 +213,14 @@ func TestSubsystemDebug(t *testing.T) {
 				},
 			},
 		},
-		"mismatched-pair": {
+		"pairs-single-map": {
 			message: "test message",
-			args:    []interface{}{"unpaired-test-key"},
-			expectedOutput: []map[string]interface{}{
+			additionalPairs: []map[string]interface{}{
 				{
-					"@level":         hclog.Debug.String(),
-					"@message":       "test message",
-					"@module":        testSubsystem,
-					hclog.MissingKey: "unpaired-test-key",
+					"test-key-1": "test-value-1",
+					"test-key-2": "test-value-2",
+					"test-key-3": "test-value-3",
 				},
-			},
-		},
-		"pairs": {
-			message: "test message",
-			args: []interface{}{
-				"test-key-1", "test-value-1",
-				"test-key-2", "test-value-2",
-				"test-key-3", "test-value-3",
 			},
 			expectedOutput: []map[string]interface{}{
 				{
@@ -236,6 +230,33 @@ func TestSubsystemDebug(t *testing.T) {
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
+				},
+			},
+		},
+		"pairs-multiple-maps": {
+			message: "test message",
+			additionalPairs: []map[string]interface{}{
+				{
+					"test-key-1": "test-value-1-map1",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+				},
+				{
+					"test-key-4": "test-value-4-map2",
+					"test-key-1": "test-value-1-map2",
+					"test-key-5": "test-value-5-map2",
+				},
+			},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":     hclog.Debug.String(),
+					"@message":   "test message",
+					"@module":    testSubsystem,
+					"test-key-1": "test-value-1-map2",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+					"test-key-4": "test-value-4-map2",
+					"test-key-5": "test-value-5-map2",
 				},
 			},
 		},
@@ -253,7 +274,7 @@ func TestSubsystemDebug(t *testing.T) {
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
 			ctx = tfsdklog.NewSubsystem(ctx, testSubsystem)
 
-			tfsdklog.SubsystemDebug(ctx, testSubsystem, testCase.message, testCase.args...)
+			tfsdklog.SubsystemDebug(ctx, testSubsystem, testCase.message, testCase.additionalPairs...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -272,9 +293,9 @@ func TestSubsystemInfo(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message        string
-		args           []interface{}
-		expectedOutput []map[string]interface{}
+		message         string
+		additionalPairs []map[string]interface{}
+		expectedOutput  []map[string]interface{}
 	}{
 		"no-pairs": {
 			message: "test message",
@@ -286,24 +307,14 @@ func TestSubsystemInfo(t *testing.T) {
 				},
 			},
 		},
-		"mismatched-pair": {
+		"pairs-single-map": {
 			message: "test message",
-			args:    []interface{}{"unpaired-test-key"},
-			expectedOutput: []map[string]interface{}{
+			additionalPairs: []map[string]interface{}{
 				{
-					"@level":         hclog.Info.String(),
-					"@message":       "test message",
-					"@module":        testSubsystem,
-					hclog.MissingKey: "unpaired-test-key",
+					"test-key-1": "test-value-1",
+					"test-key-2": "test-value-2",
+					"test-key-3": "test-value-3",
 				},
-			},
-		},
-		"pairs": {
-			message: "test message",
-			args: []interface{}{
-				"test-key-1", "test-value-1",
-				"test-key-2", "test-value-2",
-				"test-key-3", "test-value-3",
 			},
 			expectedOutput: []map[string]interface{}{
 				{
@@ -313,6 +324,33 @@ func TestSubsystemInfo(t *testing.T) {
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
+				},
+			},
+		},
+		"pairs-multiple-maps": {
+			message: "test message",
+			additionalPairs: []map[string]interface{}{
+				{
+					"test-key-1": "test-value-1-map1",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+				},
+				{
+					"test-key-4": "test-value-4-map2",
+					"test-key-1": "test-value-1-map2",
+					"test-key-5": "test-value-5-map2",
+				},
+			},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":     hclog.Info.String(),
+					"@message":   "test message",
+					"@module":    testSubsystem,
+					"test-key-1": "test-value-1-map2",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+					"test-key-4": "test-value-4-map2",
+					"test-key-5": "test-value-5-map2",
 				},
 			},
 		},
@@ -330,7 +368,7 @@ func TestSubsystemInfo(t *testing.T) {
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
 			ctx = tfsdklog.NewSubsystem(ctx, testSubsystem)
 
-			tfsdklog.SubsystemInfo(ctx, testSubsystem, testCase.message, testCase.args...)
+			tfsdklog.SubsystemInfo(ctx, testSubsystem, testCase.message, testCase.additionalPairs...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -349,9 +387,9 @@ func TestSubsystemWarn(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message        string
-		args           []interface{}
-		expectedOutput []map[string]interface{}
+		message         string
+		additionalPairs []map[string]interface{}
+		expectedOutput  []map[string]interface{}
 	}{
 		"no-pairs": {
 			message: "test message",
@@ -363,24 +401,14 @@ func TestSubsystemWarn(t *testing.T) {
 				},
 			},
 		},
-		"mismatched-pair": {
+		"pairs-single-map": {
 			message: "test message",
-			args:    []interface{}{"unpaired-test-key"},
-			expectedOutput: []map[string]interface{}{
+			additionalPairs: []map[string]interface{}{
 				{
-					"@level":         hclog.Warn.String(),
-					"@message":       "test message",
-					"@module":        testSubsystem,
-					hclog.MissingKey: "unpaired-test-key",
+					"test-key-1": "test-value-1",
+					"test-key-2": "test-value-2",
+					"test-key-3": "test-value-3",
 				},
-			},
-		},
-		"pairs": {
-			message: "test message",
-			args: []interface{}{
-				"test-key-1", "test-value-1",
-				"test-key-2", "test-value-2",
-				"test-key-3", "test-value-3",
 			},
 			expectedOutput: []map[string]interface{}{
 				{
@@ -390,6 +418,33 @@ func TestSubsystemWarn(t *testing.T) {
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
+				},
+			},
+		},
+		"pairs-multiple-maps": {
+			message: "test message",
+			additionalPairs: []map[string]interface{}{
+				{
+					"test-key-1": "test-value-1-map1",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+				},
+				{
+					"test-key-4": "test-value-4-map2",
+					"test-key-1": "test-value-1-map2",
+					"test-key-5": "test-value-5-map2",
+				},
+			},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":     hclog.Warn.String(),
+					"@message":   "test message",
+					"@module":    testSubsystem,
+					"test-key-1": "test-value-1-map2",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+					"test-key-4": "test-value-4-map2",
+					"test-key-5": "test-value-5-map2",
 				},
 			},
 		},
@@ -407,7 +462,7 @@ func TestSubsystemWarn(t *testing.T) {
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
 			ctx = tfsdklog.NewSubsystem(ctx, testSubsystem)
 
-			tfsdklog.SubsystemWarn(ctx, testSubsystem, testCase.message, testCase.args...)
+			tfsdklog.SubsystemWarn(ctx, testSubsystem, testCase.message, testCase.additionalPairs...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -426,9 +481,9 @@ func TestSubsystemError(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message        string
-		args           []interface{}
-		expectedOutput []map[string]interface{}
+		message         string
+		additionalPairs []map[string]interface{}
+		expectedOutput  []map[string]interface{}
 	}{
 		"no-pairs": {
 			message: "test message",
@@ -440,24 +495,14 @@ func TestSubsystemError(t *testing.T) {
 				},
 			},
 		},
-		"mismatched-pair": {
+		"pairs-single-map": {
 			message: "test message",
-			args:    []interface{}{"unpaired-test-key"},
-			expectedOutput: []map[string]interface{}{
+			additionalPairs: []map[string]interface{}{
 				{
-					"@level":         hclog.Error.String(),
-					"@message":       "test message",
-					"@module":        testSubsystem,
-					hclog.MissingKey: "unpaired-test-key",
+					"test-key-1": "test-value-1",
+					"test-key-2": "test-value-2",
+					"test-key-3": "test-value-3",
 				},
-			},
-		},
-		"pairs": {
-			message: "test message",
-			args: []interface{}{
-				"test-key-1", "test-value-1",
-				"test-key-2", "test-value-2",
-				"test-key-3", "test-value-3",
 			},
 			expectedOutput: []map[string]interface{}{
 				{
@@ -467,6 +512,33 @@ func TestSubsystemError(t *testing.T) {
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
+				},
+			},
+		},
+		"pairs-multiple-maps": {
+			message: "test message",
+			additionalPairs: []map[string]interface{}{
+				{
+					"test-key-1": "test-value-1-map1",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+				},
+				{
+					"test-key-4": "test-value-4-map2",
+					"test-key-1": "test-value-1-map2",
+					"test-key-5": "test-value-5-map2",
+				},
+			},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":     hclog.Error.String(),
+					"@message":   "test message",
+					"@module":    testSubsystem,
+					"test-key-1": "test-value-1-map2",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+					"test-key-4": "test-value-4-map2",
+					"test-key-5": "test-value-5-map2",
 				},
 			},
 		},
@@ -484,7 +556,7 @@ func TestSubsystemError(t *testing.T) {
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
 			ctx = tfsdklog.NewSubsystem(ctx, testSubsystem)
 
-			tfsdklog.SubsystemError(ctx, testSubsystem, testCase.message, testCase.args...)
+			tfsdklog.SubsystemError(ctx, testSubsystem, testCase.message, testCase.additionalPairs...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 

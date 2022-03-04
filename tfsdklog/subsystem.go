@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/go-hclog"
+	"github.com/hashicorp/terraform-plugin-log/internal/hclogutils"
 	"github.com/hashicorp/terraform-plugin-log/internal/logging"
 )
 
@@ -54,9 +55,11 @@ func SubsystemWith(ctx context.Context, subsystem, key string, value interface{}
 }
 
 // SubsystemTrace logs `msg` at the trace level to the subsystem logger
-// specified in `ctx`, with `args` as structured arguments in the log output.
-// `args` is expected to be pairs of key and value.
-func SubsystemTrace(ctx context.Context, subsystem, msg string, args ...interface{}) {
+// specified in `ctx`, with optional `additionalPairs` structured key-value
+// pairs in the log output. Pairs are shallow merged with any defined on the
+// subsystem logger, e.g. by the `SubsystemWith()` function, and across
+// multiple maps.
+func SubsystemTrace(ctx context.Context, subsystem, msg string, additionalPairs ...map[string]interface{}) {
 	logger := logging.GetSDKSubsystemLogger(ctx, subsystem)
 	if logger == nil {
 		if logging.GetSDKRootLogger(ctx) == nil {
@@ -67,13 +70,15 @@ func SubsystemTrace(ctx context.Context, subsystem, msg string, args ...interfac
 		// create a new logger if one doesn't exist
 		logger = logging.GetSDKSubsystemLogger(NewSubsystem(ctx, subsystem), subsystem).With("new_logger_warning", logging.NewSDKSubsystemLoggerWarning)
 	}
-	logger.Trace(msg, args...)
+	logger.Trace(msg, hclogutils.MapsToArgs(additionalPairs...)...)
 }
 
 // SubsystemDebug logs `msg` at the debug level to the subsystem logger
-// specified in `ctx`, with `args` as structured arguments in the log output.
-// `args` is expected to be pairs of key and value.
-func SubsystemDebug(ctx context.Context, subsystem, msg string, args ...interface{}) {
+// specified in `ctx`, with optional `additionalPairs` structured key-value
+// pairs in the log output. Pairs are shallow merged with any defined on the
+// subsystem logger, e.g. by the `SubsystemWith()` function, and across
+// multiple maps.
+func SubsystemDebug(ctx context.Context, subsystem, msg string, additionalPairs ...map[string]interface{}) {
 	logger := logging.GetSDKSubsystemLogger(ctx, subsystem)
 	if logger == nil {
 		if logging.GetSDKRootLogger(ctx) == nil {
@@ -84,13 +89,15 @@ func SubsystemDebug(ctx context.Context, subsystem, msg string, args ...interfac
 		// create a new logger if one doesn't exist
 		logger = logging.GetSDKSubsystemLogger(NewSubsystem(ctx, subsystem), subsystem).With("new_logger_warning", logging.NewSDKSubsystemLoggerWarning)
 	}
-	logger.Debug(msg, args...)
+	logger.Debug(msg, hclogutils.MapsToArgs(additionalPairs...)...)
 }
 
 // SubsystemInfo logs `msg` at the info level to the subsystem logger
-// specified in `ctx`, with `args` as structured arguments in the log output.
-// `args` is expected to be pairs of key and value.
-func SubsystemInfo(ctx context.Context, subsystem, msg string, args ...interface{}) {
+// specified in `ctx`, with optional `additionalPairs` structured key-value
+// pairs in the log output. Pairs are shallow merged with any defined on the
+// subsystem logger, e.g. by the `SubsystemWith()` function, and across
+// multiple maps.
+func SubsystemInfo(ctx context.Context, subsystem, msg string, additionalPairs ...map[string]interface{}) {
 	logger := logging.GetSDKSubsystemLogger(ctx, subsystem)
 	if logger == nil {
 		if logging.GetSDKRootLogger(ctx) == nil {
@@ -101,13 +108,15 @@ func SubsystemInfo(ctx context.Context, subsystem, msg string, args ...interface
 		// create a new logger if one doesn't exist
 		logger = logging.GetSDKSubsystemLogger(NewSubsystem(ctx, subsystem), subsystem).With("new_logger_warning", logging.NewSDKSubsystemLoggerWarning)
 	}
-	logger.Info(msg, args...)
+	logger.Info(msg, hclogutils.MapsToArgs(additionalPairs...)...)
 }
 
 // SubsystemWarn logs `msg` at the warn level to the subsystem logger
-// specified in `ctx`, with `args` as structured arguments in the log output.
-// `args` is expected to be pairs of key and value.
-func SubsystemWarn(ctx context.Context, subsystem, msg string, args ...interface{}) {
+// specified in `ctx`, with optional `additionalPairs` structured key-value
+// pairs in the log output. Pairs are shallow merged with any defined on the
+// subsystem logger, e.g. by the `SubsystemWith()` function, and across
+// multiple maps.
+func SubsystemWarn(ctx context.Context, subsystem, msg string, additionalPairs ...map[string]interface{}) {
 	logger := logging.GetSDKSubsystemLogger(ctx, subsystem)
 	if logger == nil {
 		if logging.GetSDKRootLogger(ctx) == nil {
@@ -118,13 +127,15 @@ func SubsystemWarn(ctx context.Context, subsystem, msg string, args ...interface
 		// create a new logger if one doesn't exist
 		logger = logging.GetSDKSubsystemLogger(NewSubsystem(ctx, subsystem), subsystem).With("new_logger_warning", logging.NewSDKSubsystemLoggerWarning)
 	}
-	logger.Warn(msg, args...)
+	logger.Warn(msg, hclogutils.MapsToArgs(additionalPairs...)...)
 }
 
 // SubsystemError logs `msg` at the error level to the subsystem logger
-// specified in `ctx`, with `args` as structured arguments in the log output.
-// `args` is expected to be pairs of key and value.
-func SubsystemError(ctx context.Context, subsystem, msg string, args ...interface{}) {
+// specified in `ctx`, with optional `additionalPairs` structured key-value
+// pairs in the log output. Pairs are shallow merged with any defined on the
+// subsystem logger, e.g. by the `SubsystemWith()` function, and across
+// multiple maps.
+func SubsystemError(ctx context.Context, subsystem, msg string, additionalPairs ...map[string]interface{}) {
 	logger := logging.GetSDKSubsystemLogger(ctx, subsystem)
 	if logger == nil {
 		if logging.GetSDKRootLogger(ctx) == nil {
@@ -135,5 +146,5 @@ func SubsystemError(ctx context.Context, subsystem, msg string, args ...interfac
 		// create a new logger if one doesn't exist
 		logger = logging.GetSDKSubsystemLogger(NewSubsystem(ctx, subsystem), subsystem).With("new_logger_warning", logging.NewSDKSubsystemLoggerWarning)
 	}
-	logger.Error(msg, args...)
+	logger.Error(msg, hclogutils.MapsToArgs(additionalPairs...)...)
 }

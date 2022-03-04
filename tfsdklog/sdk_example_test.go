@@ -41,7 +41,10 @@ func ExampleTrace() {
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here
-	Trace(exampleCtx, "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
+	Trace(exampleCtx, "hello, world", map[string]interface{}{
+		"foo":    123,
+		"colors": []string{"red", "blue", "green"},
+	})
 
 	// Output:
 	// {"@level":"trace","@message":"hello, world","@module":"sdk","colors":["red","blue","green"],"foo":123}
@@ -56,7 +59,10 @@ func ExampleDebug() {
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here
-	Debug(exampleCtx, "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
+	Debug(exampleCtx, "hello, world", map[string]interface{}{
+		"foo":    123,
+		"colors": []string{"red", "blue", "green"},
+	})
 
 	// Output:
 	// {"@level":"debug","@message":"hello, world","@module":"sdk","colors":["red","blue","green"],"foo":123}
@@ -71,7 +77,10 @@ func ExampleInfo() {
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here
-	Info(exampleCtx, "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
+	Info(exampleCtx, "hello, world", map[string]interface{}{
+		"foo":    123,
+		"colors": []string{"red", "blue", "green"},
+	})
 
 	// Output:
 	// {"@level":"info","@message":"hello, world","@module":"sdk","colors":["red","blue","green"],"foo":123}
@@ -86,7 +95,10 @@ func ExampleWarn() {
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here
-	Warn(exampleCtx, "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
+	Warn(exampleCtx, "hello, world", map[string]interface{}{
+		"foo":    123,
+		"colors": []string{"red", "blue", "green"},
+	})
 
 	// Output:
 	// {"@level":"warn","@message":"hello, world","@module":"sdk","colors":["red","blue","green"],"foo":123}
@@ -101,7 +113,10 @@ func ExampleError() {
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here
-	Error(exampleCtx, "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
+	Error(exampleCtx, "hello, world", map[string]interface{}{
+		"foo":    123,
+		"colors": []string{"red", "blue", "green"},
+	})
 
 	// Output:
 	// {"@level":"error","@message":"hello, world","@module":"sdk","colors":["red","blue","green"],"foo":123}
