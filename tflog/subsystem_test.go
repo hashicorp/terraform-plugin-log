@@ -17,11 +17,11 @@ func TestSubsystemWith(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		key                string
-		value              interface{}
-		logMessage         string
-		logAdditionalPairs []map[string]interface{}
-		expectedOutput     []map[string]interface{}
+		key                 string
+		value               interface{}
+		logMessage          string
+		logadditionalFields []map[string]interface{}
+		expectedOutput      []map[string]interface{}
 	}{
 		"no-log-pairs": {
 			key:        "test-with-key",
@@ -52,7 +52,7 @@ func TestSubsystemWith(t *testing.T) {
 			key:        "test-with-key",
 			value:      "test-with-value",
 			logMessage: "test message",
-			logAdditionalPairs: []map[string]interface{}{
+			logadditionalFields: []map[string]interface{}{
 				{
 					"test-log-key-1": "test-log-value-1",
 					"test-log-key-2": "test-log-value-2",
@@ -86,7 +86,7 @@ func TestSubsystemWith(t *testing.T) {
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
 			ctx = tflog.SubsystemWith(ctx, testSubsystem, testCase.key, testCase.value)
 
-			tflog.SubsystemTrace(ctx, testSubsystem, testCase.logMessage, testCase.logAdditionalPairs...)
+			tflog.SubsystemTrace(ctx, testSubsystem, testCase.logMessage, testCase.logadditionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -105,9 +105,9 @@ func TestSubsystemTrace(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message         string
-		additionalPairs []map[string]interface{}
-		expectedOutput  []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
 		"no-pairs": {
 			message: "test message",
@@ -121,7 +121,7 @@ func TestSubsystemTrace(t *testing.T) {
 		},
 		"pairs-single-map": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
@@ -141,7 +141,7 @@ func TestSubsystemTrace(t *testing.T) {
 		},
 		"pairs-multiple-maps": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1-map1",
 					"test-key-2": "test-value-2-map1",
@@ -180,7 +180,7 @@ func TestSubsystemTrace(t *testing.T) {
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
 
-			tflog.SubsystemTrace(ctx, testSubsystem, testCase.message, testCase.additionalPairs...)
+			tflog.SubsystemTrace(ctx, testSubsystem, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -199,9 +199,9 @@ func TestSubsystemDebug(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message         string
-		additionalPairs []map[string]interface{}
-		expectedOutput  []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
 		"no-pairs": {
 			message: "test message",
@@ -215,7 +215,7 @@ func TestSubsystemDebug(t *testing.T) {
 		},
 		"pairs-single-map": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
@@ -235,7 +235,7 @@ func TestSubsystemDebug(t *testing.T) {
 		},
 		"pairs-multiple-maps": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1-map1",
 					"test-key-2": "test-value-2-map1",
@@ -274,7 +274,7 @@ func TestSubsystemDebug(t *testing.T) {
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
 
-			tflog.SubsystemDebug(ctx, testSubsystem, testCase.message, testCase.additionalPairs...)
+			tflog.SubsystemDebug(ctx, testSubsystem, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -293,9 +293,9 @@ func TestSubsystemInfo(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message         string
-		additionalPairs []map[string]interface{}
-		expectedOutput  []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
 		"no-pairs": {
 			message: "test message",
@@ -309,7 +309,7 @@ func TestSubsystemInfo(t *testing.T) {
 		},
 		"pairs-single-map": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
@@ -329,7 +329,7 @@ func TestSubsystemInfo(t *testing.T) {
 		},
 		"pairs-multiple-maps": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1-map1",
 					"test-key-2": "test-value-2-map1",
@@ -368,7 +368,7 @@ func TestSubsystemInfo(t *testing.T) {
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
 
-			tflog.SubsystemInfo(ctx, testSubsystem, testCase.message, testCase.additionalPairs...)
+			tflog.SubsystemInfo(ctx, testSubsystem, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -387,9 +387,9 @@ func TestSubsystemWarn(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message         string
-		additionalPairs []map[string]interface{}
-		expectedOutput  []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
 		"no-pairs": {
 			message: "test message",
@@ -403,7 +403,7 @@ func TestSubsystemWarn(t *testing.T) {
 		},
 		"pairs-single-map": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
@@ -423,7 +423,7 @@ func TestSubsystemWarn(t *testing.T) {
 		},
 		"pairs-multiple-maps": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1-map1",
 					"test-key-2": "test-value-2-map1",
@@ -462,7 +462,7 @@ func TestSubsystemWarn(t *testing.T) {
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
 
-			tflog.SubsystemWarn(ctx, testSubsystem, testCase.message, testCase.additionalPairs...)
+			tflog.SubsystemWarn(ctx, testSubsystem, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -481,9 +481,9 @@ func TestSubsystemError(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message         string
-		additionalPairs []map[string]interface{}
-		expectedOutput  []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
 		"no-pairs": {
 			message: "test message",
@@ -497,7 +497,7 @@ func TestSubsystemError(t *testing.T) {
 		},
 		"pairs-single-map": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
@@ -517,7 +517,7 @@ func TestSubsystemError(t *testing.T) {
 		},
 		"pairs-multiple-maps": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1-map1",
 					"test-key-2": "test-value-2-map1",
@@ -556,7 +556,7 @@ func TestSubsystemError(t *testing.T) {
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
 
-			tflog.SubsystemError(ctx, testSubsystem, testCase.message, testCase.additionalPairs...)
+			tflog.SubsystemError(ctx, testSubsystem, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 

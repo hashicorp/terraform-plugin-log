@@ -55,11 +55,11 @@ func SubsystemWith(ctx context.Context, subsystem, key string, value interface{}
 }
 
 // SubsystemTrace logs `msg` at the trace level to the subsystem logger
-// specified in `ctx`, with optional `additionalPairs` structured key-value
+// specified in `ctx`, with optional `additionalFields` structured key-value
 // pairs in the log output. Pairs are shallow merged with any defined on the
 // subsystem logger, e.g. by the `SubsystemWith()` function, and across
 // multiple maps.
-func SubsystemTrace(ctx context.Context, subsystem, msg string, additionalPairs ...map[string]interface{}) {
+func SubsystemTrace(ctx context.Context, subsystem, msg string, additionalFields ...map[string]interface{}) {
 	logger := logging.GetProviderSubsystemLogger(ctx, subsystem)
 	if logger == nil {
 		if logging.GetProviderRootLogger(ctx) == nil {
@@ -70,15 +70,15 @@ func SubsystemTrace(ctx context.Context, subsystem, msg string, additionalPairs 
 		// create a new logger if one doesn't exist
 		logger = logging.GetProviderSubsystemLogger(NewSubsystem(ctx, subsystem), subsystem).With("new_logger_warning", logging.NewProviderSubsystemLoggerWarning)
 	}
-	logger.Trace(msg, hclogutils.MapsToArgs(additionalPairs...)...)
+	logger.Trace(msg, hclogutils.MapsToArgs(additionalFields...)...)
 }
 
 // SubsystemDebug logs `msg` at the debug level to the subsystem logger
-// specified in `ctx`, with optional `additionalPairs` structured key-value
+// specified in `ctx`, with optional `additionalFields` structured key-value
 // pairs in the log output. Pairs are shallow merged with any defined on the
 // subsystem logger, e.g. by the `SubsystemWith()` function, and across
 // multiple maps.
-func SubsystemDebug(ctx context.Context, subsystem, msg string, additionalPairs ...map[string]interface{}) {
+func SubsystemDebug(ctx context.Context, subsystem, msg string, additionalFields ...map[string]interface{}) {
 	logger := logging.GetProviderSubsystemLogger(ctx, subsystem)
 	if logger == nil {
 		if logging.GetProviderRootLogger(ctx) == nil {
@@ -89,15 +89,15 @@ func SubsystemDebug(ctx context.Context, subsystem, msg string, additionalPairs 
 		// create a new logger if one doesn't exist
 		logger = logging.GetProviderSubsystemLogger(NewSubsystem(ctx, subsystem), subsystem).With("new_logger_warning", logging.NewProviderSubsystemLoggerWarning)
 	}
-	logger.Debug(msg, hclogutils.MapsToArgs(additionalPairs...)...)
+	logger.Debug(msg, hclogutils.MapsToArgs(additionalFields...)...)
 }
 
 // SubsystemInfo logs `msg` at the info level to the subsystem logger
-// specified in `ctx`, with optional `additionalPairs` structured key-value
+// specified in `ctx`, with optional `additionalFields` structured key-value
 // pairs in the log output. Pairs are shallow merged with any defined on the
 // subsystem logger, e.g. by the `SubsystemWith()` function, and across
 // multiple maps.
-func SubsystemInfo(ctx context.Context, subsystem, msg string, additionalPairs ...map[string]interface{}) {
+func SubsystemInfo(ctx context.Context, subsystem, msg string, additionalFields ...map[string]interface{}) {
 	logger := logging.GetProviderSubsystemLogger(ctx, subsystem)
 	if logger == nil {
 		if logging.GetProviderRootLogger(ctx) == nil {
@@ -108,15 +108,15 @@ func SubsystemInfo(ctx context.Context, subsystem, msg string, additionalPairs .
 		// create a new logger if one doesn't exist
 		logger = logging.GetProviderSubsystemLogger(NewSubsystem(ctx, subsystem), subsystem).With("new_logger_warning", logging.NewProviderSubsystemLoggerWarning)
 	}
-	logger.Info(msg, hclogutils.MapsToArgs(additionalPairs...)...)
+	logger.Info(msg, hclogutils.MapsToArgs(additionalFields...)...)
 }
 
 // SubsystemWarn logs `msg` at the warn level to the subsystem logger
-// specified in `ctx`, with optional `additionalPairs` structured key-value
+// specified in `ctx`, with optional `additionalFields` structured key-value
 // pairs in the log output. Pairs are shallow merged with any defined on the
 // subsystem logger, e.g. by the `SubsystemWith()` function, and across
 // multiple maps.
-func SubsystemWarn(ctx context.Context, subsystem, msg string, additionalPairs ...map[string]interface{}) {
+func SubsystemWarn(ctx context.Context, subsystem, msg string, additionalFields ...map[string]interface{}) {
 	logger := logging.GetProviderSubsystemLogger(ctx, subsystem)
 	if logger == nil {
 		if logging.GetProviderRootLogger(ctx) == nil {
@@ -127,15 +127,15 @@ func SubsystemWarn(ctx context.Context, subsystem, msg string, additionalPairs .
 		// create a new logger if one doesn't exist
 		logger = logging.GetProviderSubsystemLogger(NewSubsystem(ctx, subsystem), subsystem).With("new_logger_warning", logging.NewProviderSubsystemLoggerWarning)
 	}
-	logger.Warn(msg, hclogutils.MapsToArgs(additionalPairs...)...)
+	logger.Warn(msg, hclogutils.MapsToArgs(additionalFields...)...)
 }
 
 // SubsystemError logs `msg` at the error level to the subsystem logger
-// specified in `ctx`, with optional `additionalPairs` structured key-value
+// specified in `ctx`, with optional `additionalFields` structured key-value
 // pairs in the log output. Pairs are shallow merged with any defined on the
 // subsystem logger, e.g. by the `SubsystemWith()` function, and across
 // multiple maps.
-func SubsystemError(ctx context.Context, subsystem, msg string, additionalPairs ...map[string]interface{}) {
+func SubsystemError(ctx context.Context, subsystem, msg string, additionalFields ...map[string]interface{}) {
 	logger := logging.GetProviderSubsystemLogger(ctx, subsystem)
 	if logger == nil {
 		if logging.GetProviderRootLogger(ctx) == nil {
@@ -146,5 +146,5 @@ func SubsystemError(ctx context.Context, subsystem, msg string, additionalPairs 
 		// create a new logger if one doesn't exist
 		logger = logging.GetProviderSubsystemLogger(NewSubsystem(ctx, subsystem), subsystem).With("new_logger_warning", logging.NewProviderSubsystemLoggerWarning)
 	}
-	logger.Error(msg, hclogutils.MapsToArgs(additionalPairs...)...)
+	logger.Error(msg, hclogutils.MapsToArgs(additionalFields...)...)
 }

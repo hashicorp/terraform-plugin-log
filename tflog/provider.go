@@ -23,10 +23,10 @@ func With(ctx context.Context, key string, value interface{}) context.Context {
 }
 
 // Trace logs `msg` at the trace level to the logger in `ctx`, with optional
-// `additionalPairs` structured key-value pairs in the log output. Pairs are
+// `additionalFields` structured key-value pairs in the log output. Pairs are
 // shallow merged with any defined on the logger, e.g. by the `With()` function,
 // and across multiple maps.
-func Trace(ctx context.Context, msg string, additionalPairs ...map[string]interface{}) {
+func Trace(ctx context.Context, msg string, additionalFields ...map[string]interface{}) {
 	logger := logging.GetProviderRootLogger(ctx)
 	if logger == nil {
 		// this essentially should never happen in production
@@ -36,14 +36,14 @@ func Trace(ctx context.Context, msg string, additionalPairs ...map[string]interf
 		// so just making this a no-op is fine
 		return
 	}
-	logger.Trace(msg, hclogutils.MapsToArgs(additionalPairs...)...)
+	logger.Trace(msg, hclogutils.MapsToArgs(additionalFields...)...)
 }
 
 // Debug logs `msg` at the debug level to the logger in `ctx`, with optional
-// `additionalPairs` structured key-value pairs in the log output. Pairs are
+// `additionalFields` structured key-value pairs in the log output. Pairs are
 // shallow merged with any defined on the logger, e.g. by the `With()` function,
 // and across multiple maps.
-func Debug(ctx context.Context, msg string, additionalPairs ...map[string]interface{}) {
+func Debug(ctx context.Context, msg string, additionalFields ...map[string]interface{}) {
 	logger := logging.GetProviderRootLogger(ctx)
 	if logger == nil {
 		// this essentially should never happen in production
@@ -53,14 +53,14 @@ func Debug(ctx context.Context, msg string, additionalPairs ...map[string]interf
 		// so just making this a no-op is fine
 		return
 	}
-	logger.Debug(msg, hclogutils.MapsToArgs(additionalPairs...)...)
+	logger.Debug(msg, hclogutils.MapsToArgs(additionalFields...)...)
 }
 
 // Info logs `msg` at the info level to the logger in `ctx`, with optional
-// `additionalPairs` structured key-value pairs in the log output. Pairs are
+// `additionalFields` structured key-value pairs in the log output. Pairs are
 // shallow merged with any defined on the logger, e.g. by the `With()` function,
 // and across multiple maps.
-func Info(ctx context.Context, msg string, additionalPairs ...map[string]interface{}) {
+func Info(ctx context.Context, msg string, additionalFields ...map[string]interface{}) {
 	logger := logging.GetProviderRootLogger(ctx)
 	if logger == nil {
 		// this essentially should never happen in production
@@ -70,14 +70,14 @@ func Info(ctx context.Context, msg string, additionalPairs ...map[string]interfa
 		// so just making this a no-op is fine
 		return
 	}
-	logger.Info(msg, hclogutils.MapsToArgs(additionalPairs...)...)
+	logger.Info(msg, hclogutils.MapsToArgs(additionalFields...)...)
 }
 
 // Warn logs `msg` at the warn level to the logger in `ctx`, with optional
-// `additionalPairs` structured key-value pairs in the log output. Pairs are
+// `additionalFields` structured key-value pairs in the log output. Pairs are
 // shallow merged with any defined on the logger, e.g. by the `With()` function,
 // and across multiple maps.
-func Warn(ctx context.Context, msg string, additionalPairs ...map[string]interface{}) {
+func Warn(ctx context.Context, msg string, additionalFields ...map[string]interface{}) {
 	logger := logging.GetProviderRootLogger(ctx)
 	if logger == nil {
 		// this essentially should never happen in production
@@ -87,14 +87,14 @@ func Warn(ctx context.Context, msg string, additionalPairs ...map[string]interfa
 		// so just making this a no-op is fine
 		return
 	}
-	logger.Warn(msg, hclogutils.MapsToArgs(additionalPairs...)...)
+	logger.Warn(msg, hclogutils.MapsToArgs(additionalFields...)...)
 }
 
 // Error logs `msg` at the error level to the logger in `ctx`, with optional
-// `additionalPairs` structured key-value pairs in the log output. Pairs are
+// `additionalFields` structured key-value pairs in the log output. Pairs are
 // shallow merged with any defined on the logger, e.g. by the `With()` function,
 // and across multiple maps.
-func Error(ctx context.Context, msg string, additionalPairs ...map[string]interface{}) {
+func Error(ctx context.Context, msg string, additionalFields ...map[string]interface{}) {
 	logger := logging.GetProviderRootLogger(ctx)
 	if logger == nil {
 		// this essentially should never happen in production
@@ -104,5 +104,5 @@ func Error(ctx context.Context, msg string, additionalPairs ...map[string]interf
 		// so just making this a no-op is fine
 		return
 	}
-	logger.Error(msg, hclogutils.MapsToArgs(additionalPairs...)...)
+	logger.Error(msg, hclogutils.MapsToArgs(additionalFields...)...)
 }

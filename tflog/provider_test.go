@@ -15,11 +15,11 @@ func TestWith(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		key                string
-		value              interface{}
-		logMessage         string
-		logAdditionalPairs []map[string]interface{}
-		expectedOutput     []map[string]interface{}
+		key                 string
+		value               interface{}
+		logMessage          string
+		logadditionalFields []map[string]interface{}
+		expectedOutput      []map[string]interface{}
 	}{
 		"no-log-pairs": {
 			key:        "test-with-key",
@@ -48,7 +48,7 @@ func TestWith(t *testing.T) {
 			key:        "test-with-key",
 			value:      "test-with-value",
 			logMessage: "test message",
-			logAdditionalPairs: []map[string]interface{}{
+			logadditionalFields: []map[string]interface{}{
 				{
 					"test-log-key-1": "test-log-value-1",
 					"test-log-key-2": "test-log-value-2",
@@ -80,7 +80,7 @@ func TestWith(t *testing.T) {
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 			ctx = tflog.With(ctx, testCase.key, testCase.value)
 
-			tflog.Trace(ctx, testCase.logMessage, testCase.logAdditionalPairs...)
+			tflog.Trace(ctx, testCase.logMessage, testCase.logadditionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -99,9 +99,9 @@ func TestTrace(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message         string
-		additionalPairs []map[string]interface{}
-		expectedOutput  []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
 		"no-pairs": {
 			message: "test message",
@@ -114,7 +114,7 @@ func TestTrace(t *testing.T) {
 		},
 		"pairs-single-map": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
@@ -133,7 +133,7 @@ func TestTrace(t *testing.T) {
 		},
 		"pairs-multiple-maps": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1-map1",
 					"test-key-2": "test-value-2-map1",
@@ -170,7 +170,7 @@ func TestTrace(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 
-			tflog.Trace(ctx, testCase.message, testCase.additionalPairs...)
+			tflog.Trace(ctx, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -189,9 +189,9 @@ func TestDebug(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message         string
-		additionalPairs []map[string]interface{}
-		expectedOutput  []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
 		"no-pairs": {
 			message: "test message",
@@ -204,7 +204,7 @@ func TestDebug(t *testing.T) {
 		},
 		"pairs-single-map": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
@@ -223,7 +223,7 @@ func TestDebug(t *testing.T) {
 		},
 		"pairs-multiple-maps": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1-map1",
 					"test-key-2": "test-value-2-map1",
@@ -260,7 +260,7 @@ func TestDebug(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 
-			tflog.Debug(ctx, testCase.message, testCase.additionalPairs...)
+			tflog.Debug(ctx, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -279,9 +279,9 @@ func TestInfo(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message         string
-		additionalPairs []map[string]interface{}
-		expectedOutput  []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
 		"no-pairs": {
 			message: "test message",
@@ -294,7 +294,7 @@ func TestInfo(t *testing.T) {
 		},
 		"pairs-single-map": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
@@ -313,7 +313,7 @@ func TestInfo(t *testing.T) {
 		},
 		"pairs-multiple-maps": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1-map1",
 					"test-key-2": "test-value-2-map1",
@@ -350,7 +350,7 @@ func TestInfo(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 
-			tflog.Info(ctx, testCase.message, testCase.additionalPairs...)
+			tflog.Info(ctx, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -369,9 +369,9 @@ func TestWarn(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message         string
-		additionalPairs []map[string]interface{}
-		expectedOutput  []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
 		"no-pairs": {
 			message: "test message",
@@ -384,7 +384,7 @@ func TestWarn(t *testing.T) {
 		},
 		"pairs-single-map": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
@@ -403,7 +403,7 @@ func TestWarn(t *testing.T) {
 		},
 		"pairs-multiple-maps": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1-map1",
 					"test-key-2": "test-value-2-map1",
@@ -440,7 +440,7 @@ func TestWarn(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 
-			tflog.Warn(ctx, testCase.message, testCase.additionalPairs...)
+			tflog.Warn(ctx, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -459,9 +459,9 @@ func TestError(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message         string
-		additionalPairs []map[string]interface{}
-		expectedOutput  []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
 		"no-pairs": {
 			message: "test message",
@@ -474,7 +474,7 @@ func TestError(t *testing.T) {
 		},
 		"pairs-single-map": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
@@ -493,7 +493,7 @@ func TestError(t *testing.T) {
 		},
 		"pairs-multiple-maps": {
 			message: "test message",
-			additionalPairs: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-key-1": "test-value-1-map1",
 					"test-key-2": "test-value-2-map1",
@@ -530,7 +530,7 @@ func TestError(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 
-			tflog.Error(ctx, testCase.message, testCase.additionalPairs...)
+			tflog.Error(ctx, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
