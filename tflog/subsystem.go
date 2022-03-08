@@ -18,9 +18,10 @@ import (
 // at other times.
 //
 // The only Options supported for subsystems are the Options for setting the
-// level of the logger.
+// level and additional location offset of the logger.
 func NewSubsystem(ctx context.Context, subsystem string, options ...logging.Option) context.Context {
 	logger := logging.GetProviderRootLogger(ctx)
+
 	if logger == nil {
 		// this essentially should never happen in production
 		// the root logger for provider code should be injected
@@ -29,12 +30,40 @@ func NewSubsystem(ctx context.Context, subsystem string, options ...logging.Opti
 		// so just making this a no-op is fine
 		return ctx
 	}
-	subLogger := logger.Named(subsystem)
+
+	loggerOptions := logging.GetProviderRootLoggerOptions(ctx)
 	opts := logging.ApplyLoggerOpts(options...)
-	if opts.Level != hclog.NoLevel {
-		subLogger.SetLevel(opts.Level)
+
+	// On the off-chance that the logger options are not available, fallback
+	// to creating a named logger. This will preserve the root logger options,
+	// but cannot make changes beyond the level due to the hclog.Logger
+	// interface.
+	if loggerOptions == nil {
+		subLogger := logger.Named(subsystem)
+
+		if opts.AdditionalLocationOffset != 1 {
+			logger.Warn("Unable to create logging subsystem with AdditionalLocationOffset due to missing root logger options")
+		}
+
+		if opts.Level != hclog.NoLevel {
+			subLogger.SetLevel(opts.Level)
+		}
+
+		return logging.SetProviderSubsystemLogger(ctx, subsystem, subLogger)
 	}
-	return logging.SetProviderSubsystemLogger(ctx, subsystem, subLogger)
+
+	subLoggerOptions := hclogutils.LoggerOptionsCopy(loggerOptions)
+	subLoggerOptions.Name = subLoggerOptions.Name + "." + subsystem
+
+	if opts.AdditionalLocationOffset != 1 {
+		subLoggerOptions.AdditionalLocationOffset = opts.AdditionalLocationOffset
+	}
+
+	if opts.Level != hclog.NoLevel {
+		subLoggerOptions.Level = opts.Level
+	}
+
+	return logging.SetProviderSubsystemLogger(ctx, subsystem, hclog.New(subLoggerOptions))
 }
 
 // SubsystemWith returns a new context.Context that has a modified logger for

@@ -8,10 +8,14 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-log/internal/loggertest"
+	"github.com/hashicorp/terraform-plugin-log/internal/logging"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-const testSubsystem = "test_subsystem"
+const (
+	testSubsystem       = "test_subsystem"
+	testSubsystemModule = logging.DefaultProviderRootLoggerName + "." + testSubsystem
+)
 
 func TestSubsystemWith(t *testing.T) {
 	t.Parallel()
@@ -31,7 +35,7 @@ func TestSubsystemWith(t *testing.T) {
 				{
 					"@level":        hclog.Trace.String(),
 					"@message":      "test message",
-					"@module":       testSubsystem,
+					"@module":       testSubsystemModule,
 					"test-with-key": "test-with-value",
 				},
 			},
@@ -43,7 +47,7 @@ func TestSubsystemWith(t *testing.T) {
 				{
 					"@level":                  hclog.Trace.String(),
 					"@message":                "test message",
-					"@module":                 testSubsystem,
+					"@module":                 testSubsystemModule,
 					"unfielded-test-with-key": nil,
 				},
 			},
@@ -63,7 +67,7 @@ func TestSubsystemWith(t *testing.T) {
 				{
 					"@level":         hclog.Trace.String(),
 					"@message":       "test message",
-					"@module":        testSubsystem,
+					"@module":        testSubsystemModule,
 					"test-log-key-1": "test-log-value-1",
 					"test-log-key-2": "test-log-value-2",
 					"test-log-key-3": "test-log-value-3",
@@ -115,7 +119,7 @@ func TestSubsystemTrace(t *testing.T) {
 				{
 					"@level":   hclog.Trace.String(),
 					"@message": "test message",
-					"@module":  testSubsystem,
+					"@module":  testSubsystemModule,
 				},
 			},
 		},
@@ -132,7 +136,7 @@ func TestSubsystemTrace(t *testing.T) {
 				{
 					"@level":     hclog.Trace.String(),
 					"@message":   "test message",
-					"@module":    testSubsystem,
+					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
@@ -157,7 +161,7 @@ func TestSubsystemTrace(t *testing.T) {
 				{
 					"@level":     hclog.Trace.String(),
 					"@message":   "test message",
-					"@module":    testSubsystem,
+					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1-map2",
 					"test-key-2": "test-value-2-map1",
 					"test-key-3": "test-value-3-map1",
@@ -209,7 +213,7 @@ func TestSubsystemDebug(t *testing.T) {
 				{
 					"@level":   hclog.Debug.String(),
 					"@message": "test message",
-					"@module":  testSubsystem,
+					"@module":  testSubsystemModule,
 				},
 			},
 		},
@@ -226,7 +230,7 @@ func TestSubsystemDebug(t *testing.T) {
 				{
 					"@level":     hclog.Debug.String(),
 					"@message":   "test message",
-					"@module":    testSubsystem,
+					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
@@ -251,7 +255,7 @@ func TestSubsystemDebug(t *testing.T) {
 				{
 					"@level":     hclog.Debug.String(),
 					"@message":   "test message",
-					"@module":    testSubsystem,
+					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1-map2",
 					"test-key-2": "test-value-2-map1",
 					"test-key-3": "test-value-3-map1",
@@ -303,7 +307,7 @@ func TestSubsystemInfo(t *testing.T) {
 				{
 					"@level":   hclog.Info.String(),
 					"@message": "test message",
-					"@module":  testSubsystem,
+					"@module":  testSubsystemModule,
 				},
 			},
 		},
@@ -320,7 +324,7 @@ func TestSubsystemInfo(t *testing.T) {
 				{
 					"@level":     hclog.Info.String(),
 					"@message":   "test message",
-					"@module":    testSubsystem,
+					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
@@ -345,7 +349,7 @@ func TestSubsystemInfo(t *testing.T) {
 				{
 					"@level":     hclog.Info.String(),
 					"@message":   "test message",
-					"@module":    testSubsystem,
+					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1-map2",
 					"test-key-2": "test-value-2-map1",
 					"test-key-3": "test-value-3-map1",
@@ -397,7 +401,7 @@ func TestSubsystemWarn(t *testing.T) {
 				{
 					"@level":   hclog.Warn.String(),
 					"@message": "test message",
-					"@module":  testSubsystem,
+					"@module":  testSubsystemModule,
 				},
 			},
 		},
@@ -414,7 +418,7 @@ func TestSubsystemWarn(t *testing.T) {
 				{
 					"@level":     hclog.Warn.String(),
 					"@message":   "test message",
-					"@module":    testSubsystem,
+					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
@@ -439,7 +443,7 @@ func TestSubsystemWarn(t *testing.T) {
 				{
 					"@level":     hclog.Warn.String(),
 					"@message":   "test message",
-					"@module":    testSubsystem,
+					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1-map2",
 					"test-key-2": "test-value-2-map1",
 					"test-key-3": "test-value-3-map1",
@@ -491,7 +495,7 @@ func TestSubsystemError(t *testing.T) {
 				{
 					"@level":   hclog.Error.String(),
 					"@message": "test message",
-					"@module":  testSubsystem,
+					"@module":  testSubsystemModule,
 				},
 			},
 		},
@@ -508,7 +512,7 @@ func TestSubsystemError(t *testing.T) {
 				{
 					"@level":     hclog.Error.String(),
 					"@message":   "test message",
-					"@module":    testSubsystem,
+					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
@@ -533,7 +537,7 @@ func TestSubsystemError(t *testing.T) {
 				{
 					"@level":     hclog.Error.String(),
 					"@message":   "test message",
-					"@module":    testSubsystem,
+					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1-map2",
 					"test-key-2": "test-value-2-map1",
 					"test-key-3": "test-value-3-map1",
