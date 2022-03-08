@@ -15,7 +15,7 @@ func ExampleNewSubsystem() {
 
 	// messages logged to the subsystem will carry the subsystem name with
 	// them
-	SubsystemTrace(subCtx, "my-subsystem", "hello, world", "foo", 123)
+	SubsystemTrace(subCtx, "my-subsystem", "hello, world", map[string]interface{}{"foo": 123})
 
 	// Output:
 	// {"@level":"trace","@message":"hello, world","@module":"sdk.my-subsystem","foo":123}
@@ -38,14 +38,14 @@ func ExampleNewSubsystem_withLevel() {
 	subCtx := NewSubsystem(exampleCtx, "my-subsystem", WithLevelFromEnv("EXAMPLE_SUBSYSTEM_LEVEL"))
 
 	// this won't actually get output, it's not at WARN or higher
-	SubsystemTrace(subCtx, "my-subsystem", "hello, world", "foo", 123)
+	SubsystemTrace(subCtx, "my-subsystem", "hello, world", map[string]interface{}{"foo": 123})
 
 	// the parent logger will still output at its configured TRACE level,
 	// though
-	Trace(subCtx, "hello, world", "foo", 123)
+	Trace(subCtx, "hello, world", map[string]interface{}{"foo": 123})
 
 	// and the subsystem logger will output at the WARN level
-	SubsystemWarn(subCtx, "my-subsystem", "hello, world", "foo", 123)
+	SubsystemWarn(subCtx, "my-subsystem", "hello, world", map[string]interface{}{"foo": 123})
 
 	// Output:
 	// {"@level":"trace","@message":"hello, world","@module":"sdk","foo":123}
@@ -82,7 +82,10 @@ func ExampleSubsystemTrace() {
 	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
 
 	// non-example-setup code begins here
-	SubsystemTrace(exampleCtx, "my-subsystem", "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
+	SubsystemTrace(exampleCtx, "my-subsystem", "hello, world", map[string]interface{}{
+		"foo":    123,
+		"colors": []string{"red", "blue", "green"},
+	})
 
 	// Output:
 	// {"@level":"trace","@message":"hello, world","@module":"sdk.my-subsystem","colors":["red","blue","green"],"foo":123}
@@ -98,7 +101,10 @@ func ExampleSubsystemDebug() {
 	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
 
 	// non-example-setup code begins here
-	SubsystemDebug(exampleCtx, "my-subsystem", "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
+	SubsystemDebug(exampleCtx, "my-subsystem", "hello, world", map[string]interface{}{
+		"foo":    123,
+		"colors": []string{"red", "blue", "green"},
+	})
 
 	// Output:
 	// {"@level":"debug","@message":"hello, world","@module":"sdk.my-subsystem","colors":["red","blue","green"],"foo":123}
@@ -114,7 +120,10 @@ func ExampleSubsystemInfo() {
 	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
 
 	// non-example-setup code begins here
-	SubsystemInfo(exampleCtx, "my-subsystem", "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
+	SubsystemInfo(exampleCtx, "my-subsystem", "hello, world", map[string]interface{}{
+		"foo":    123,
+		"colors": []string{"red", "blue", "green"},
+	})
 
 	// Output:
 	// {"@level":"info","@message":"hello, world","@module":"sdk.my-subsystem","colors":["red","blue","green"],"foo":123}
@@ -130,7 +139,10 @@ func ExampleSubsystemWarn() {
 	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
 
 	// non-example-setup code begins here
-	SubsystemWarn(exampleCtx, "my-subsystem", "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
+	SubsystemWarn(exampleCtx, "my-subsystem", "hello, world", map[string]interface{}{
+		"foo":    123,
+		"colors": []string{"red", "blue", "green"},
+	})
 
 	// Output:
 	// {"@level":"warn","@message":"hello, world","@module":"sdk.my-subsystem","colors":["red","blue","green"],"foo":123}
@@ -146,7 +158,10 @@ func ExampleSubsystemError() {
 	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
 
 	// non-example-setup code begins here
-	SubsystemError(exampleCtx, "my-subsystem", "hello, world", "foo", 123, "colors", []string{"red", "blue", "green"})
+	SubsystemError(exampleCtx, "my-subsystem", "hello, world", map[string]interface{}{
+		"foo":    123,
+		"colors": []string{"red", "blue", "green"},
+	})
 
 	// Output:
 	// {"@level":"error","@message":"hello, world","@module":"sdk.my-subsystem","colors":["red","blue","green"],"foo":123}

@@ -17,13 +17,13 @@ func TestSubsystemWith(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		key            string
-		value          interface{}
-		logMessage     string
-		logArgs        []interface{}
-		expectedOutput []map[string]interface{}
+		key                 string
+		value               interface{}
+		logMessage          string
+		logadditionalFields []map[string]interface{}
+		expectedOutput      []map[string]interface{}
 	}{
-		"no-log-pairs": {
+		"no-log-fields": {
 			key:        "test-with-key",
 			value:      "test-with-value",
 			logMessage: "test message",
@@ -36,41 +36,28 @@ func TestSubsystemWith(t *testing.T) {
 				},
 			},
 		},
-		"mismatched-log-pair": {
-			key:        "test-with-key",
-			value:      "test-with-value",
-			logMessage: "test message",
-			logArgs:    []interface{}{"unpaired-test-log-key"},
-			expectedOutput: []map[string]interface{}{
-				{
-					"@level":         hclog.Trace.String(),
-					"@message":       "test message",
-					"@module":        testSubsystem,
-					"test-with-key":  "test-with-value",
-					hclog.MissingKey: "unpaired-test-log-key",
-				},
-			},
-		},
-		"mismatched-with-pair": {
-			key:        "unpaired-test-with-key",
+		"mismatched-with-field": {
+			key:        "unfielded-test-with-key",
 			logMessage: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":                 hclog.Trace.String(),
-					"@message":               "test message",
-					"@module":                testSubsystem,
-					"unpaired-test-with-key": nil,
+					"@level":                  hclog.Trace.String(),
+					"@message":                "test message",
+					"@module":                 testSubsystem,
+					"unfielded-test-with-key": nil,
 				},
 			},
 		},
-		"with-and-log-pairs": {
+		"with-and-log-fields": {
 			key:        "test-with-key",
 			value:      "test-with-value",
 			logMessage: "test message",
-			logArgs: []interface{}{
-				"test-log-key-1", "test-log-value-1",
-				"test-log-key-2", "test-log-value-2",
-				"test-log-key-3", "test-log-value-3",
+			logadditionalFields: []map[string]interface{}{
+				{
+					"test-log-key-1": "test-log-value-1",
+					"test-log-key-2": "test-log-value-2",
+					"test-log-key-3": "test-log-value-3",
+				},
 			},
 			expectedOutput: []map[string]interface{}{
 				{
@@ -99,7 +86,7 @@ func TestSubsystemWith(t *testing.T) {
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
 			ctx = tflog.SubsystemWith(ctx, testSubsystem, testCase.key, testCase.value)
 
-			tflog.SubsystemTrace(ctx, testSubsystem, testCase.logMessage, testCase.logArgs...)
+			tflog.SubsystemTrace(ctx, testSubsystem, testCase.logMessage, testCase.logadditionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -118,11 +105,11 @@ func TestSubsystemTrace(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message        string
-		args           []interface{}
-		expectedOutput []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -132,24 +119,14 @@ func TestSubsystemTrace(t *testing.T) {
 				},
 			},
 		},
-		"mismatched-pair": {
+		"fields-single-map": {
 			message: "test message",
-			args:    []interface{}{"unpaired-test-key"},
-			expectedOutput: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
-					"@level":         hclog.Trace.String(),
-					"@message":       "test message",
-					"@module":        testSubsystem,
-					hclog.MissingKey: "unpaired-test-key",
+					"test-key-1": "test-value-1",
+					"test-key-2": "test-value-2",
+					"test-key-3": "test-value-3",
 				},
-			},
-		},
-		"pairs": {
-			message: "test message",
-			args: []interface{}{
-				"test-key-1", "test-value-1",
-				"test-key-2", "test-value-2",
-				"test-key-3", "test-value-3",
 			},
 			expectedOutput: []map[string]interface{}{
 				{
@@ -159,6 +136,33 @@ func TestSubsystemTrace(t *testing.T) {
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
+				},
+			},
+		},
+		"fields-multiple-maps": {
+			message: "test message",
+			additionalFields: []map[string]interface{}{
+				{
+					"test-key-1": "test-value-1-map1",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+				},
+				{
+					"test-key-4": "test-value-4-map2",
+					"test-key-1": "test-value-1-map2",
+					"test-key-5": "test-value-5-map2",
+				},
+			},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":     hclog.Trace.String(),
+					"@message":   "test message",
+					"@module":    testSubsystem,
+					"test-key-1": "test-value-1-map2",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+					"test-key-4": "test-value-4-map2",
+					"test-key-5": "test-value-5-map2",
 				},
 			},
 		},
@@ -176,7 +180,7 @@ func TestSubsystemTrace(t *testing.T) {
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
 
-			tflog.SubsystemTrace(ctx, testSubsystem, testCase.message, testCase.args...)
+			tflog.SubsystemTrace(ctx, testSubsystem, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -195,11 +199,11 @@ func TestSubsystemDebug(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message        string
-		args           []interface{}
-		expectedOutput []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -209,24 +213,14 @@ func TestSubsystemDebug(t *testing.T) {
 				},
 			},
 		},
-		"mismatched-pair": {
+		"fields-single-map": {
 			message: "test message",
-			args:    []interface{}{"unpaired-test-key"},
-			expectedOutput: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
-					"@level":         hclog.Debug.String(),
-					"@message":       "test message",
-					"@module":        testSubsystem,
-					hclog.MissingKey: "unpaired-test-key",
+					"test-key-1": "test-value-1",
+					"test-key-2": "test-value-2",
+					"test-key-3": "test-value-3",
 				},
-			},
-		},
-		"pairs": {
-			message: "test message",
-			args: []interface{}{
-				"test-key-1", "test-value-1",
-				"test-key-2", "test-value-2",
-				"test-key-3", "test-value-3",
 			},
 			expectedOutput: []map[string]interface{}{
 				{
@@ -236,6 +230,33 @@ func TestSubsystemDebug(t *testing.T) {
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
+				},
+			},
+		},
+		"fields-multiple-maps": {
+			message: "test message",
+			additionalFields: []map[string]interface{}{
+				{
+					"test-key-1": "test-value-1-map1",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+				},
+				{
+					"test-key-4": "test-value-4-map2",
+					"test-key-1": "test-value-1-map2",
+					"test-key-5": "test-value-5-map2",
+				},
+			},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":     hclog.Debug.String(),
+					"@message":   "test message",
+					"@module":    testSubsystem,
+					"test-key-1": "test-value-1-map2",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+					"test-key-4": "test-value-4-map2",
+					"test-key-5": "test-value-5-map2",
 				},
 			},
 		},
@@ -253,7 +274,7 @@ func TestSubsystemDebug(t *testing.T) {
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
 
-			tflog.SubsystemDebug(ctx, testSubsystem, testCase.message, testCase.args...)
+			tflog.SubsystemDebug(ctx, testSubsystem, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -272,11 +293,11 @@ func TestSubsystemInfo(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message        string
-		args           []interface{}
-		expectedOutput []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -286,24 +307,14 @@ func TestSubsystemInfo(t *testing.T) {
 				},
 			},
 		},
-		"mismatched-pair": {
+		"fields-single-map": {
 			message: "test message",
-			args:    []interface{}{"unpaired-test-key"},
-			expectedOutput: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
-					"@level":         hclog.Info.String(),
-					"@message":       "test message",
-					"@module":        testSubsystem,
-					hclog.MissingKey: "unpaired-test-key",
+					"test-key-1": "test-value-1",
+					"test-key-2": "test-value-2",
+					"test-key-3": "test-value-3",
 				},
-			},
-		},
-		"pairs": {
-			message: "test message",
-			args: []interface{}{
-				"test-key-1", "test-value-1",
-				"test-key-2", "test-value-2",
-				"test-key-3", "test-value-3",
 			},
 			expectedOutput: []map[string]interface{}{
 				{
@@ -313,6 +324,33 @@ func TestSubsystemInfo(t *testing.T) {
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
+				},
+			},
+		},
+		"fields-multiple-maps": {
+			message: "test message",
+			additionalFields: []map[string]interface{}{
+				{
+					"test-key-1": "test-value-1-map1",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+				},
+				{
+					"test-key-4": "test-value-4-map2",
+					"test-key-1": "test-value-1-map2",
+					"test-key-5": "test-value-5-map2",
+				},
+			},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":     hclog.Info.String(),
+					"@message":   "test message",
+					"@module":    testSubsystem,
+					"test-key-1": "test-value-1-map2",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+					"test-key-4": "test-value-4-map2",
+					"test-key-5": "test-value-5-map2",
 				},
 			},
 		},
@@ -330,7 +368,7 @@ func TestSubsystemInfo(t *testing.T) {
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
 
-			tflog.SubsystemInfo(ctx, testSubsystem, testCase.message, testCase.args...)
+			tflog.SubsystemInfo(ctx, testSubsystem, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -349,11 +387,11 @@ func TestSubsystemWarn(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message        string
-		args           []interface{}
-		expectedOutput []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -363,24 +401,14 @@ func TestSubsystemWarn(t *testing.T) {
 				},
 			},
 		},
-		"mismatched-pair": {
+		"fields-single-map": {
 			message: "test message",
-			args:    []interface{}{"unpaired-test-key"},
-			expectedOutput: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
-					"@level":         hclog.Warn.String(),
-					"@message":       "test message",
-					"@module":        testSubsystem,
-					hclog.MissingKey: "unpaired-test-key",
+					"test-key-1": "test-value-1",
+					"test-key-2": "test-value-2",
+					"test-key-3": "test-value-3",
 				},
-			},
-		},
-		"pairs": {
-			message: "test message",
-			args: []interface{}{
-				"test-key-1", "test-value-1",
-				"test-key-2", "test-value-2",
-				"test-key-3", "test-value-3",
 			},
 			expectedOutput: []map[string]interface{}{
 				{
@@ -390,6 +418,33 @@ func TestSubsystemWarn(t *testing.T) {
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
+				},
+			},
+		},
+		"fields-multiple-maps": {
+			message: "test message",
+			additionalFields: []map[string]interface{}{
+				{
+					"test-key-1": "test-value-1-map1",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+				},
+				{
+					"test-key-4": "test-value-4-map2",
+					"test-key-1": "test-value-1-map2",
+					"test-key-5": "test-value-5-map2",
+				},
+			},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":     hclog.Warn.String(),
+					"@message":   "test message",
+					"@module":    testSubsystem,
+					"test-key-1": "test-value-1-map2",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+					"test-key-4": "test-value-4-map2",
+					"test-key-5": "test-value-5-map2",
 				},
 			},
 		},
@@ -407,7 +462,7 @@ func TestSubsystemWarn(t *testing.T) {
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
 
-			tflog.SubsystemWarn(ctx, testSubsystem, testCase.message, testCase.args...)
+			tflog.SubsystemWarn(ctx, testSubsystem, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -426,11 +481,11 @@ func TestSubsystemError(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message        string
-		args           []interface{}
-		expectedOutput []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -440,24 +495,14 @@ func TestSubsystemError(t *testing.T) {
 				},
 			},
 		},
-		"mismatched-pair": {
+		"fields-single-map": {
 			message: "test message",
-			args:    []interface{}{"unpaired-test-key"},
-			expectedOutput: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
-					"@level":         hclog.Error.String(),
-					"@message":       "test message",
-					"@module":        testSubsystem,
-					hclog.MissingKey: "unpaired-test-key",
+					"test-key-1": "test-value-1",
+					"test-key-2": "test-value-2",
+					"test-key-3": "test-value-3",
 				},
-			},
-		},
-		"pairs": {
-			message: "test message",
-			args: []interface{}{
-				"test-key-1", "test-value-1",
-				"test-key-2", "test-value-2",
-				"test-key-3", "test-value-3",
 			},
 			expectedOutput: []map[string]interface{}{
 				{
@@ -467,6 +512,33 @@ func TestSubsystemError(t *testing.T) {
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
+				},
+			},
+		},
+		"fields-multiple-maps": {
+			message: "test message",
+			additionalFields: []map[string]interface{}{
+				{
+					"test-key-1": "test-value-1-map1",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+				},
+				{
+					"test-key-4": "test-value-4-map2",
+					"test-key-1": "test-value-1-map2",
+					"test-key-5": "test-value-5-map2",
+				},
+			},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":     hclog.Error.String(),
+					"@message":   "test message",
+					"@module":    testSubsystem,
+					"test-key-1": "test-value-1-map2",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+					"test-key-4": "test-value-4-map2",
+					"test-key-5": "test-value-5-map2",
 				},
 			},
 		},
@@ -484,7 +556,7 @@ func TestSubsystemError(t *testing.T) {
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
 
-			tflog.SubsystemError(ctx, testSubsystem, testCase.message, testCase.args...)
+			tflog.SubsystemError(ctx, testSubsystem, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 

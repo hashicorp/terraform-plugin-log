@@ -15,13 +15,13 @@ func TestWith(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		key            string
-		value          interface{}
-		logMessage     string
-		logArgs        []interface{}
-		expectedOutput []map[string]interface{}
+		key                 string
+		value               interface{}
+		logMessage          string
+		logadditionalFields []map[string]interface{}
+		expectedOutput      []map[string]interface{}
 	}{
-		"no-log-pairs": {
+		"no-log-fields": {
 			key:        "test-with-key",
 			value:      "test-with-value",
 			logMessage: "test message",
@@ -33,39 +33,27 @@ func TestWith(t *testing.T) {
 				},
 			},
 		},
-		"mismatched-log-pair": {
-			key:        "test-with-key",
-			value:      "test-with-value",
-			logMessage: "test message",
-			logArgs:    []interface{}{"unpaired-test-log-key"},
-			expectedOutput: []map[string]interface{}{
-				{
-					"@level":         hclog.Trace.String(),
-					"@message":       "test message",
-					"test-with-key":  "test-with-value",
-					hclog.MissingKey: "unpaired-test-log-key",
-				},
-			},
-		},
-		"mismatched-with-pair": {
-			key:        "unpaired-test-with-key",
+		"mismatched-with-field": {
+			key:        "unfielded-test-with-key",
 			logMessage: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":                 hclog.Trace.String(),
-					"@message":               "test message",
-					"unpaired-test-with-key": nil,
+					"@level":                  hclog.Trace.String(),
+					"@message":                "test message",
+					"unfielded-test-with-key": nil,
 				},
 			},
 		},
-		"with-and-log-pairs": {
+		"with-and-log-fields": {
 			key:        "test-with-key",
 			value:      "test-with-value",
 			logMessage: "test message",
-			logArgs: []interface{}{
-				"test-log-key-1", "test-log-value-1",
-				"test-log-key-2", "test-log-value-2",
-				"test-log-key-3", "test-log-value-3",
+			logadditionalFields: []map[string]interface{}{
+				{
+					"test-log-key-1": "test-log-value-1",
+					"test-log-key-2": "test-log-value-2",
+					"test-log-key-3": "test-log-value-3",
+				},
 			},
 			expectedOutput: []map[string]interface{}{
 				{
@@ -92,7 +80,7 @@ func TestWith(t *testing.T) {
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
 			ctx = tfsdklog.With(ctx, testCase.key, testCase.value)
 
-			tfsdklog.Trace(ctx, testCase.logMessage, testCase.logArgs...)
+			tfsdklog.Trace(ctx, testCase.logMessage, testCase.logadditionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -111,11 +99,11 @@ func TestTrace(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message        string
-		args           []interface{}
-		expectedOutput []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -124,23 +112,14 @@ func TestTrace(t *testing.T) {
 				},
 			},
 		},
-		"mismatched-pair": {
+		"fields-single-map": {
 			message: "test message",
-			args:    []interface{}{"unpaired-test-key"},
-			expectedOutput: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
-					"@level":         hclog.Trace.String(),
-					"@message":       "test message",
-					hclog.MissingKey: "unpaired-test-key",
+					"test-key-1": "test-value-1",
+					"test-key-2": "test-value-2",
+					"test-key-3": "test-value-3",
 				},
-			},
-		},
-		"pairs": {
-			message: "test message",
-			args: []interface{}{
-				"test-key-1", "test-value-1",
-				"test-key-2", "test-value-2",
-				"test-key-3", "test-value-3",
 			},
 			expectedOutput: []map[string]interface{}{
 				{
@@ -149,6 +128,32 @@ func TestTrace(t *testing.T) {
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
+				},
+			},
+		},
+		"fields-multiple-maps": {
+			message: "test message",
+			additionalFields: []map[string]interface{}{
+				{
+					"test-key-1": "test-value-1-map1",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+				},
+				{
+					"test-key-4": "test-value-4-map2",
+					"test-key-1": "test-value-1-map2",
+					"test-key-5": "test-value-5-map2",
+				},
+			},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":     hclog.Trace.String(),
+					"@message":   "test message",
+					"test-key-1": "test-value-1-map2",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+					"test-key-4": "test-value-4-map2",
+					"test-key-5": "test-value-5-map2",
 				},
 			},
 		},
@@ -165,7 +170,7 @@ func TestTrace(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
 
-			tfsdklog.Trace(ctx, testCase.message, testCase.args...)
+			tfsdklog.Trace(ctx, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -184,11 +189,11 @@ func TestDebug(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message        string
-		args           []interface{}
-		expectedOutput []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -197,23 +202,14 @@ func TestDebug(t *testing.T) {
 				},
 			},
 		},
-		"mismatched-pair": {
+		"fields-single-map": {
 			message: "test message",
-			args:    []interface{}{"unpaired-test-key"},
-			expectedOutput: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
-					"@level":         hclog.Debug.String(),
-					"@message":       "test message",
-					hclog.MissingKey: "unpaired-test-key",
+					"test-key-1": "test-value-1",
+					"test-key-2": "test-value-2",
+					"test-key-3": "test-value-3",
 				},
-			},
-		},
-		"pairs": {
-			message: "test message",
-			args: []interface{}{
-				"test-key-1", "test-value-1",
-				"test-key-2", "test-value-2",
-				"test-key-3", "test-value-3",
 			},
 			expectedOutput: []map[string]interface{}{
 				{
@@ -222,6 +218,32 @@ func TestDebug(t *testing.T) {
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
+				},
+			},
+		},
+		"fields-multiple-maps": {
+			message: "test message",
+			additionalFields: []map[string]interface{}{
+				{
+					"test-key-1": "test-value-1-map1",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+				},
+				{
+					"test-key-4": "test-value-4-map2",
+					"test-key-1": "test-value-1-map2",
+					"test-key-5": "test-value-5-map2",
+				},
+			},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":     hclog.Debug.String(),
+					"@message":   "test message",
+					"test-key-1": "test-value-1-map2",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+					"test-key-4": "test-value-4-map2",
+					"test-key-5": "test-value-5-map2",
 				},
 			},
 		},
@@ -238,7 +260,7 @@ func TestDebug(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
 
-			tfsdklog.Debug(ctx, testCase.message, testCase.args...)
+			tfsdklog.Debug(ctx, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -257,11 +279,11 @@ func TestInfo(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message        string
-		args           []interface{}
-		expectedOutput []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -270,23 +292,14 @@ func TestInfo(t *testing.T) {
 				},
 			},
 		},
-		"mismatched-pair": {
+		"fields-single-map": {
 			message: "test message",
-			args:    []interface{}{"unpaired-test-key"},
-			expectedOutput: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
-					"@level":         hclog.Info.String(),
-					"@message":       "test message",
-					hclog.MissingKey: "unpaired-test-key",
+					"test-key-1": "test-value-1",
+					"test-key-2": "test-value-2",
+					"test-key-3": "test-value-3",
 				},
-			},
-		},
-		"pairs": {
-			message: "test message",
-			args: []interface{}{
-				"test-key-1", "test-value-1",
-				"test-key-2", "test-value-2",
-				"test-key-3", "test-value-3",
 			},
 			expectedOutput: []map[string]interface{}{
 				{
@@ -295,6 +308,32 @@ func TestInfo(t *testing.T) {
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
+				},
+			},
+		},
+		"fields-multiple-maps": {
+			message: "test message",
+			additionalFields: []map[string]interface{}{
+				{
+					"test-key-1": "test-value-1-map1",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+				},
+				{
+					"test-key-4": "test-value-4-map2",
+					"test-key-1": "test-value-1-map2",
+					"test-key-5": "test-value-5-map2",
+				},
+			},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":     hclog.Info.String(),
+					"@message":   "test message",
+					"test-key-1": "test-value-1-map2",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+					"test-key-4": "test-value-4-map2",
+					"test-key-5": "test-value-5-map2",
 				},
 			},
 		},
@@ -311,7 +350,7 @@ func TestInfo(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
 
-			tfsdklog.Info(ctx, testCase.message, testCase.args...)
+			tfsdklog.Info(ctx, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -330,11 +369,11 @@ func TestWarn(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message        string
-		args           []interface{}
-		expectedOutput []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -343,23 +382,14 @@ func TestWarn(t *testing.T) {
 				},
 			},
 		},
-		"mismatched-pair": {
+		"fields-single-map": {
 			message: "test message",
-			args:    []interface{}{"unpaired-test-key"},
-			expectedOutput: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
-					"@level":         hclog.Warn.String(),
-					"@message":       "test message",
-					hclog.MissingKey: "unpaired-test-key",
+					"test-key-1": "test-value-1",
+					"test-key-2": "test-value-2",
+					"test-key-3": "test-value-3",
 				},
-			},
-		},
-		"pairs": {
-			message: "test message",
-			args: []interface{}{
-				"test-key-1", "test-value-1",
-				"test-key-2", "test-value-2",
-				"test-key-3", "test-value-3",
 			},
 			expectedOutput: []map[string]interface{}{
 				{
@@ -368,6 +398,32 @@ func TestWarn(t *testing.T) {
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
+				},
+			},
+		},
+		"fields-multiple-maps": {
+			message: "test message",
+			additionalFields: []map[string]interface{}{
+				{
+					"test-key-1": "test-value-1-map1",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+				},
+				{
+					"test-key-4": "test-value-4-map2",
+					"test-key-1": "test-value-1-map2",
+					"test-key-5": "test-value-5-map2",
+				},
+			},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":     hclog.Warn.String(),
+					"@message":   "test message",
+					"test-key-1": "test-value-1-map2",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+					"test-key-4": "test-value-4-map2",
+					"test-key-5": "test-value-5-map2",
 				},
 			},
 		},
@@ -384,7 +440,7 @@ func TestWarn(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
 
-			tfsdklog.Warn(ctx, testCase.message, testCase.args...)
+			tfsdklog.Warn(ctx, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -403,11 +459,11 @@ func TestError(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		message        string
-		args           []interface{}
-		expectedOutput []map[string]interface{}
+		message          string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -416,23 +472,14 @@ func TestError(t *testing.T) {
 				},
 			},
 		},
-		"mismatched-pair": {
+		"fields-single-map": {
 			message: "test message",
-			args:    []interface{}{"unpaired-test-key"},
-			expectedOutput: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
-					"@level":         hclog.Error.String(),
-					"@message":       "test message",
-					hclog.MissingKey: "unpaired-test-key",
+					"test-key-1": "test-value-1",
+					"test-key-2": "test-value-2",
+					"test-key-3": "test-value-3",
 				},
-			},
-		},
-		"pairs": {
-			message: "test message",
-			args: []interface{}{
-				"test-key-1", "test-value-1",
-				"test-key-2", "test-value-2",
-				"test-key-3", "test-value-3",
 			},
 			expectedOutput: []map[string]interface{}{
 				{
@@ -441,6 +488,32 @@ func TestError(t *testing.T) {
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
+				},
+			},
+		},
+		"fields-multiple-maps": {
+			message: "test message",
+			additionalFields: []map[string]interface{}{
+				{
+					"test-key-1": "test-value-1-map1",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+				},
+				{
+					"test-key-4": "test-value-4-map2",
+					"test-key-1": "test-value-1-map2",
+					"test-key-5": "test-value-5-map2",
+				},
+			},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":     hclog.Error.String(),
+					"@message":   "test message",
+					"test-key-1": "test-value-1-map2",
+					"test-key-2": "test-value-2-map1",
+					"test-key-3": "test-value-3-map1",
+					"test-key-4": "test-value-4-map2",
+					"test-key-5": "test-value-5-map2",
 				},
 			},
 		},
@@ -457,7 +530,7 @@ func TestError(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
 
-			tfsdklog.Error(ctx, testCase.message, testCase.args...)
+			tfsdklog.Error(ctx, testCase.message, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
