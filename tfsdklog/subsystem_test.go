@@ -23,7 +23,7 @@ func TestSubsystemWith(t *testing.T) {
 		logadditionalFields []map[string]interface{}
 		expectedOutput      []map[string]interface{}
 	}{
-		"no-log-pairs": {
+		"no-log-fields": {
 			key:        "test-with-key",
 			value:      "test-with-value",
 			logMessage: "test message",
@@ -36,19 +36,19 @@ func TestSubsystemWith(t *testing.T) {
 				},
 			},
 		},
-		"mismatched-with-pair": {
-			key:        "unpaired-test-with-key",
+		"mismatched-with-field": {
+			key:        "unfielded-test-with-key",
 			logMessage: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":                 hclog.Trace.String(),
-					"@message":               "test message",
-					"@module":                testSubsystem,
-					"unpaired-test-with-key": nil,
+					"@level":                  hclog.Trace.String(),
+					"@message":                "test message",
+					"@module":                 testSubsystem,
+					"unfielded-test-with-key": nil,
 				},
 			},
 		},
-		"with-and-log-pairs": {
+		"with-and-log-fields": {
 			key:        "test-with-key",
 			value:      "test-with-value",
 			logMessage: "test message",
@@ -109,7 +109,7 @@ func TestSubsystemTrace(t *testing.T) {
 		additionalFields []map[string]interface{}
 		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -119,7 +119,7 @@ func TestSubsystemTrace(t *testing.T) {
 				},
 			},
 		},
-		"pairs-single-map": {
+		"fields-single-map": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{
@@ -139,7 +139,7 @@ func TestSubsystemTrace(t *testing.T) {
 				},
 			},
 		},
-		"pairs-multiple-maps": {
+		"fields-multiple-maps": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{
@@ -203,7 +203,7 @@ func TestSubsystemDebug(t *testing.T) {
 		additionalFields []map[string]interface{}
 		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -213,7 +213,7 @@ func TestSubsystemDebug(t *testing.T) {
 				},
 			},
 		},
-		"pairs-single-map": {
+		"fields-single-map": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{
@@ -233,7 +233,7 @@ func TestSubsystemDebug(t *testing.T) {
 				},
 			},
 		},
-		"pairs-multiple-maps": {
+		"fields-multiple-maps": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{
@@ -297,7 +297,7 @@ func TestSubsystemInfo(t *testing.T) {
 		additionalFields []map[string]interface{}
 		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -307,7 +307,7 @@ func TestSubsystemInfo(t *testing.T) {
 				},
 			},
 		},
-		"pairs-single-map": {
+		"fields-single-map": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{
@@ -327,7 +327,7 @@ func TestSubsystemInfo(t *testing.T) {
 				},
 			},
 		},
-		"pairs-multiple-maps": {
+		"fields-multiple-maps": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{
@@ -391,7 +391,7 @@ func TestSubsystemWarn(t *testing.T) {
 		additionalFields []map[string]interface{}
 		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -401,7 +401,7 @@ func TestSubsystemWarn(t *testing.T) {
 				},
 			},
 		},
-		"pairs-single-map": {
+		"fields-single-map": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{
@@ -421,7 +421,7 @@ func TestSubsystemWarn(t *testing.T) {
 				},
 			},
 		},
-		"pairs-multiple-maps": {
+		"fields-multiple-maps": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{
@@ -485,7 +485,7 @@ func TestSubsystemError(t *testing.T) {
 		additionalFields []map[string]interface{}
 		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -495,7 +495,7 @@ func TestSubsystemError(t *testing.T) {
 				},
 			},
 		},
-		"pairs-single-map": {
+		"fields-single-map": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{
@@ -515,7 +515,7 @@ func TestSubsystemError(t *testing.T) {
 				},
 			},
 		},
-		"pairs-multiple-maps": {
+		"fields-multiple-maps": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{

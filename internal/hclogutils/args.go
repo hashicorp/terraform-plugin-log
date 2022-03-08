@@ -1,6 +1,6 @@
 package hclogutils
 
-// MapsToArgs will shallow merge pair maps into the slice of key1, value1,
+// MapsToArgs will shallow merge field maps into the slice of key1, value1,
 // key2, value2, ... arguments expected by hc-log.Logger methods.
 func MapsToArgs(maps ...map[string]interface{}) []interface{} {
 	switch len(maps) {

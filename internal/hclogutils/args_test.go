@@ -137,7 +137,7 @@ func TestMapsToArgs(t *testing.T) {
 			got := hclogutils.MapsToArgs(testCase.maps...)
 
 			if len(got)%2 != 0 {
-				t.Fatalf("expected even number of key-value pairs, got: %v", got)
+				t.Fatalf("expected even number of key-value fields, got: %v", got)
 			}
 
 			if got == nil && testCase.expectedArgs == nil {

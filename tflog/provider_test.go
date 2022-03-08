@@ -21,7 +21,7 @@ func TestWith(t *testing.T) {
 		logadditionalFields []map[string]interface{}
 		expectedOutput      []map[string]interface{}
 	}{
-		"no-log-pairs": {
+		"no-log-fields": {
 			key:        "test-with-key",
 			value:      "test-with-value",
 			logMessage: "test message",
@@ -33,18 +33,18 @@ func TestWith(t *testing.T) {
 				},
 			},
 		},
-		"mismatched-with-pair": {
-			key:        "unpaired-test-with-key",
+		"mismatched-with-field": {
+			key:        "unfielded-test-with-key",
 			logMessage: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":                 hclog.Trace.String(),
-					"@message":               "test message",
-					"unpaired-test-with-key": nil,
+					"@level":                  hclog.Trace.String(),
+					"@message":                "test message",
+					"unfielded-test-with-key": nil,
 				},
 			},
 		},
-		"with-and-log-pairs": {
+		"with-and-log-fields": {
 			key:        "test-with-key",
 			value:      "test-with-value",
 			logMessage: "test message",
@@ -103,7 +103,7 @@ func TestTrace(t *testing.T) {
 		additionalFields []map[string]interface{}
 		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -112,7 +112,7 @@ func TestTrace(t *testing.T) {
 				},
 			},
 		},
-		"pairs-single-map": {
+		"fields-single-map": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{
@@ -131,7 +131,7 @@ func TestTrace(t *testing.T) {
 				},
 			},
 		},
-		"pairs-multiple-maps": {
+		"fields-multiple-maps": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{
@@ -193,7 +193,7 @@ func TestDebug(t *testing.T) {
 		additionalFields []map[string]interface{}
 		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -202,7 +202,7 @@ func TestDebug(t *testing.T) {
 				},
 			},
 		},
-		"pairs-single-map": {
+		"fields-single-map": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{
@@ -221,7 +221,7 @@ func TestDebug(t *testing.T) {
 				},
 			},
 		},
-		"pairs-multiple-maps": {
+		"fields-multiple-maps": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{
@@ -283,7 +283,7 @@ func TestInfo(t *testing.T) {
 		additionalFields []map[string]interface{}
 		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -292,7 +292,7 @@ func TestInfo(t *testing.T) {
 				},
 			},
 		},
-		"pairs-single-map": {
+		"fields-single-map": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{
@@ -311,7 +311,7 @@ func TestInfo(t *testing.T) {
 				},
 			},
 		},
-		"pairs-multiple-maps": {
+		"fields-multiple-maps": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{
@@ -373,7 +373,7 @@ func TestWarn(t *testing.T) {
 		additionalFields []map[string]interface{}
 		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -382,7 +382,7 @@ func TestWarn(t *testing.T) {
 				},
 			},
 		},
-		"pairs-single-map": {
+		"fields-single-map": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{
@@ -401,7 +401,7 @@ func TestWarn(t *testing.T) {
 				},
 			},
 		},
-		"pairs-multiple-maps": {
+		"fields-multiple-maps": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{
@@ -463,7 +463,7 @@ func TestError(t *testing.T) {
 		additionalFields []map[string]interface{}
 		expectedOutput   []map[string]interface{}
 	}{
-		"no-pairs": {
+		"no-fields": {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
@@ -472,7 +472,7 @@ func TestError(t *testing.T) {
 				},
 			},
 		},
-		"pairs-single-map": {
+		"fields-single-map": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{
@@ -491,7 +491,7 @@ func TestError(t *testing.T) {
 				},
 			},
 		},
-		"pairs-multiple-maps": {
+		"fields-multiple-maps": {
 			message: "test message",
 			additionalFields: []map[string]interface{}{
 				{

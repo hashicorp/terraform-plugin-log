@@ -56,7 +56,7 @@ func SubsystemWith(ctx context.Context, subsystem, key string, value interface{}
 
 // SubsystemTrace logs `msg` at the trace level to the subsystem logger
 // specified in `ctx`, with optional `additionalFields` structured key-value
-// pairs in the log output. Pairs are shallow merged with any defined on the
+// fields in the log output. Fields are shallow merged with any defined on the
 // subsystem logger, e.g. by the `SubsystemWith()` function, and across
 // multiple maps.
 func SubsystemTrace(ctx context.Context, subsystem, msg string, additionalFields ...map[string]interface{}) {
@@ -75,7 +75,7 @@ func SubsystemTrace(ctx context.Context, subsystem, msg string, additionalFields
 
 // SubsystemDebug logs `msg` at the debug level to the subsystem logger
 // specified in `ctx`, with optional `additionalFields` structured key-value
-// pairs in the log output. Pairs are shallow merged with any defined on the
+// fields in the log output. Fields are shallow merged with any defined on the
 // subsystem logger, e.g. by the `SubsystemWith()` function, and across
 // multiple maps.
 func SubsystemDebug(ctx context.Context, subsystem, msg string, additionalFields ...map[string]interface{}) {
@@ -94,7 +94,7 @@ func SubsystemDebug(ctx context.Context, subsystem, msg string, additionalFields
 
 // SubsystemInfo logs `msg` at the info level to the subsystem logger
 // specified in `ctx`, with optional `additionalFields` structured key-value
-// pairs in the log output. Pairs are shallow merged with any defined on the
+// fields in the log output. Fields are shallow merged with any defined on the
 // subsystem logger, e.g. by the `SubsystemWith()` function, and across
 // multiple maps.
 func SubsystemInfo(ctx context.Context, subsystem, msg string, additionalFields ...map[string]interface{}) {
@@ -113,7 +113,7 @@ func SubsystemInfo(ctx context.Context, subsystem, msg string, additionalFields 
 
 // SubsystemWarn logs `msg` at the warn level to the subsystem logger
 // specified in `ctx`, with optional `additionalFields` structured key-value
-// pairs in the log output. Pairs are shallow merged with any defined on the
+// fields in the log output. Fields are shallow merged with any defined on the
 // subsystem logger, e.g. by the `SubsystemWith()` function, and across
 // multiple maps.
 func SubsystemWarn(ctx context.Context, subsystem, msg string, additionalFields ...map[string]interface{}) {
@@ -132,7 +132,7 @@ func SubsystemWarn(ctx context.Context, subsystem, msg string, additionalFields 
 
 // SubsystemError logs `msg` at the error level to the subsystem logger
 // specified in `ctx`, with optional `additionalFields` structured key-value
-// pairs in the log output. Pairs are shallow merged with any defined on the
+// fields in the log output. Fields are shallow merged with any defined on the
 // subsystem logger, e.g. by the `SubsystemWith()` function, and across
 // multiple maps.
 func SubsystemError(ctx context.Context, subsystem, msg string, additionalFields ...map[string]interface{}) {
