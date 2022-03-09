@@ -31,6 +31,8 @@ func TestWithAdditionalLocationOffset(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
+					// Caller line (number after colon) should match
+					// tflog.SubsystemTrace() line in test case implementation.
 					"@caller":  "/tflog/options_test.go:30",
 					"@level":   hclog.Trace.String(),
 					"@message": "test message",
@@ -45,6 +47,9 @@ func TestWithAdditionalLocationOffset(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
+					// Caller line (number after colon) should match
+					// tflog.SubsystemTrace() line in testSubsystemTraceHelper
+					// function implementation.
 					"@caller":  "/tflog/options_test.go:16",
 					"@level":   hclog.Trace.String(),
 					"@message": "test message",
@@ -59,7 +64,10 @@ func TestWithAdditionalLocationOffset(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@caller":  "/tflog/options_test.go:58",
+					// Caller line (number after colon) should match
+					// testSubsystemTraceHelper() line in test case
+					// implementation.
+					"@caller":  "/tflog/options_test.go:63",
 					"@level":   hclog.Trace.String(),
 					"@message": "test message",
 					"@module":  testSubsystemModule,
