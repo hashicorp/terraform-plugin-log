@@ -8,13 +8,12 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-log/internal/loggertest"
-	"github.com/hashicorp/terraform-plugin-log/internal/logging"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 const (
 	testSubsystem       = "test_subsystem"
-	testSubsystemModule = logging.DefaultProviderRootLoggerName + "." + testSubsystem
+	testSubsystemModule = "provider." + testSubsystem
 )
 
 func TestSubsystemWith(t *testing.T) {

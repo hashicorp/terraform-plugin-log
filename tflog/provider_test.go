@@ -8,7 +8,6 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-log/internal/loggertest"
-	"github.com/hashicorp/terraform-plugin-log/internal/logging"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
@@ -30,7 +29,7 @@ func TestWith(t *testing.T) {
 				{
 					"@level":        hclog.Trace.String(),
 					"@message":      "test message",
-					"@module":       logging.DefaultProviderRootLoggerName,
+					"@module":       "provider",
 					"test-with-key": "test-with-value",
 				},
 			},
@@ -42,7 +41,7 @@ func TestWith(t *testing.T) {
 				{
 					"@level":                  hclog.Trace.String(),
 					"@message":                "test message",
-					"@module":                 logging.DefaultProviderRootLoggerName,
+					"@module":                 "provider",
 					"unfielded-test-with-key": nil,
 				},
 			},
@@ -62,7 +61,7 @@ func TestWith(t *testing.T) {
 				{
 					"@level":         hclog.Trace.String(),
 					"@message":       "test message",
-					"@module":        logging.DefaultProviderRootLoggerName,
+					"@module":        "provider",
 					"test-log-key-1": "test-log-value-1",
 					"test-log-key-2": "test-log-value-2",
 					"test-log-key-3": "test-log-value-3",
@@ -113,7 +112,7 @@ func TestTrace(t *testing.T) {
 				{
 					"@level":   hclog.Trace.String(),
 					"@message": "test message",
-					"@module":  logging.DefaultProviderRootLoggerName,
+					"@module":  "provider",
 				},
 			},
 		},
@@ -130,7 +129,7 @@ func TestTrace(t *testing.T) {
 				{
 					"@level":     hclog.Trace.String(),
 					"@message":   "test message",
-					"@module":    logging.DefaultProviderRootLoggerName,
+					"@module":    "provider",
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
@@ -155,7 +154,7 @@ func TestTrace(t *testing.T) {
 				{
 					"@level":     hclog.Trace.String(),
 					"@message":   "test message",
-					"@module":    logging.DefaultProviderRootLoggerName,
+					"@module":    "provider",
 					"test-key-1": "test-value-1-map2",
 					"test-key-2": "test-value-2-map1",
 					"test-key-3": "test-value-3-map1",
@@ -206,7 +205,7 @@ func TestDebug(t *testing.T) {
 				{
 					"@level":   hclog.Debug.String(),
 					"@message": "test message",
-					"@module":  logging.DefaultProviderRootLoggerName,
+					"@module":  "provider",
 				},
 			},
 		},
@@ -223,7 +222,7 @@ func TestDebug(t *testing.T) {
 				{
 					"@level":     hclog.Debug.String(),
 					"@message":   "test message",
-					"@module":    logging.DefaultProviderRootLoggerName,
+					"@module":    "provider",
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
@@ -248,7 +247,7 @@ func TestDebug(t *testing.T) {
 				{
 					"@level":     hclog.Debug.String(),
 					"@message":   "test message",
-					"@module":    logging.DefaultProviderRootLoggerName,
+					"@module":    "provider",
 					"test-key-1": "test-value-1-map2",
 					"test-key-2": "test-value-2-map1",
 					"test-key-3": "test-value-3-map1",
@@ -299,7 +298,7 @@ func TestInfo(t *testing.T) {
 				{
 					"@level":   hclog.Info.String(),
 					"@message": "test message",
-					"@module":  logging.DefaultProviderRootLoggerName,
+					"@module":  "provider",
 				},
 			},
 		},
@@ -316,7 +315,7 @@ func TestInfo(t *testing.T) {
 				{
 					"@level":     hclog.Info.String(),
 					"@message":   "test message",
-					"@module":    logging.DefaultProviderRootLoggerName,
+					"@module":    "provider",
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
@@ -341,7 +340,7 @@ func TestInfo(t *testing.T) {
 				{
 					"@level":     hclog.Info.String(),
 					"@message":   "test message",
-					"@module":    logging.DefaultProviderRootLoggerName,
+					"@module":    "provider",
 					"test-key-1": "test-value-1-map2",
 					"test-key-2": "test-value-2-map1",
 					"test-key-3": "test-value-3-map1",
@@ -392,7 +391,7 @@ func TestWarn(t *testing.T) {
 				{
 					"@level":   hclog.Warn.String(),
 					"@message": "test message",
-					"@module":  logging.DefaultProviderRootLoggerName,
+					"@module":  "provider",
 				},
 			},
 		},
@@ -409,7 +408,7 @@ func TestWarn(t *testing.T) {
 				{
 					"@level":     hclog.Warn.String(),
 					"@message":   "test message",
-					"@module":    logging.DefaultProviderRootLoggerName,
+					"@module":    "provider",
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
@@ -434,7 +433,7 @@ func TestWarn(t *testing.T) {
 				{
 					"@level":     hclog.Warn.String(),
 					"@message":   "test message",
-					"@module":    logging.DefaultProviderRootLoggerName,
+					"@module":    "provider",
 					"test-key-1": "test-value-1-map2",
 					"test-key-2": "test-value-2-map1",
 					"test-key-3": "test-value-3-map1",
@@ -485,7 +484,7 @@ func TestError(t *testing.T) {
 				{
 					"@level":   hclog.Error.String(),
 					"@message": "test message",
-					"@module":  logging.DefaultProviderRootLoggerName,
+					"@module":  "provider",
 				},
 			},
 		},
@@ -502,7 +501,7 @@ func TestError(t *testing.T) {
 				{
 					"@level":     hclog.Error.String(),
 					"@message":   "test message",
-					"@module":    logging.DefaultProviderRootLoggerName,
+					"@module":    "provider",
 					"test-key-1": "test-value-1",
 					"test-key-2": "test-value-2",
 					"test-key-3": "test-value-3",
@@ -527,7 +526,7 @@ func TestError(t *testing.T) {
 				{
 					"@level":     hclog.Error.String(),
 					"@message":   "test message",
-					"@module":    logging.DefaultProviderRootLoggerName,
+					"@module":    "provider",
 					"test-key-1": "test-value-1-map2",
 					"test-key-2": "test-value-2-map1",
 					"test-key-3": "test-value-3-map1",
