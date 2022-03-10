@@ -13,7 +13,7 @@ import (
 func NewRootSDKLogger(ctx context.Context, options ...logging.Option) context.Context {
 	opts := logging.ApplyLoggerOpts(options...)
 	if opts.Name == "" {
-		opts.Name = "sdk"
+		opts.Name = logging.DefaultSDKRootLoggerName
 	}
 	if sink := getSink(ctx); sink != nil {
 		logger := sink.Named(opts.Name)
@@ -33,9 +33,13 @@ func NewRootSDKLogger(ctx context.Context, options ...logging.Option) context.Co
 		IncludeLocation:          opts.IncludeLocation,
 		DisableTime:              !opts.IncludeTime,
 		Output:                   opts.Output,
-		AdditionalLocationOffset: 1,
+		AdditionalLocationOffset: opts.AdditionalLocationOffset,
 	}
-	return logging.SetSDKRootLogger(ctx, hclog.New(loggerOptions))
+
+	ctx = logging.SetSDKRootLogger(ctx, hclog.New(loggerOptions))
+	ctx = logging.SetSDKRootLoggerOptions(ctx, loggerOptions)
+
+	return ctx
 }
 
 // NewRootProviderLogger returns a new context.Context that contains a provider
@@ -43,7 +47,7 @@ func NewRootSDKLogger(ctx context.Context, options ...logging.Option) context.Co
 func NewRootProviderLogger(ctx context.Context, options ...logging.Option) context.Context {
 	opts := logging.ApplyLoggerOpts(options...)
 	if opts.Name == "" {
-		opts.Name = "provider"
+		opts.Name = logging.DefaultProviderRootLoggerName
 	}
 	if sink := getSink(ctx); sink != nil {
 		logger := sink.Named(opts.Name)
@@ -63,9 +67,13 @@ func NewRootProviderLogger(ctx context.Context, options ...logging.Option) conte
 		IncludeLocation:          opts.IncludeLocation,
 		DisableTime:              !opts.IncludeTime,
 		Output:                   opts.Output,
-		AdditionalLocationOffset: 1,
+		AdditionalLocationOffset: opts.AdditionalLocationOffset,
 	}
-	return logging.SetProviderRootLogger(ctx, hclog.New(loggerOptions))
+
+	ctx = logging.SetProviderRootLogger(ctx, hclog.New(loggerOptions))
+	ctx = logging.SetProviderRootLoggerOptions(ctx, loggerOptions)
+
+	return ctx
 }
 
 // With returns a new context.Context that has a modified logger in it which

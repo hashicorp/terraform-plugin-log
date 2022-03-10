@@ -1,0 +1,7 @@
+```release-note:enhancement
+tflog: Added `WithAdditionalLocationOffset` function, which allows implementations to adjust the location offset when using helper functions
+```
+
+```release-note:enhancement
+tfsdklog: Added `WithAdditionalLocationOffset` function, which allows implementations to adjust the location offset when using helper functions
+```

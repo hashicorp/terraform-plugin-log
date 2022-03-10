@@ -4,19 +4,27 @@ import (
 	"context"
 	"io"
 
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-log/internal/logging"
+	"github.com/hashicorp/terraform-plugin-log/tfsdklog"
 )
 
 func SDKRoot(ctx context.Context, output io.Writer) context.Context {
-	loggerOptions := &hclog.LoggerOptions{
-		DisableTime: true,
-		JSONFormat:  true,
-		Level:       hclog.Trace,
-		Output:      output,
-	}
+	return tfsdklog.NewRootSDKLogger(
+		ctx,
+		logging.WithoutLocation(),
+		logging.WithoutTimestamp(),
+		logging.WithOutput(output),
+	)
+}
 
-	ctx = logging.SetSDKRootLogger(ctx, hclog.New(loggerOptions))
-
-	return ctx
+// SDKRootWithLocation is for testing code that affects go-hclog's caller
+// information (location offset). Most testing code should avoid this, since
+// correctly checking differences including the location is extra effort
+// with little benefit.
+func SDKRootWithLocation(ctx context.Context, output io.Writer) context.Context {
+	return tfsdklog.NewRootSDKLogger(
+		ctx,
+		logging.WithoutTimestamp(),
+		logging.WithOutput(output),
+	)
 }
