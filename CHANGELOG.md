@@ -1,5 +1,13 @@
 # 0.3.0 (March 10, 2022)
 
+NOTES:
+
+* The following Go modules, if used, must be also be updated when updating to this terraform-plugin-log version:
+    * [terraform-plugin-framework](https://github.com/hashicorp/terraform-plugin-framework/blob/main/CHANGELOG.md): v0.6.0 or higher
+    * [terraform-plugin-go](https://github.com/hashicorp/terraform-plugin-go/blob/main/CHANGELOG.md): v0.8.0 or higher
+    * [terraform-plugin-mux](https://github.com/hashicorp/terraform-plugin-mux/blob/main/CHANGELOG.md): v0.6.0 or higher
+    * [terraform-plugin-sdk](https://github.com/hashicorp/terraform-plugin-sdk/blob/main/CHANGELOG.md): v2.11.0 or higher
+
 BREAKING CHANGES:
 
 * tflog: The `Trace()`, `Debug()`, `Info()`, `Warn()`, and `Error()` functions and `Subsystem` equivalents now use `...map[string]interface{}` as the final optional parameter, where the `string` is the structured logging key, rather than expecting matched `key interface{}, value interface{}` pairs. If multiple maps contain the same key, the value is shallow merged. ([#34](https://github.com/hashicorp/terraform-plugin-log/issues/34))
