@@ -6,9 +6,9 @@ terraform-plugin-log is a helper module for logging from Terraform providers. It
 
 ## Go Compatibility
 
-terraform-plugin-log is built in Go, and uses the [support policy](https://golang.org/doc/devel/release.html#policy) of Go as its support policy. The two latest major releases of Go are supported by terraform-plugin-log.
+This project follows the [support policy](https://golang.org/doc/devel/release.html#policy) of Go as its support policy. The two latest major releases of Go are supported by the project.
 
-Currently, that means Go **1.16** or later must be used when using terraform-plugin-log.
+Currently, that means Go **1.17** or later must be used when including this project as a dependency.
 
 ## Contributing
 
