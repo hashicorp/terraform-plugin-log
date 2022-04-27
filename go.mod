@@ -3,7 +3,7 @@ module github.com/hashicorp/terraform-plugin-log
 go 1.17
 
 require (
-	github.com/google/go-cmp v0.5.7
+	github.com/google/go-cmp v0.5.8
 	github.com/hashicorp/go-hclog v1.2.0
 	github.com/mitchellh/go-testing-interface v1.14.1
 )
