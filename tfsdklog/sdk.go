@@ -15,12 +15,19 @@ func NewRootSDKLogger(ctx context.Context, options ...logging.Option) context.Co
 	if opts.Name == "" {
 		opts.Name = logging.DefaultSDKRootLoggerName
 	}
-	if sink := getSink(ctx); sink != nil {
+	if sink := logging.GetSink(ctx); sink != nil {
 		logger := sink.Named(opts.Name)
+		loggerOptions := logging.GetSinkOptions(ctx)
+
 		if opts.Level != hclog.NoLevel {
 			logger.SetLevel(opts.Level)
+			loggerOptions.Level = opts.Level
 		}
-		return logging.SetSDKRootLogger(ctx, logger)
+
+		ctx = logging.SetSDKRootLogger(ctx, logger)
+		ctx = logging.SetSDKRootLoggerOptions(ctx, loggerOptions)
+
+		return ctx
 	}
 	if opts.Level == hclog.NoLevel {
 		opts.Level = hclog.Trace
@@ -49,12 +56,19 @@ func NewRootProviderLogger(ctx context.Context, options ...logging.Option) conte
 	if opts.Name == "" {
 		opts.Name = logging.DefaultProviderRootLoggerName
 	}
-	if sink := getSink(ctx); sink != nil {
+	if sink := logging.GetSink(ctx); sink != nil {
 		logger := sink.Named(opts.Name)
+		loggerOptions := logging.GetSinkOptions(ctx)
+
 		if opts.Level != hclog.NoLevel {
 			logger.SetLevel(opts.Level)
+			loggerOptions.Level = opts.Level
 		}
-		return logging.SetProviderRootLogger(ctx, logger)
+
+		ctx = logging.SetProviderRootLogger(ctx, logger)
+		ctx = logging.SetProviderRootLoggerOptions(ctx, loggerOptions)
+
+		return ctx
 	}
 	if opts.Level == hclog.NoLevel {
 		opts.Level = hclog.Trace
