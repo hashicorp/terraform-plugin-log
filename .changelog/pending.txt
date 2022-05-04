@@ -1,0 +1,7 @@
+```release-note:feature
+Added `tflogtest` package, which provides functionality for unit testing of provider logging
+```
+
+```release-note:feature
+Added `tfsdklogtest` package, which provides functionality for unit testing of SDK logging
+```
