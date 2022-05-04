@@ -120,3 +120,82 @@ func TestWithAdditionalLocationOffset(t *testing.T) {
 		})
 	}
 }
+
+func TestWithRootFields(t *testing.T) {
+	t.Parallel()
+
+	testCases := map[string]struct {
+		logMessage      string
+		rootFields      map[string]interface{}
+		subsystemFields map[string]interface{}
+		expectedOutput  []map[string]interface{}
+	}{
+		"no-root-log-fields": {
+			subsystemFields: map[string]interface{}{
+				"test-subsystem-key": "test-subsystem-value",
+			},
+			logMessage: "test message",
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":             hclog.Trace.String(),
+					"@message":           "test message",
+					"@module":            testSubsystemModule,
+					"test-subsystem-key": "test-subsystem-value",
+				},
+			},
+		},
+		"with-root-log-fields": {
+			subsystemFields: map[string]interface{}{
+				"test-subsystem-key": "test-subsystem-value",
+			},
+			logMessage: "test message",
+			rootFields: map[string]interface{}{
+				"test-root-key": "test-root-value",
+			},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":             hclog.Trace.String(),
+					"@message":           "test message",
+					"@module":            testSubsystemModule,
+					"test-root-key":      "test-root-value",
+					"test-subsystem-key": "test-subsystem-value",
+				},
+			},
+		},
+	}
+
+	for name, testCase := range testCases {
+		name, testCase := name, testCase
+
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			var outputBuffer bytes.Buffer
+
+			ctx := context.Background()
+			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
+
+			for key, value := range testCase.rootFields {
+				ctx = tflog.With(ctx, key, value)
+			}
+
+			ctx = tflog.NewSubsystem(ctx, testSubsystem, tflog.WithRootFields())
+
+			for key, value := range testCase.subsystemFields {
+				ctx = tflog.SubsystemWith(ctx, testSubsystem, key, value)
+			}
+
+			tflog.SubsystemTrace(ctx, testSubsystem, testCase.logMessage)
+
+			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
+
+			if err != nil {
+				t.Fatalf("unable to read multiple line JSON: %s", err)
+			}
+
+			if diff := cmp.Diff(testCase.expectedOutput, got); diff != "" {
+				t.Errorf("unexpected output difference: %s", diff)
+			}
+		})
+	}
+}
