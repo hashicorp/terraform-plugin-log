@@ -8,11 +8,12 @@ import (
 
 func MultilineJSONDecode(data io.Reader) ([]map[string]interface{}, error) {
 	var result []map[string]interface{}
-	var entry map[string]interface{}
 
 	dec := json.NewDecoder(data)
 
 	for {
+		var entry map[string]interface{}
+
 		err := dec.Decode(&entry)
 
 		if err == io.EOF {
