@@ -1,0 +1,3 @@
+```release-note:bug
+tflog+tfsdklog: Prevented `Unable to create logging subsystem with AdditionalLocationOffset due to missing root logger options` warning logs during acceptance testing
+```

@@ -1,0 +1,7 @@
+```release-note:enhancement
+tflog: Added `WithRootFields()` function, which can copy root logger fields to a new subsystem logger during `NewSubsystem()`
+```
+
+```release-note:enhancement
+tfsdklog: Added `WithRootFields()` function, which can copy root logger fields to a new subsystem logger during `NewSubsystem()`
+```

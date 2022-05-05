@@ -1,3 +1,23 @@
+# 0.4.0 (May 4, 2022)
+
+NOTES:
+
+* This Go module has been updated to Go 1.17 per the [Go support policy](https://golang.org/doc/devel/release.html#policy). Any consumers building on earlier Go versions may experience errors. ([#51](https://github.com/hashicorp/terraform-plugin-log/issues/51))
+
+FEATURES:
+
+* Added `tflogtest` package, which provides functionality for unit testing of provider logging ([#62](https://github.com/hashicorp/terraform-plugin-log/issues/62))
+* Added `tfsdklogtest` package, which provides functionality for unit testing of SDK logging ([#62](https://github.com/hashicorp/terraform-plugin-log/issues/62))
+
+ENHANCEMENTS:
+
+* tflog: Added `WithRootFields()` function, which can copy root logger fields to a new subsystem logger during `NewSubsystem()` ([#60](https://github.com/hashicorp/terraform-plugin-log/issues/60))
+* tfsdklog: Added `WithRootFields()` function, which can copy root logger fields to a new subsystem logger during `NewSubsystem()` ([#60](https://github.com/hashicorp/terraform-plugin-log/issues/60))
+
+BUG FIXES:
+
+* tflog+tfsdklog: Prevented `Unable to create logging subsystem with AdditionalLocationOffset due to missing root logger options` warning logs during acceptance testing ([#58](https://github.com/hashicorp/terraform-plugin-log/issues/58))
+
 # 0.3.0 (March 10, 2022)
 
 NOTES:
