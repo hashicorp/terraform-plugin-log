@@ -17,7 +17,7 @@ DOCKER_RUN_FLAGS=--interactive \
 	-e "CURRENT_GIT_BRANCH=$$(git rev-parse --abbrev-ref HEAD)"
 
 
-# Run the terraform.io website via a published docker image
+# Run the terraform.io website to preview local content changes 
 website:
 	@echo "==> Downloading latest Docker image..."
 	@docker pull ${DOCKER_IMAGE}
