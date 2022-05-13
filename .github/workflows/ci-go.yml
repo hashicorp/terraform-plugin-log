@@ -6,7 +6,6 @@ on:
     paths:
       - .github/workflows/test.yml
       - .golangci.yml
-      - .go-version
       - go.mod
       - '**.go'
 
