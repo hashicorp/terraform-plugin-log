@@ -22,8 +22,6 @@ jobs:
           go-version-file: 'go.mod'
       - run: go mod download
       - uses: golangci/golangci-lint-action@v3.2.0
-        with:
-          skip-go-installation: true
   test:
     name: test (Go v${{ matrix.go-version }})
     runs-on: ubuntu-latest
