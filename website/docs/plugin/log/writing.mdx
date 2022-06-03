@@ -65,25 +65,27 @@ Use variables to attach information to specific logs or to an entire logger, whi
 
 ### Single Log Variables
 
-To specify filterable variables in the log output, add sets of key and value argument pairs after the log message. You can add as many key and value argument pairs as you need, but the key must always come before its associated value.
+To specify filterable variables in the log output, add a map of additional fields after the log message.
 
 The following example adds both a URL and a method for an API request.
 
 ```go
-tflog.Trace(ctx, "executing API request",
-    "url", "https://www.example.com/my/endpoint",
-    "method", "POST")
+tflog.Trace(ctx, "executing API request", map[string]interface{}{
+    "url": "https://www.example.com/my/endpoint",
+    "method": "POST",
+})
 ```
 
 You can also use other standard Go types for values.
 
 ```go
-tflog.Trace(ctx, "executing API request",
-    "url", "https://www.example.com/my/endpoint",
-    "method", "POST",
-    "size", 200,
-    "authenticated", true,
-    "headers", map[string][]string{"content-type": []string{"application/json"}})
+tflog.Trace(ctx, "executing API request", map[string]interface{}{
+    "url": "https://www.example.com/my/endpoint",
+    "method": "POST",
+    "size": 200,
+    "authenticated": true,
+    "headers": map[string][]string{"content-type": []string{"application/json"}},
+})
 ```
 
 ### Multiple Log Variables
@@ -155,7 +157,9 @@ Logging or adding variables to subsystem loggers requires separate function call
 For example, use [`tflog.SubsystemDebug()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SubsystemDebug) to write a debug level log with a specific subsystem.
 
 ```go
-tflog.SubsystemDebug(ctx, "my-subsystem", "writing to a subsystem", "meaning_of_life", 42)
+tflog.SubsystemDebug(ctx, "my-subsystem", "writing to a subsystem", map[string]interface{}{
+    "meaning_of_life": 42,
+})
 ```
 
 Use [`tflog.SubsystemWith()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SubsystemWith) to attach variables to a specific subsystem.
