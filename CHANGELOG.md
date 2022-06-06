@@ -1,3 +1,9 @@
+# 0.4.1 (June 6, 2022)
+
+NOTES:
+
+* The `gopkg.in/yaml.v3` dependency has been updated to address CVE-2022-28948 ([#69](https://github.com/hashicorp/terraform-plugin-log/issues/69))
+
 # 0.4.0 (May 4, 2022)
 
 NOTES:
