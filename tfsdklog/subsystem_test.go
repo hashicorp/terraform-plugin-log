@@ -19,11 +19,11 @@ func TestSubsystemWith(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
-		key                 string
-		value               interface{}
-		logMessage          string
-		logadditionalFields []map[string]interface{}
-		expectedOutput      []map[string]interface{}
+		key              string
+		value            interface{}
+		logMessage       string
+		additionalFields []map[string]interface{}
+		expectedOutput   []map[string]interface{}
 	}{
 		"no-log-fields": {
 			key:        "test-with-key",
