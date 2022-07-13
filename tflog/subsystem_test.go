@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-log/internal/loggertest"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -32,7 +31,7 @@ func TestSubsystemWith(t *testing.T) {
 			logMessage: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":        hclog.Trace.String(),
+					"@level":        "trace",
 					"@message":      "test message",
 					"@module":       testSubsystemModule,
 					"test-with-key": "test-with-value",
@@ -44,7 +43,7 @@ func TestSubsystemWith(t *testing.T) {
 			logMessage: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":                  hclog.Trace.String(),
+					"@level":                  "trace",
 					"@message":                "test message",
 					"@module":                 testSubsystemModule,
 					"unfielded-test-with-key": nil,
@@ -55,7 +54,7 @@ func TestSubsystemWith(t *testing.T) {
 			key:        "test-with-key",
 			value:      "test-with-value",
 			logMessage: "test message",
-			logadditionalFields: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-log-key-1": "test-log-value-1",
 					"test-log-key-2": "test-log-value-2",
@@ -64,7 +63,7 @@ func TestSubsystemWith(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":         hclog.Trace.String(),
+					"@level":         "trace",
 					"@message":       "test message",
 					"@module":        testSubsystemModule,
 					"test-log-key-1": "test-log-value-1",
@@ -89,7 +88,7 @@ func TestSubsystemWith(t *testing.T) {
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
 			ctx = tflog.SubsystemWith(ctx, testSubsystem, testCase.key, testCase.value)
 
-			tflog.SubsystemTrace(ctx, testSubsystem, testCase.logMessage, testCase.logadditionalFields...)
+			tflog.SubsystemTrace(ctx, testSubsystem, testCase.logMessage, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -116,7 +115,7 @@ func TestSubsystemTrace(t *testing.T) {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":   hclog.Trace.String(),
+					"@level":   "trace",
 					"@message": "test message",
 					"@module":  testSubsystemModule,
 				},
@@ -133,7 +132,7 @@ func TestSubsystemTrace(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Trace.String(),
+					"@level":     "trace",
 					"@message":   "test message",
 					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1",
@@ -158,7 +157,7 @@ func TestSubsystemTrace(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Trace.String(),
+					"@level":     "trace",
 					"@message":   "test message",
 					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1-map2",
@@ -210,7 +209,7 @@ func TestSubsystemDebug(t *testing.T) {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":   hclog.Debug.String(),
+					"@level":   "debug",
 					"@message": "test message",
 					"@module":  testSubsystemModule,
 				},
@@ -227,7 +226,7 @@ func TestSubsystemDebug(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Debug.String(),
+					"@level":     "debug",
 					"@message":   "test message",
 					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1",
@@ -252,7 +251,7 @@ func TestSubsystemDebug(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Debug.String(),
+					"@level":     "debug",
 					"@message":   "test message",
 					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1-map2",
@@ -304,7 +303,7 @@ func TestSubsystemInfo(t *testing.T) {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":   hclog.Info.String(),
+					"@level":   "info",
 					"@message": "test message",
 					"@module":  testSubsystemModule,
 				},
@@ -321,7 +320,7 @@ func TestSubsystemInfo(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Info.String(),
+					"@level":     "info",
 					"@message":   "test message",
 					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1",
@@ -346,7 +345,7 @@ func TestSubsystemInfo(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Info.String(),
+					"@level":     "info",
 					"@message":   "test message",
 					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1-map2",
@@ -398,7 +397,7 @@ func TestSubsystemWarn(t *testing.T) {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":   hclog.Warn.String(),
+					"@level":   "warn",
 					"@message": "test message",
 					"@module":  testSubsystemModule,
 				},
@@ -415,7 +414,7 @@ func TestSubsystemWarn(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Warn.String(),
+					"@level":     "warn",
 					"@message":   "test message",
 					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1",
@@ -440,7 +439,7 @@ func TestSubsystemWarn(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Warn.String(),
+					"@level":     "warn",
 					"@message":   "test message",
 					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1-map2",
@@ -492,7 +491,7 @@ func TestSubsystemError(t *testing.T) {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":   hclog.Error.String(),
+					"@level":   "error",
 					"@message": "test message",
 					"@module":  testSubsystemModule,
 				},
@@ -509,7 +508,7 @@ func TestSubsystemError(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Error.String(),
+					"@level":     "error",
 					"@message":   "test message",
 					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1",
@@ -534,7 +533,7 @@ func TestSubsystemError(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Error.String(),
+					"@level":     "error",
 					"@message":   "test message",
 					"@module":    testSubsystemModule,
 					"test-key-1": "test-value-1-map2",

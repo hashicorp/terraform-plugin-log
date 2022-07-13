@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-log/internal/loggertest"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -27,7 +26,7 @@ func TestWith(t *testing.T) {
 			logMessage: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":        hclog.Trace.String(),
+					"@level":        "trace",
 					"@message":      "test message",
 					"@module":       "provider",
 					"test-with-key": "test-with-value",
@@ -39,7 +38,7 @@ func TestWith(t *testing.T) {
 			logMessage: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":                  hclog.Trace.String(),
+					"@level":                  "trace",
 					"@message":                "test message",
 					"@module":                 "provider",
 					"unfielded-test-with-key": nil,
@@ -50,7 +49,7 @@ func TestWith(t *testing.T) {
 			key:        "test-with-key",
 			value:      "test-with-value",
 			logMessage: "test message",
-			logadditionalFields: []map[string]interface{}{
+			additionalFields: []map[string]interface{}{
 				{
 					"test-log-key-1": "test-log-value-1",
 					"test-log-key-2": "test-log-value-2",
@@ -59,7 +58,7 @@ func TestWith(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":         hclog.Trace.String(),
+					"@level":         "trace",
 					"@message":       "test message",
 					"@module":        "provider",
 					"test-log-key-1": "test-log-value-1",
@@ -83,7 +82,7 @@ func TestWith(t *testing.T) {
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 			ctx = tflog.With(ctx, testCase.key, testCase.value)
 
-			tflog.Trace(ctx, testCase.logMessage, testCase.logadditionalFields...)
+			tflog.Trace(ctx, testCase.logMessage, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -110,7 +109,7 @@ func TestTrace(t *testing.T) {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":   hclog.Trace.String(),
+					"@level":   "trace",
 					"@message": "test message",
 					"@module":  "provider",
 				},
@@ -127,7 +126,7 @@ func TestTrace(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Trace.String(),
+					"@level":     "trace",
 					"@message":   "test message",
 					"@module":    "provider",
 					"test-key-1": "test-value-1",
@@ -152,7 +151,7 @@ func TestTrace(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Trace.String(),
+					"@level":     "trace",
 					"@message":   "test message",
 					"@module":    "provider",
 					"test-key-1": "test-value-1-map2",
@@ -203,7 +202,7 @@ func TestDebug(t *testing.T) {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":   hclog.Debug.String(),
+					"@level":   "debug",
 					"@message": "test message",
 					"@module":  "provider",
 				},
@@ -220,7 +219,7 @@ func TestDebug(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Debug.String(),
+					"@level":     "debug",
 					"@message":   "test message",
 					"@module":    "provider",
 					"test-key-1": "test-value-1",
@@ -245,7 +244,7 @@ func TestDebug(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Debug.String(),
+					"@level":     "debug",
 					"@message":   "test message",
 					"@module":    "provider",
 					"test-key-1": "test-value-1-map2",
@@ -296,7 +295,7 @@ func TestInfo(t *testing.T) {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":   hclog.Info.String(),
+					"@level":   "info",
 					"@message": "test message",
 					"@module":  "provider",
 				},
@@ -313,7 +312,7 @@ func TestInfo(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Info.String(),
+					"@level":     "info",
 					"@message":   "test message",
 					"@module":    "provider",
 					"test-key-1": "test-value-1",
@@ -338,7 +337,7 @@ func TestInfo(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Info.String(),
+					"@level":     "info",
 					"@message":   "test message",
 					"@module":    "provider",
 					"test-key-1": "test-value-1-map2",
@@ -389,7 +388,7 @@ func TestWarn(t *testing.T) {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":   hclog.Warn.String(),
+					"@level":   "warn",
 					"@message": "test message",
 					"@module":  "provider",
 				},
@@ -406,7 +405,7 @@ func TestWarn(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Warn.String(),
+					"@level":     "warn",
 					"@message":   "test message",
 					"@module":    "provider",
 					"test-key-1": "test-value-1",
@@ -431,7 +430,7 @@ func TestWarn(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Warn.String(),
+					"@level":     "warn",
 					"@message":   "test message",
 					"@module":    "provider",
 					"test-key-1": "test-value-1-map2",
@@ -482,7 +481,7 @@ func TestError(t *testing.T) {
 			message: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":   hclog.Error.String(),
+					"@level":   "error",
 					"@message": "test message",
 					"@module":  "provider",
 				},
@@ -499,7 +498,7 @@ func TestError(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Error.String(),
+					"@level":     "error",
 					"@message":   "test message",
 					"@module":    "provider",
 					"test-key-1": "test-value-1",
@@ -524,7 +523,7 @@ func TestError(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":     hclog.Error.String(),
+					"@level":     "error",
 					"@message":   "test message",
 					"@module":    "provider",
 					"test-key-1": "test-value-1-map2",

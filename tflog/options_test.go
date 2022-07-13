@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-log/internal/loggertest"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -34,7 +33,7 @@ func TestWithAdditionalLocationOffset(t *testing.T) {
 					// Caller line (number after colon) should match
 					// tflog.SubsystemTrace() line in test case implementation.
 					"@caller":  "/tflog/options_test.go:30",
-					"@level":   hclog.Trace.String(),
+					"@level":   "trace",
 					"@message": "test message",
 					"@module":  testSubsystemModule,
 				},
@@ -51,7 +50,7 @@ func TestWithAdditionalLocationOffset(t *testing.T) {
 					// tflog.SubsystemTrace() line in testSubsystemTraceHelper
 					// function implementation.
 					"@caller":  "/tflog/options_test.go:16",
-					"@level":   hclog.Trace.String(),
+					"@level":   "trace",
 					"@message": "test message",
 					"@module":  testSubsystemModule,
 				},
@@ -68,7 +67,7 @@ func TestWithAdditionalLocationOffset(t *testing.T) {
 					// testSubsystemTraceHelper() line in test case
 					// implementation.
 					"@caller":  "/tflog/options_test.go:63",
-					"@level":   hclog.Trace.String(),
+					"@level":   "trace",
 					"@message": "test message",
 					"@module":  testSubsystemModule,
 				},
@@ -137,7 +136,7 @@ func TestWithRootFields(t *testing.T) {
 			logMessage: "test message",
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":             hclog.Trace.String(),
+					"@level":             "trace",
 					"@message":           "test message",
 					"@module":            testSubsystemModule,
 					"test-subsystem-key": "test-subsystem-value",
@@ -154,7 +153,7 @@ func TestWithRootFields(t *testing.T) {
 			},
 			expectedOutput: []map[string]interface{}{
 				{
-					"@level":             hclog.Trace.String(),
+					"@level":             "trace",
 					"@message":           "test message",
 					"@module":            testSubsystemModule,
 					"test-root-key":      "test-root-value",
