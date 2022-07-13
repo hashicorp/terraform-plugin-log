@@ -3,6 +3,7 @@ package tfsdklog_test
 import (
 	"bytes"
 	"context"
+	"regexp"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
