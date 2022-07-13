@@ -32,7 +32,7 @@ func TestWithAdditionalLocationOffset(t *testing.T) {
 				{
 					// Caller line (number after colon) should match
 					// tflog.SubsystemTrace() line in test case implementation.
-					"@caller":  "/tflog/options_test.go:30",
+					"@caller":  "/tflog/options_test.go:29",
 					"@level":   "trace",
 					"@message": "test message",
 					"@module":  testSubsystemModule,
@@ -49,7 +49,7 @@ func TestWithAdditionalLocationOffset(t *testing.T) {
 					// Caller line (number after colon) should match
 					// tflog.SubsystemTrace() line in testSubsystemTraceHelper
 					// function implementation.
-					"@caller":  "/tflog/options_test.go:16",
+					"@caller":  "/tflog/options_test.go:15",
 					"@level":   "trace",
 					"@message": "test message",
 					"@module":  testSubsystemModule,
@@ -66,7 +66,7 @@ func TestWithAdditionalLocationOffset(t *testing.T) {
 					// Caller line (number after colon) should match
 					// testSubsystemTraceHelper() line in test case
 					// implementation.
-					"@caller":  "/tflog/options_test.go:63",
+					"@caller":  "/tflog/options_test.go:62",
 					"@level":   "trace",
 					"@message": "test message",
 					"@module":  testSubsystemModule,
