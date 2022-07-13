@@ -3,6 +3,7 @@ package logging
 import (
 	"io"
 	"os"
+	"regexp"
 
 	"github.com/hashicorp/go-hclog"
 )
@@ -44,6 +45,84 @@ type LoggerOpts struct {
 	// copy existing fields from the root logger. This is only performed
 	// at the time of new subsystem creation.
 	IncludeRootFields bool
+
+	// OmitLogWithFieldKeys indicates that the logger should omit to write
+	// any log when any of the given keys is found within the arguments.
+	//
+	// Example:
+	//
+	//   OmitLogWithFieldKeys = `['foo', 'baz']`
+	//
+	//   log1 = `{ msg = "...", args = { 'foo', '...', 'bar', '...' }`   -> omitted
+	//   log2 = `{ msg = "...", args = { 'bar', '...' }`                 -> printed
+	//   log3 = `{ msg = "...", args = { 'baz`', '...', 'boo', '...' }`  -> omitted
+	//
+	OmitLogWithFieldKeys []string
+
+	// OmitLogWithMessageRegex indicates that the logger should omit to write
+	// any log that matches any of the given *regexp.Regexp.
+	//
+	// Example:
+	//
+	//   OmitLogWithMessageRegex = `[regexp.MustCompile("(foo|bar)")]`
+	//
+	//   log1 = `{ msg = "banana apple foo", args = {...}`     -> omitted
+	//   log2 = `{ msg = "pineapple mango", args = {...}`      -> printed
+	//   log3 = `{ msg = "pineapple mango bar", args = {...}`  -> omitted
+	//
+	OmitLogWithMessageRegex []*regexp.Regexp
+
+	// OmitLogWithMessageStrings indicates that the logger should omit to write
+	// any log that matches any of the given string.
+	//
+	// Example:
+	//
+	//   OmitLogWithMessageStrings = `['foo', 'bar']`
+	//
+	//   log1 = `{ msg = "banana apple foo", args = {...}`     -> omitted
+	//   log2 = `{ msg = "pineapple mango", args = {...}`      -> printed
+	//   log3 = `{ msg = "pineapple mango bar", args = {...}`  -> omitted
+	//
+	OmitLogWithMessageStrings []string
+
+	// MaskFieldValueWithFieldKeys indicates that the logger should mask with asterisks (`*`)
+	// any argument value where the key matches one of the given keys.
+	//
+	// Example:
+	//
+	//   MaskFieldValueWithFieldKeys = `['foo', 'baz']`
+	//
+	//   log1 = `{ msg = "...", args = { 'foo', '***', 'bar', '...' }`   -> masked value
+	//   log2 = `{ msg = "...", args = { 'bar', '...' }`                 -> as-is value
+	//   log3 = `{ msg = "...", args = { 'baz`', '***', 'boo', '...' }`  -> masked value
+	//
+	MaskFieldValueWithFieldKeys []string
+
+	// MaskMessageRegex indicates that the logger should replace, within
+	// a log message, the portion matching one of the given *regexp.Regexp.
+	//
+	// Example:
+	//
+	//   MaskMessageRegex = `[regexp.MustCompile("(foo|bar)")]`
+	//
+	//   log1 = `{ msg = "banana apple ***", args = {...}`     -> masked portion
+	//   log2 = `{ msg = "pineapple mango", args = {...}`      -> as-is
+	//   log3 = `{ msg = "pineapple mango ***", args = {...}`  -> masked portion
+	//
+	MaskMessageRegex []*regexp.Regexp
+
+	// MaskMessageStrings indicates that the logger should replace, within
+	// a log message, the portion matching one of the given strings.
+	//
+	// Example:
+	//
+	//   MaskMessageStrings = `['foo', 'bar']`
+	//
+	//   log1 = `{ msg = "banana apple ***", args = {...}`     -> masked portion
+	//   log2 = `{ msg = "pineapple mango", args = {...}`      -> as-is
+	//   log3 = `{ msg = "pineapple mango ***", args = {...}`  -> masked portion
+	//
+	MaskMessageStrings []string
 }
 
 // ApplyLoggerOpts generates a LoggerOpts out of a list of Option
@@ -111,6 +190,54 @@ func WithoutLocation() Option {
 func WithoutTimestamp() Option {
 	return func(l LoggerOpts) LoggerOpts {
 		l.IncludeTime = false
+		return l
+	}
+}
+
+// WithOmitLogWithFieldKeys appends keys to the LoggerOpts.OmitLogWithFieldKeys field.
+func WithOmitLogWithFieldKeys(keys ...string) Option {
+	return func(l LoggerOpts) LoggerOpts {
+		l.OmitLogWithFieldKeys = append(l.OmitLogWithFieldKeys, keys...)
+		return l
+	}
+}
+
+// WithOmitLogWithMessageRegex appends *regexp.Regexp to the LoggerOpts.OmitLogWithMessageRegex field.
+func WithOmitLogWithMessageRegex(expressions ...*regexp.Regexp) Option {
+	return func(l LoggerOpts) LoggerOpts {
+		l.OmitLogWithMessageRegex = append(l.OmitLogWithMessageRegex, expressions...)
+		return l
+	}
+}
+
+// WithOmitLogWithMessageStrings appends string to the LoggerOpts.OmitLogWithMessageStrings field.
+func WithOmitLogWithMessageStrings(matchingStrings ...string) Option {
+	return func(l LoggerOpts) LoggerOpts {
+		l.OmitLogWithMessageStrings = append(l.OmitLogWithMessageStrings, matchingStrings...)
+		return l
+	}
+}
+
+// WithMaskFieldValueWithFieldKeys appends keys to the LoggerOpts.MaskFieldValueWithFieldKeys field.
+func WithMaskFieldValueWithFieldKeys(keys ...string) Option {
+	return func(l LoggerOpts) LoggerOpts {
+		l.MaskFieldValueWithFieldKeys = append(l.MaskFieldValueWithFieldKeys, keys...)
+		return l
+	}
+}
+
+// WithMaskMessageRegex appends *regexp.Regexp to the LoggerOpts.MaskMessageRegex field.
+func WithMaskMessageRegex(expressions ...*regexp.Regexp) Option {
+	return func(l LoggerOpts) LoggerOpts {
+		l.MaskMessageRegex = append(l.MaskMessageRegex, expressions...)
+		return l
+	}
+}
+
+// WithMaskMessageStrings appends string to the LoggerOpts.MaskMessageStrings field.
+func WithMaskMessageStrings(matchingStrings ...string) Option {
+	return func(l LoggerOpts) LoggerOpts {
+		l.MaskMessageStrings = append(l.MaskMessageStrings, matchingStrings...)
 		return l
 	}
 }
