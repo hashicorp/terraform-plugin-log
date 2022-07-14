@@ -1,6 +1,9 @@
 package tfsdklog
 
-import "os"
+import (
+	"os"
+	"regexp"
+)
 
 func ExampleNewSubsystem() {
 	// this function calls new with the options it needs to be reliably
@@ -165,4 +168,140 @@ func ExampleSubsystemError() {
 
 	// Output:
 	// {"@level":"error","@message":"hello, world","@module":"sdk.my-subsystem","colors":["red","blue","green"],"foo":123}
+}
+
+func ExampleSubsystemMaskFieldValuesWithFieldKeys() {
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
+	exampleCtx := getExampleContext()
+
+	// non-example-setup code begins here
+	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
+	exampleCtx = SubsystemMaskFieldValuesWithFieldKeys(exampleCtx, "my-subsystem", "field1")
+
+	// all messages logged with exampleCtx will now have field1=***
+	SubsystemTrace(exampleCtx, "my-subsystem", "example log message", map[string]interface{}{
+		"field1": 123,
+		"field2": 456,
+	})
+
+	// Output:
+	// {"@level":"trace","@message":"example log message","@module":"sdk.my-subsystem","field1":"***","field2":456}
+}
+
+func ExampleSubsystemMaskMessageStrings() {
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
+	exampleCtx := getExampleContext()
+
+	// non-example-setup code begins here
+	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
+	exampleCtx = SubsystemMaskMessageStrings(exampleCtx, "my-subsystem", "my-sensitive-data")
+
+	// all messages logged with exampleCtx will now have my-sensitive-data
+	// replaced with ***
+	SubsystemTrace(exampleCtx, "my-subsystem", "example log message with my-sensitive-data masked")
+
+	// Output:
+	// {"@level":"trace","@message":"example log message with *** masked","@module":"sdk.my-subsystem"}
+}
+
+func ExampleSubsystemMaskMessageRegexes() {
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
+	exampleCtx := getExampleContext()
+
+	// non-example-setup code begins here
+	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
+	exampleCtx = SubsystemMaskMessageRegexes(exampleCtx, "my-subsystem", regexp.MustCompile(`[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}`))
+
+	// all messages logged with exampleCtx will now have strings matching the
+	// regular expression replaced with ***
+	SubsystemTrace(exampleCtx, "my-subsystem", "example log message with 1234-1234-1234-1234 masked")
+
+	// Output:
+	// {"@level":"trace","@message":"example log message with *** masked","@module":"sdk.my-subsystem"}
+}
+
+func ExampleSubsystemOmitLogWithFieldKeys() {
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
+	exampleCtx := getExampleContext()
+
+	// non-example-setup code begins here
+	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
+	exampleCtx = SubsystemOmitLogWithFieldKeys(exampleCtx, "my-subsystem", "field1")
+
+	// all messages logged with exampleCtx and using field1 will be omitted
+	SubsystemTrace(exampleCtx, "my-subsystem", "example log message", map[string]interface{}{
+		"field1": 123,
+		"field2": 456,
+	})
+
+	// Output:
+	//
+}
+
+func ExampleSubsystemOmitLogWithMessageStrings() {
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
+	exampleCtx := getExampleContext()
+
+	// non-example-setup code begins here
+	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
+	exampleCtx = SubsystemOmitLogWithMessageStrings(exampleCtx, "my-subsystem", "my-sensitive-data")
+
+	// all messages logged with exampleCtx will now have my-sensitive-data
+	// entries omitted
+	SubsystemTrace(exampleCtx, "my-subsystem", "example log message with my-sensitive-data masked")
+
+	// Output:
+	//
+}
+
+func ExampleSubsystemOmitLogWithMessageRegexes() {
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
+	exampleCtx := getExampleContext()
+
+	// non-example-setup code begins here
+	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
+	exampleCtx = SubsystemOmitLogWithMessageRegexes(exampleCtx, "my-subsystem", regexp.MustCompile(`[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}`))
+
+	// all messages logged with exampleCtx will be omitted if they have a
+	// string matching the regular expression
+	SubsystemTrace(exampleCtx, "my-subsystem", "example log message with 1234-1234-1234-1234 masked")
+
+	// Output:
+	//
 }
