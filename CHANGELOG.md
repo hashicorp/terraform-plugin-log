@@ -1,3 +1,12 @@
+# 0.5.0 (July 14, 2022)
+
+FEATURES:
+
+* tflog: Added `SubsystemWithOmitLogWithFieldKeys()`, `SubsystemWithOmitLogWithMessageRegex()`, `SubsystemWithOmitLogMatchingString()`, `SubsystemWithMaskFieldValueWithFieldKeys()`, `SubsystemWithMaskMessageRegex()` and `SubsystemWithMaskLogMatchingString()` functions, which provide log omission and log masking filtering, based on message and argument keys, for provider subsystem loggers ([#71](https://github.com/hashicorp/terraform-plugin-log/issues/71))
+* tflog: Added `WithOmitLogWithFieldKeys()`, `WithOmitLogWithMessageRegex()`, `WithOmitLogMatchingString()`, `WithMaskFieldValueWithFieldKeys()`, `WithMaskMessageRegex()` and `WithMaskLogMatchingString()` functions, which provide log omission and log masking filtering, based on message and argument keys, for the provider root logger ([#71](https://github.com/hashicorp/terraform-plugin-log/issues/71))
+* tfsdklog: Added `SubsystemWithOmitLogWithFieldKeys()`, `SubsystemWithOmitLogWithMessageRegex()`, `SubsystemWithOmitLogMatchingString()`, `SubsystemWithMaskFieldValueWithFieldKeys()`, `SubsystemWithMaskMessageRegex()`and `SubsystemWithMaskLogMatchingString()` functions, which provide log omission and log masking filtering, based on message and argument keys, for SDK subsystem loggers ([#71](https://github.com/hashicorp/terraform-plugin-log/issues/71))
+* tfsdklog: Added `WithOmitLogWithFieldKeys()`, `WithOmitLogWithMessageRegex()`, `WithOmitLogMatchingString()`, `WithMaskFieldValueWithFieldKeys()`, `WithMaskMessageRegex()` and `WithMaskLogMatchingString()` functions, which provide log omission and log masking filtering, based on message and argument keys, for the SDK root logger ([#71](https://github.com/hashicorp/terraform-plugin-log/issues/71))
+
 # 0.4.1 (June 6, 2022)
 
 NOTES:
