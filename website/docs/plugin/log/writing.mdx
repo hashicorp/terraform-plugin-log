@@ -92,7 +92,7 @@ tflog.Trace(ctx, "executing API request", map[string]interface{}{
 
 Loggers are transported using a `context.Context` type, so injecting a variable into a logger returns a new `context.Context` containing the modified logger. Subsequent calls to `tflog` with that logger will implicitly include the variable.
 
-Use [`tflog.With()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#With) to attach variables to a logger.
+Use [`tflog.SetField()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SetField) to attach variables to a logger.
 
 ```go
 // overwrite logger to include new `url` variable
@@ -152,7 +152,7 @@ Logging or adding variables to subsystem loggers requires separate function call
 * [`tflog.SubsystemInfo()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SubsystemInfo): Equivalent to [`tflog.Info()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#Info), but using a subsystem logger.
 * [`tflog.SubsystemDebug()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SubsystemDebug): Equivalent to [`tflog.Debug()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#Debug), but using a subsystem logger.
 * [`tflog.SubsystemTrace()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SubsystemTrace): Equivalent to [`tflog.Trace()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#Trace), but using a subsystem logger.
-* [`tflog.SubsystemWith()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SubsystemWith): Equivalent to [`tflog.With()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#With), but using a subsystem logger.
+* [`tflog.SubsystemSetField()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SubsystemSetField): Equivalent to [`tflog.SetField()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SetField), but using a subsystem logger.
 
 For example, use [`tflog.SubsystemDebug()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SubsystemDebug) to write a debug level log with a specific subsystem.
 
@@ -162,7 +162,7 @@ tflog.SubsystemDebug(ctx, "my-subsystem", "writing to a subsystem", map[string]i
 })
 ```
 
-Use [`tflog.SubsystemWith()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SubsystemWith) to attach variables to a specific subsystem.
+Use [`tflog.SubsystemSetField()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SubsystemSetField) to attach variables to a specific subsystem.
 
 ```go
 // overwrite logger to include new `url` variable

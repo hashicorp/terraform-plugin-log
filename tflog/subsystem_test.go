@@ -16,7 +16,7 @@ const (
 	testSubsystemModule = "provider." + testSubsystem
 )
 
-func TestSubsystemWith(t *testing.T) {
+func TestSubsystemSetField(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {

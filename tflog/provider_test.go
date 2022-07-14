@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-func TestWith(t *testing.T) {
+func TestSetField(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
