@@ -47,15 +47,15 @@ type LoggerOpts struct {
 	IncludeRootFields bool
 
 	// OmitLogWithFieldKeys indicates that the logger should omit to write
-	// any log when any of the given keys is found within the arguments.
+	// any log when any of the given keys is found within the fields.
 	//
 	// Example:
 	//
 	//   OmitLogWithFieldKeys = `['foo', 'baz']`
 	//
-	//   log1 = `{ msg = "...", args = { 'foo', '...', 'bar', '...' }`   -> omitted
-	//   log2 = `{ msg = "...", args = { 'bar', '...' }`                 -> printed
-	//   log3 = `{ msg = "...", args = { 'baz`', '...', 'boo', '...' }`  -> omitted
+	//   log1 = `{ msg = "...", fields = { 'foo', '...', 'bar', '...' }`   -> omitted
+	//   log2 = `{ msg = "...", fields = { 'bar', '...' }`                 -> printed
+	//   log3 = `{ msg = "...", fields = { 'baz`', '...', 'boo', '...' }`  -> omitted
 	//
 	OmitLogWithFieldKeys []string
 
@@ -66,9 +66,9 @@ type LoggerOpts struct {
 	//
 	//   OmitLogWithMessageRegex = `[regexp.MustCompile("(foo|bar)")]`
 	//
-	//   log1 = `{ msg = "banana apple foo", args = {...}`     -> omitted
-	//   log2 = `{ msg = "pineapple mango", args = {...}`      -> printed
-	//   log3 = `{ msg = "pineapple mango bar", args = {...}`  -> omitted
+	//   log1 = `{ msg = "banana apple foo", fields = {...}`     -> omitted
+	//   log2 = `{ msg = "pineapple mango", fields = {...}`      -> printed
+	//   log3 = `{ msg = "pineapple mango bar", fields = {...}`  -> omitted
 	//
 	OmitLogWithMessageRegex []*regexp.Regexp
 
@@ -79,22 +79,22 @@ type LoggerOpts struct {
 	//
 	//   OmitLogWithMessageStrings = `['foo', 'bar']`
 	//
-	//   log1 = `{ msg = "banana apple foo", args = {...}`     -> omitted
-	//   log2 = `{ msg = "pineapple mango", args = {...}`      -> printed
-	//   log3 = `{ msg = "pineapple mango bar", args = {...}`  -> omitted
+	//   log1 = `{ msg = "banana apple foo", fields = {...}`     -> omitted
+	//   log2 = `{ msg = "pineapple mango", fields = {...}`      -> printed
+	//   log3 = `{ msg = "pineapple mango bar", fields = {...}`  -> omitted
 	//
 	OmitLogWithMessageStrings []string
 
 	// MaskFieldValueWithFieldKeys indicates that the logger should mask with asterisks (`*`)
-	// any argument value where the key matches one of the given keys.
+	// any field value where the key matches one of the given keys.
 	//
 	// Example:
 	//
 	//   MaskFieldValueWithFieldKeys = `['foo', 'baz']`
 	//
-	//   log1 = `{ msg = "...", args = { 'foo', '***', 'bar', '...' }`   -> masked value
-	//   log2 = `{ msg = "...", args = { 'bar', '...' }`                 -> as-is value
-	//   log3 = `{ msg = "...", args = { 'baz`', '***', 'boo', '...' }`  -> masked value
+	//   log1 = `{ msg = "...", fields = { 'foo', '***', 'bar', '...' }`   -> masked value
+	//   log2 = `{ msg = "...", fields = { 'bar', '...' }`                 -> as-is value
+	//   log3 = `{ msg = "...", fields = { 'baz`', '***', 'boo', '...' }`  -> masked value
 	//
 	MaskFieldValueWithFieldKeys []string
 
@@ -105,9 +105,9 @@ type LoggerOpts struct {
 	//
 	//   MaskMessageRegex = `[regexp.MustCompile("(foo|bar)")]`
 	//
-	//   log1 = `{ msg = "banana apple ***", args = {...}`     -> masked portion
-	//   log2 = `{ msg = "pineapple mango", args = {...}`      -> as-is
-	//   log3 = `{ msg = "pineapple mango ***", args = {...}`  -> masked portion
+	//   log1 = `{ msg = "banana apple ***", fields = {...}`     -> masked portion
+	//   log2 = `{ msg = "pineapple mango", fields = {...}`      -> as-is
+	//   log3 = `{ msg = "pineapple mango ***", fields = {...}`  -> masked portion
 	//
 	MaskMessageRegex []*regexp.Regexp
 
@@ -118,9 +118,9 @@ type LoggerOpts struct {
 	//
 	//   MaskMessageStrings = `['foo', 'bar']`
 	//
-	//   log1 = `{ msg = "banana apple ***", args = {...}`     -> masked portion
-	//   log2 = `{ msg = "pineapple mango", args = {...}`      -> as-is
-	//   log3 = `{ msg = "pineapple mango ***", args = {...}`  -> masked portion
+	//   log1 = `{ msg = "banana apple ***", fields = {...}`     -> masked portion
+	//   log2 = `{ msg = "pineapple mango", fields = {...}`      -> as-is
+	//   log3 = `{ msg = "pineapple mango ***", fields = {...}`  -> masked portion
 	//
 	MaskMessageStrings []string
 }

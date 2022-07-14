@@ -74,7 +74,7 @@ func NewSubsystem(ctx context.Context, subsystem string, options ...logging.Opti
 }
 
 // SubsystemWith returns a new context.Context that has a modified logger for
-// the specified subsystem in it which will include key and value as arguments
+// the specified subsystem in it which will include key and value as fields
 // in all its log output.
 func SubsystemWith(ctx context.Context, subsystem, key string, value interface{}) context.Context {
 	logger := logging.GetSDKSubsystemLogger(ctx, subsystem)
@@ -232,7 +232,7 @@ func subsystemOmitOrMask(ctx context.Context, logger hclog.Logger, subsystem str
 
 // SubsystemWithOmitLogWithFieldKeys returns a new context.Context that has a modified logger
 // that will omit to write any log when any of the given keys is found
-// within the arguments.
+// within its fields.
 //
 // Each call to this function is additive:
 // the keys to omit by are added to the existing configuration.
@@ -241,9 +241,9 @@ func subsystemOmitOrMask(ctx context.Context, logger hclog.Logger, subsystem str
 //
 //   configuration = `['foo', 'baz']`
 //
-//   log1 = `{ msg = "...", args = { 'foo', '...', 'bar', '...' }`   -> omitted
-//   log2 = `{ msg = "...", args = { 'bar', '...' }`                 -> printed
-//   log3 = `{ msg = "...", args = { 'baz`', '...', 'boo', '...' }`  -> omitted
+//   log1 = `{ msg = "...", fields = { 'foo', '...', 'bar', '...' }`   -> omitted
+//   log2 = `{ msg = "...", fields = { 'bar', '...' }`                 -> printed
+//   log3 = `{ msg = "...", fields = { 'baz`', '...', 'boo', '...' }`  -> omitted
 //
 func SubsystemWithOmitLogWithFieldKeys(ctx context.Context, subsystem string, keys ...string) context.Context {
 	lOpts := logging.GetSDKSubsystemTFLoggerOpts(ctx, subsystem)
@@ -264,9 +264,9 @@ func SubsystemWithOmitLogWithFieldKeys(ctx context.Context, subsystem string, ke
 //
 //   configuration = `[regexp.MustCompile("(foo|bar)")]`
 //
-//   log1 = `{ msg = "banana apple foo", args = {...}`     -> omitted
-//   log2 = `{ msg = "pineapple mango", args = {...}`      -> printed
-//   log3 = `{ msg = "pineapple mango bar", args = {...}`  -> omitted
+//   log1 = `{ msg = "banana apple foo", fields = {...}`     -> omitted
+//   log2 = `{ msg = "pineapple mango", fields = {...}`      -> printed
+//   log3 = `{ msg = "pineapple mango bar", fields = {...}`  -> omitted
 //
 func SubsystemWithOmitLogWithMessageRegex(ctx context.Context, subsystem string, expressions ...*regexp.Regexp) context.Context {
 	lOpts := logging.GetSDKSubsystemTFLoggerOpts(ctx, subsystem)
@@ -286,9 +286,9 @@ func SubsystemWithOmitLogWithMessageRegex(ctx context.Context, subsystem string,
 //
 //   configuration = `['foo', 'bar']`
 //
-//   log1 = `{ msg = "banana apple foo", args = {...}`     -> omitted
-//   log2 = `{ msg = "pineapple mango", args = {...}`      -> printed
-//   log3 = `{ msg = "pineapple mango bar", args = {...}`  -> omitted
+//   log1 = `{ msg = "banana apple foo", fields = {...}`     -> omitted
+//   log2 = `{ msg = "pineapple mango", fields = {...}`      -> printed
+//   log3 = `{ msg = "pineapple mango bar", fields = {...}`  -> omitted
 //
 func SubsystemWithOmitLogMatchingString(ctx context.Context, subsystem string, matchingStrings ...string) context.Context {
 	lOpts := logging.GetSDKSubsystemTFLoggerOpts(ctx, subsystem)
@@ -299,7 +299,7 @@ func SubsystemWithOmitLogMatchingString(ctx context.Context, subsystem string, m
 }
 
 // SubsystemWithMaskFieldValueWithFieldKeys returns a new context.Context that has a modified logger
-// that masks (replaces) with asterisks (`***`) any argument value where the
+// that masks (replaces) with asterisks (`***`) any field value where the
 // key matches one of the given keys.
 //
 // Each call to this function is additive:
@@ -309,9 +309,9 @@ func SubsystemWithOmitLogMatchingString(ctx context.Context, subsystem string, m
 //
 //   configuration = `['foo', 'baz']`
 //
-//   log1 = `{ msg = "...", args = { 'foo', '***', 'bar', '...' }`   -> masked value
-//   log2 = `{ msg = "...", args = { 'bar', '...' }`                 -> as-is value
-//   log3 = `{ msg = "...", args = { 'baz`', '***', 'boo', '...' }`  -> masked value
+//   log1 = `{ msg = "...", fields = { 'foo', '***', 'bar', '...' }`   -> masked value
+//   log2 = `{ msg = "...", fields = { 'bar', '...' }`                 -> as-is value
+//   log3 = `{ msg = "...", fields = { 'baz`', '***', 'boo', '...' }`  -> masked value
 //
 func SubsystemWithMaskFieldValueWithFieldKeys(ctx context.Context, subsystem string, keys ...string) context.Context {
 	lOpts := logging.GetSDKSubsystemTFLoggerOpts(ctx, subsystem)
@@ -332,9 +332,9 @@ func SubsystemWithMaskFieldValueWithFieldKeys(ctx context.Context, subsystem str
 //
 //   configuration = `[regexp.MustCompile("(foo|bar)")]`
 //
-//   log1 = `{ msg = "banana apple ***", args = {...}`     -> masked portion
-//   log2 = `{ msg = "pineapple mango", args = {...}`      -> as-is
-//   log3 = `{ msg = "pineapple mango ***", args = {...}`  -> masked portion
+//   log1 = `{ msg = "banana apple ***", fields = {...}`     -> masked portion
+//   log2 = `{ msg = "pineapple mango", fields = {...}`      -> as-is
+//   log3 = `{ msg = "pineapple mango ***", fields = {...}`  -> masked portion
 //
 func SubsystemWithMaskMessageRegex(ctx context.Context, subsystem string, expressions ...*regexp.Regexp) context.Context {
 	lOpts := logging.GetSDKSubsystemTFLoggerOpts(ctx, subsystem)
@@ -355,9 +355,9 @@ func SubsystemWithMaskMessageRegex(ctx context.Context, subsystem string, expres
 //
 //   configuration = `['foo', 'bar']`
 //
-//   log1 = `{ msg = "banana apple ***", args = {...}`     -> masked portion
-//   log2 = `{ msg = "pineapple mango", args = {...}`      -> as-is
-//   log3 = `{ msg = "pineapple mango ***", args = {...}`  -> masked portion
+//   log1 = `{ msg = "banana apple ***", fields = {...}`     -> masked portion
+//   log2 = `{ msg = "pineapple mango", fields = {...}`      -> as-is
+//   log3 = `{ msg = "pineapple mango ***", fields = {...}`  -> masked portion
 //
 func SubsystemWithMaskLogMatchingString(ctx context.Context, subsystem string, matchingStrings ...string) context.Context {
 	lOpts := logging.GetSDKSubsystemTFLoggerOpts(ctx, subsystem)
