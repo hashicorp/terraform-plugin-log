@@ -60,7 +60,7 @@ func ExampleNewSubsystem_withLevel() {
 	// {"@level":"warn","@message":"hello, world","@module":"provider.my-subsystem","foo":123}
 }
 
-func ExampleSubsystemWith() {
+func ExampleSubsystemSetField() {
 	// virtually no plugin developers will need to worry about
 	// instantiating loggers, as the libraries they're using will take care
 	// of that, but we're not using those libraries in these examples. So
@@ -76,7 +76,7 @@ func ExampleSubsystemWith() {
 	// non-example-setup code begins here
 
 	// associate a key and value with all lines logged by the sub-logger
-	derivedCtx := SubsystemWith(exampleCtx, "my-subsystem", "foo", 123)
+	derivedCtx := SubsystemSetField(exampleCtx, "my-subsystem", "foo", 123)
 
 	// all messages logged with derivedCtx will now have foo=123
 	// automatically included

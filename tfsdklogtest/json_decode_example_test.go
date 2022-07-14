@@ -14,7 +14,7 @@ func ExampleMultilineJSONDecode() {
 	ctx := RootLogger(context.Background(), &output)
 
 	// Root SDK logger is now available for usage, such as writing entries,
-	// calling With(), or calling NewSubsystem().
+	// calling SetField(), or calling NewSubsystem().
 	tfsdklog.Trace(ctx, "entry 1")
 	tfsdklog.Trace(ctx, "entry 2")
 

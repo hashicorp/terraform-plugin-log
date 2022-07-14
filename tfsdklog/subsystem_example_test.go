@@ -52,7 +52,7 @@ func ExampleNewSubsystem_withLevel() {
 	// {"@level":"warn","@message":"hello, world","@module":"sdk.my-subsystem","foo":123}
 }
 
-func ExampleSubsystemWith() {
+func ExampleSubsystemSetField() {
 	// this function calls new with the options it needs to be reliably
 	// tested. framework and sdk developers should call new, inject the
 	// resulting context in their framework, and then pass it around. this
@@ -62,7 +62,7 @@ func ExampleSubsystemWith() {
 	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
 
 	// non-example-setup code begins here
-	derivedCtx := SubsystemWith(exampleCtx, "my-subsystem", "foo", 123)
+	derivedCtx := SubsystemSetField(exampleCtx, "my-subsystem", "foo", 123)
 
 	// all messages logged with derivedCtx will now have foo=123
 	// automatically included

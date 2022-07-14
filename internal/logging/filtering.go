@@ -12,12 +12,12 @@ const logMaskingReplacementString = "***"
 // ShouldOmit takes a log's *string message and slices of arguments,
 // and determines, based on the LoggerOpts configuration, if the
 // log should be omitted (i.e. prevent it to be printed on the final writer).
-func (lo LoggerOpts) ShouldOmit(msg *string, argSlices ...[]interface{}) bool {
+func (lo LoggerOpts) ShouldOmit(msg *string, hclogArgSlices ...[]interface{}) bool {
 	// Omit log if any of the configured keys is found
 	// either in the logger implied arguments,
 	// or in the additional arguments
 	if len(lo.OmitLogWithFieldKeys) > 0 {
-		for _, args := range argSlices {
+		for _, args := range hclogArgSlices {
 			argKeys := hclogutils.ArgsToKeys(args)
 			if argKeysContain(argKeys, lo.OmitLogWithFieldKeys) {
 				return true
@@ -26,8 +26,8 @@ func (lo LoggerOpts) ShouldOmit(msg *string, argSlices ...[]interface{}) bool {
 	}
 
 	// Omit log if any of the configured regexp matches the log message
-	if len(lo.OmitLogWithMessageRegex) > 0 {
-		for _, r := range lo.OmitLogWithMessageRegex {
+	if len(lo.OmitLogWithMessageRegexes) > 0 {
+		for _, r := range lo.OmitLogWithMessageRegexes {
 			if r.MatchString(*msg) {
 				return true
 			}
@@ -51,10 +51,10 @@ func (lo LoggerOpts) ShouldOmit(msg *string, argSlices ...[]interface{}) bool {
 // based on the LoggerOpts configuration.
 //
 // Note that the given input is changed-in-place by this method.
-func (lo LoggerOpts) ApplyMask(msg *string, argSlices ...[]interface{}) {
-	if len(lo.MaskFieldValueWithFieldKeys) > 0 {
-		for _, k := range lo.MaskFieldValueWithFieldKeys {
-			for _, args := range argSlices {
+func (lo LoggerOpts) ApplyMask(msg *string, hclogArgSlices ...[]interface{}) {
+	if len(lo.MaskFieldValuesWithFieldKeys) > 0 {
+		for _, k := range lo.MaskFieldValuesWithFieldKeys {
+			for _, args := range hclogArgSlices {
 				// Here we loop `i` with steps of 2, starting from position 1 (i.e. `1, 3, 5, 7...`).
 				// We then look up the key for each argument, by looking at `i-1`.
 				// This ensures that in case of malformed arg slices that don't have
@@ -77,8 +77,8 @@ func (lo LoggerOpts) ApplyMask(msg *string, argSlices ...[]interface{}) {
 
 	// Replace any part of the log message matching any of the configured regexp,
 	// with a masking replacement string
-	if len(lo.MaskMessageRegex) > 0 {
-		for _, r := range lo.MaskMessageRegex {
+	if len(lo.MaskMessageRegexes) > 0 {
+		for _, r := range lo.MaskMessageRegexes {
 			*msg = r.ReplaceAllString(*msg, logMaskingReplacementString)
 		}
 	}

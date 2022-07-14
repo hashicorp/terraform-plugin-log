@@ -175,13 +175,13 @@ func TestWithRootFields(t *testing.T) {
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
 
 			for key, value := range testCase.rootFields {
-				ctx = tfsdklog.With(ctx, key, value)
+				ctx = tfsdklog.SetField(ctx, key, value)
 			}
 
 			ctx = tfsdklog.NewSubsystem(ctx, testSubsystem, tfsdklog.WithRootFields())
 
 			for key, value := range testCase.subsystemFields {
-				ctx = tfsdklog.SubsystemWith(ctx, testSubsystem, key, value)
+				ctx = tfsdklog.SubsystemSetField(ctx, testSubsystem, key, value)
 			}
 
 			tfsdklog.SubsystemTrace(ctx, testSubsystem, testCase.logMessage)

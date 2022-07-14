@@ -15,7 +15,7 @@ func getExampleContext() context.Context {
 		WithoutLocation(), logging.WithoutTimestamp())
 }
 
-func ExampleWith() {
+func ExampleSetField() {
 	// virtually no plugin developers will need to worry about
 	// instantiating loggers, as the libraries they're using will take care
 	// of that, but we're not using those libraries in these examples. So
@@ -26,7 +26,7 @@ func ExampleWith() {
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here
-	derivedCtx := With(exampleCtx, "foo", 123)
+	derivedCtx := SetField(exampleCtx, "foo", 123)
 
 	// all messages logged with derivedCtx will now have foo=123
 	// automatically included

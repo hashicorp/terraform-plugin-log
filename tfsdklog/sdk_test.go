@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tfsdklog"
 )
 
-func TestWith(t *testing.T) {
+func TestSetField(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
@@ -81,7 +81,7 @@ func TestWith(t *testing.T) {
 
 			ctx := context.Background()
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
-			ctx = tfsdklog.With(ctx, testCase.key, testCase.value)
+			ctx = tfsdklog.SetField(ctx, testCase.key, testCase.value)
 
 			tfsdklog.Trace(ctx, testCase.logMessage, testCase.additionalFields...)
 
@@ -565,7 +565,7 @@ func TestError(t *testing.T) {
 
 const testLogMsg = "System FOO has caused error BAR because of incorrectly configured BAZ"
 
-func TestWithOmitLogWithFieldKeys(t *testing.T) {
+func TestOmitLogWithFieldKeys(t *testing.T) {
 	testCases := map[string]struct {
 		msg              string
 		additionalFields []map[string]interface{}
@@ -633,7 +633,7 @@ func TestWithOmitLogWithFieldKeys(t *testing.T) {
 
 			ctx := context.Background()
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
-			ctx = tfsdklog.WithOmitLogWithFieldKeys(ctx, testCase.omitLogKeys...)
+			ctx = tfsdklog.OmitLogWithFieldKeys(ctx, testCase.omitLogKeys...)
 
 			tfsdklog.Warn(ctx, testCase.msg, testCase.additionalFields...)
 
@@ -649,7 +649,7 @@ func TestWithOmitLogWithFieldKeys(t *testing.T) {
 	}
 }
 
-func TestWithOmitLogWithMessageRegex(t *testing.T) {
+func TestOmitLogWithMessageRegexes(t *testing.T) {
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -717,7 +717,7 @@ func TestWithOmitLogWithMessageRegex(t *testing.T) {
 
 			ctx := context.Background()
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
-			ctx = tfsdklog.WithOmitLogWithMessageRegex(ctx, testCase.omitLogMatchingRegexp...)
+			ctx = tfsdklog.OmitLogWithMessageRegexes(ctx, testCase.omitLogMatchingRegexp...)
 
 			tfsdklog.Debug(ctx, testCase.msg, testCase.additionalFields...)
 
@@ -733,7 +733,7 @@ func TestWithOmitLogWithMessageRegex(t *testing.T) {
 	}
 }
 
-func TestWithOmitLogMatchingString(t *testing.T) {
+func TestOmitLogWithMessageStrings(t *testing.T) {
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -801,7 +801,7 @@ func TestWithOmitLogMatchingString(t *testing.T) {
 
 			ctx := context.Background()
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
-			ctx = tfsdklog.WithOmitLogMatchingString(ctx, testCase.omitLogMatchingString...)
+			ctx = tfsdklog.OmitLogWithMessageStrings(ctx, testCase.omitLogMatchingString...)
 
 			tfsdklog.Debug(ctx, testCase.msg, testCase.additionalFields...)
 
@@ -817,7 +817,7 @@ func TestWithOmitLogMatchingString(t *testing.T) {
 	}
 }
 
-func TestWithMaskFieldValueWithFieldKeys(t *testing.T) {
+func TestMaskFieldValuesWithFieldKeys(t *testing.T) {
 	testCases := map[string]struct {
 		msg              string
 		additionalFields []map[string]interface{}
@@ -893,7 +893,7 @@ func TestWithMaskFieldValueWithFieldKeys(t *testing.T) {
 
 			ctx := context.Background()
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
-			ctx = tfsdklog.WithMaskFieldValueWithFieldKeys(ctx, testCase.maskLogKeys...)
+			ctx = tfsdklog.MaskFieldValuesWithFieldKeys(ctx, testCase.maskLogKeys...)
 
 			tfsdklog.Error(ctx, testCase.msg, testCase.additionalFields...)
 
@@ -909,7 +909,7 @@ func TestWithMaskFieldValueWithFieldKeys(t *testing.T) {
 	}
 }
 
-func TestWithMaskMessageRegex(t *testing.T) {
+func TestMaskMessageRegexes(t *testing.T) {
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -985,7 +985,7 @@ func TestWithMaskMessageRegex(t *testing.T) {
 
 			ctx := context.Background()
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
-			ctx = tfsdklog.WithMaskMessageRegex(ctx, testCase.maskLogMatchingRegexp...)
+			ctx = tfsdklog.MaskMessageRegexes(ctx, testCase.maskLogMatchingRegexp...)
 
 			tfsdklog.Trace(ctx, testCase.msg, testCase.additionalFields...)
 
@@ -1001,7 +1001,7 @@ func TestWithMaskMessageRegex(t *testing.T) {
 	}
 }
 
-func TestWithMaskLogMatchingString(t *testing.T) {
+func TestMaskMessageStrings(t *testing.T) {
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -1077,7 +1077,7 @@ func TestWithMaskLogMatchingString(t *testing.T) {
 
 			ctx := context.Background()
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
-			ctx = tfsdklog.WithMaskLogMatchingString(ctx, testCase.maskLogMatchingString...)
+			ctx = tfsdklog.MaskMessageStrings(ctx, testCase.maskLogMatchingString...)
 
 			tfsdklog.Info(ctx, testCase.msg, testCase.additionalFields...)
 

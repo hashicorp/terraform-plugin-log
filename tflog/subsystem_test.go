@@ -16,7 +16,7 @@ const (
 	testSubsystemModule = "provider." + testSubsystem
 )
 
-func TestSubsystemWith(t *testing.T) {
+func TestSubsystemSetField(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
@@ -87,7 +87,7 @@ func TestSubsystemWith(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
-			ctx = tflog.SubsystemWith(ctx, testSubsystem, testCase.key, testCase.value)
+			ctx = tflog.SubsystemSetField(ctx, testSubsystem, testCase.key, testCase.value)
 
 			tflog.SubsystemTrace(ctx, testSubsystem, testCase.logMessage, testCase.additionalFields...)
 
@@ -574,7 +574,7 @@ func TestSubsystemError(t *testing.T) {
 	}
 }
 
-func TestSubsystemWithOmitLogWithFieldKeys(t *testing.T) {
+func TestSubsystemOmitLogWithFieldKeys(t *testing.T) {
 	testCases := map[string]struct {
 		msg              string
 		additionalFields []map[string]interface{}
@@ -643,7 +643,7 @@ func TestSubsystemWithOmitLogWithFieldKeys(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
-			ctx = tflog.SubsystemWithOmitLogWithFieldKeys(ctx, testSubsystem, testCase.omitLogKeys...)
+			ctx = tflog.SubsystemOmitLogWithFieldKeys(ctx, testSubsystem, testCase.omitLogKeys...)
 
 			tflog.SubsystemWarn(ctx, testSubsystem, testCase.msg, testCase.additionalFields...)
 
@@ -659,7 +659,7 @@ func TestSubsystemWithOmitLogWithFieldKeys(t *testing.T) {
 	}
 }
 
-func TestSubsystemWithOmitLogWithMessageRegex(t *testing.T) {
+func TestSubsystemOmitLogWithMessageRegexes(t *testing.T) {
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -728,7 +728,7 @@ func TestSubsystemWithOmitLogWithMessageRegex(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
-			ctx = tflog.SubsystemWithOmitLogWithMessageRegex(ctx, testSubsystem, testCase.omitLogMatchingRegexp...)
+			ctx = tflog.SubsystemOmitLogWithMessageRegexes(ctx, testSubsystem, testCase.omitLogMatchingRegexp...)
 
 			tflog.SubsystemDebug(ctx, testSubsystem, testCase.msg, testCase.additionalFields...)
 
@@ -744,7 +744,7 @@ func TestSubsystemWithOmitLogWithMessageRegex(t *testing.T) {
 	}
 }
 
-func TestSubsystemWithOmitLogMatchingString(t *testing.T) {
+func TestSubsystemOmitLogWithMessageStrings(t *testing.T) {
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -813,7 +813,7 @@ func TestSubsystemWithOmitLogMatchingString(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
-			ctx = tflog.SubsystemWithOmitLogMatchingString(ctx, testSubsystem, testCase.omitLogMatchingString...)
+			ctx = tflog.SubsystemOmitLogWithMessageStrings(ctx, testSubsystem, testCase.omitLogMatchingString...)
 
 			tflog.SubsystemDebug(ctx, testSubsystem, testCase.msg, testCase.additionalFields...)
 
@@ -829,7 +829,7 @@ func TestSubsystemWithOmitLogMatchingString(t *testing.T) {
 	}
 }
 
-func TestSubsystemWithMaskFieldValueWithFieldKeys(t *testing.T) {
+func TestSubsystemMaskFieldValuesWithFieldKeys(t *testing.T) {
 	testCases := map[string]struct {
 		msg              string
 		additionalFields []map[string]interface{}
@@ -906,7 +906,7 @@ func TestSubsystemWithMaskFieldValueWithFieldKeys(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
-			ctx = tflog.SubsystemWithMaskFieldValueWithFieldKeys(ctx, testSubsystem, testCase.maskLogKeys...)
+			ctx = tflog.SubsystemMaskFieldValuesWithFieldKeys(ctx, testSubsystem, testCase.maskLogKeys...)
 
 			tflog.SubsystemError(ctx, testSubsystem, testCase.msg, testCase.additionalFields...)
 
@@ -922,7 +922,7 @@ func TestSubsystemWithMaskFieldValueWithFieldKeys(t *testing.T) {
 	}
 }
 
-func TestSubsystemWithMaskMessageRegex(t *testing.T) {
+func TestSubsystemMaskMessageRegexes(t *testing.T) {
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -999,7 +999,7 @@ func TestSubsystemWithMaskMessageRegex(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
-			ctx = tflog.SubsystemWithMaskMessageRegex(ctx, testSubsystem, testCase.maskLogMatchingRegexp...)
+			ctx = tflog.SubsystemMaskMessageRegexes(ctx, testSubsystem, testCase.maskLogMatchingRegexp...)
 
 			tflog.SubsystemTrace(ctx, testSubsystem, testCase.msg, testCase.additionalFields...)
 
@@ -1015,7 +1015,7 @@ func TestSubsystemWithMaskMessageRegex(t *testing.T) {
 	}
 }
 
-func TestSubsystemWithMaskLogMatchingString(t *testing.T) {
+func TestSubsystemMaskMessageStrings(t *testing.T) {
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -1092,7 +1092,7 @@ func TestSubsystemWithMaskLogMatchingString(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 			ctx = tflog.NewSubsystem(ctx, testSubsystem)
-			ctx = tflog.SubsystemWithMaskLogMatchingString(ctx, testSubsystem, testCase.maskLogMatchingString...)
+			ctx = tflog.SubsystemMaskMessageStrings(ctx, testSubsystem, testCase.maskLogMatchingString...)
 
 			tflog.SubsystemInfo(ctx, testSubsystem, testCase.msg, testCase.additionalFields...)
 

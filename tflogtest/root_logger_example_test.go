@@ -14,7 +14,7 @@ func ExampleRootLogger() {
 	ctx := RootLogger(context.Background(), &output)
 
 	// Root provider logger is now available for usage, such as writing
-	// entries, calling With(), or calling NewSubsystem().
+	// entries, calling SetField(), or calling NewSubsystem().
 	tflog.Trace(ctx, "hello, world", map[string]interface{}{
 		"foo":    123,
 		"colors": []string{"red", "blue", "green"},
