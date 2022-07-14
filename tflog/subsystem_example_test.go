@@ -60,7 +60,7 @@ func ExampleNewSubsystem_withLevel() {
 	// {"@level":"warn","@message":"hello, world","@module":"provider.my-subsystem","foo":123}
 }
 
-func ExampleSubsystemWith() {
+func ExampleSubsystemSetField() {
 	// virtually no plugin developers will need to worry about
 	// instantiating loggers, as the libraries they're using will take care
 	// of that, but we're not using those libraries in these examples. So

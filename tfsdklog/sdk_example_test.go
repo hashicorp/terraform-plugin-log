@@ -13,7 +13,7 @@ func getExampleContext() context.Context {
 		WithLevel(hclog.Trace), WithoutLocation(), logging.WithoutTimestamp())
 }
 
-func ExampleWith() {
+func ExampleSetField() {
 	// this function calls New with the options it needs to be reliably
 	// tested. Framework and SDK developers should call New, inject the
 	// resulting context in their framework, and then pass it around. This

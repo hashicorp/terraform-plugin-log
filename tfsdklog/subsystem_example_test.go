@@ -52,7 +52,7 @@ func ExampleNewSubsystem_withLevel() {
 	// {"@level":"warn","@message":"hello, world","@module":"sdk.my-subsystem","foo":123}
 }
 
-func ExampleSubsystemWith() {
+func ExampleSubsystemSetField() {
 	// this function calls new with the options it needs to be reliably
 	// tested. framework and sdk developers should call new, inject the
 	// resulting context in their framework, and then pass it around. this
