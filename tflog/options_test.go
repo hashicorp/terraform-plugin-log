@@ -175,13 +175,13 @@ func TestWithRootFields(t *testing.T) {
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
 
 			for key, value := range testCase.rootFields {
-				ctx = tflog.With(ctx, key, value)
+				ctx = tflog.SetField(ctx, key, value)
 			}
 
 			ctx = tflog.NewSubsystem(ctx, testSubsystem, tflog.WithRootFields())
 
 			for key, value := range testCase.subsystemFields {
-				ctx = tflog.SubsystemWith(ctx, testSubsystem, key, value)
+				ctx = tflog.SubsystemSetField(ctx, testSubsystem, key, value)
 			}
 
 			tflog.SubsystemTrace(ctx, testSubsystem, testCase.logMessage)

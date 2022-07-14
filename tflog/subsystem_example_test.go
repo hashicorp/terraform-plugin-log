@@ -76,7 +76,7 @@ func ExampleSubsystemWith() {
 	// non-example-setup code begins here
 
 	// associate a key and value with all lines logged by the sub-logger
-	derivedCtx := SubsystemWith(exampleCtx, "my-subsystem", "foo", 123)
+	derivedCtx := SubsystemSetField(exampleCtx, "my-subsystem", "foo", 123)
 
 	// all messages logged with derivedCtx will now have foo=123
 	// automatically included

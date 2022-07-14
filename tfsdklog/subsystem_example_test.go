@@ -62,7 +62,7 @@ func ExampleSubsystemWith() {
 	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
 
 	// non-example-setup code begins here
-	derivedCtx := SubsystemWith(exampleCtx, "my-subsystem", "foo", 123)
+	derivedCtx := SubsystemSetField(exampleCtx, "my-subsystem", "foo", 123)
 
 	// all messages logged with derivedCtx will now have foo=123
 	// automatically included

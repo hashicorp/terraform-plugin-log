@@ -81,7 +81,7 @@ func TestWith(t *testing.T) {
 
 			ctx := context.Background()
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
-			ctx = tflog.With(ctx, testCase.key, testCase.value)
+			ctx = tflog.SetField(ctx, testCase.key, testCase.value)
 
 			tflog.Trace(ctx, testCase.logMessage, testCase.additionalFields...)
 
@@ -565,7 +565,7 @@ func TestError(t *testing.T) {
 
 const testLogMsg = "System FOO has caused error BAR because of incorrectly configured BAZ"
 
-func TestWithOmitLogWithFieldKeys(t *testing.T) {
+func TestOmitLogWithFieldKeys(t *testing.T) {
 	testCases := map[string]struct {
 		msg              string
 		additionalFields []map[string]interface{}
@@ -633,7 +633,7 @@ func TestWithOmitLogWithFieldKeys(t *testing.T) {
 
 			ctx := context.Background()
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
-			ctx = tflog.WithOmitLogWithFieldKeys(ctx, testCase.omitLogKeys...)
+			ctx = tflog.OmitLogWithFieldKeys(ctx, testCase.omitLogKeys...)
 
 			tflog.Warn(ctx, testCase.msg, testCase.additionalFields...)
 
@@ -649,7 +649,7 @@ func TestWithOmitLogWithFieldKeys(t *testing.T) {
 	}
 }
 
-func TestWithOmitLogWithMessageRegex(t *testing.T) {
+func TestOmitLogWithMessageRegexes(t *testing.T) {
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -717,7 +717,7 @@ func TestWithOmitLogWithMessageRegex(t *testing.T) {
 
 			ctx := context.Background()
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
-			ctx = tflog.WithOmitLogWithMessageRegex(ctx, testCase.omitLogMatchingRegexp...)
+			ctx = tflog.OmitLogWithMessageRegexes(ctx, testCase.omitLogMatchingRegexp...)
 
 			tflog.Debug(ctx, testCase.msg, testCase.additionalFields...)
 
@@ -733,7 +733,7 @@ func TestWithOmitLogWithMessageRegex(t *testing.T) {
 	}
 }
 
-func TestWithOmitLogMatchingString(t *testing.T) {
+func TestOmitLogWithMessageStrings(t *testing.T) {
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -801,7 +801,7 @@ func TestWithOmitLogMatchingString(t *testing.T) {
 
 			ctx := context.Background()
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
-			ctx = tflog.WithOmitLogMatchingString(ctx, testCase.omitLogMatchingString...)
+			ctx = tflog.OmitLogWithMessageStrings(ctx, testCase.omitLogMatchingString...)
 
 			tflog.Debug(ctx, testCase.msg, testCase.additionalFields...)
 
@@ -817,7 +817,7 @@ func TestWithOmitLogMatchingString(t *testing.T) {
 	}
 }
 
-func TestWithMaskFieldValueWithFieldKeys(t *testing.T) {
+func TestMaskFieldValuesWithFieldKeys(t *testing.T) {
 	testCases := map[string]struct {
 		msg              string
 		additionalFields []map[string]interface{}
@@ -893,7 +893,7 @@ func TestWithMaskFieldValueWithFieldKeys(t *testing.T) {
 
 			ctx := context.Background()
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
-			ctx = tflog.WithMaskFieldValueWithFieldKeys(ctx, testCase.maskLogKeys...)
+			ctx = tflog.MaskFieldValuesWithFieldKeys(ctx, testCase.maskLogKeys...)
 
 			tflog.Error(ctx, testCase.msg, testCase.additionalFields...)
 
@@ -909,7 +909,7 @@ func TestWithMaskFieldValueWithFieldKeys(t *testing.T) {
 	}
 }
 
-func TestWithMaskMessageRegex(t *testing.T) {
+func TestMaskMessageRegexes(t *testing.T) {
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -985,7 +985,7 @@ func TestWithMaskMessageRegex(t *testing.T) {
 
 			ctx := context.Background()
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
-			ctx = tflog.WithMaskMessageRegex(ctx, testCase.maskLogMatchingRegexp...)
+			ctx = tflog.MaskMessageRegexes(ctx, testCase.maskLogMatchingRegexp...)
 
 			tflog.Trace(ctx, testCase.msg, testCase.additionalFields...)
 
@@ -1001,7 +1001,7 @@ func TestWithMaskMessageRegex(t *testing.T) {
 	}
 }
 
-func TestWithMaskLogMatchingString(t *testing.T) {
+func TestMaskMessageStrings(t *testing.T) {
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -1077,7 +1077,7 @@ func TestWithMaskLogMatchingString(t *testing.T) {
 
 			ctx := context.Background()
 			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
-			ctx = tflog.WithMaskLogMatchingString(ctx, testCase.maskLogMatchingString...)
+			ctx = tflog.MaskMessageStrings(ctx, testCase.maskLogMatchingString...)
 
 			tflog.Info(ctx, testCase.msg, testCase.additionalFields...)
 

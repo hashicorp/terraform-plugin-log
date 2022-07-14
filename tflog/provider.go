@@ -9,9 +9,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/internal/logging"
 )
 
-// With returns a new context.Context that has a modified logger in it which
-func With(ctx context.Context, key string, value interface{}) context.Context {
+// SetField returns a new context.Context that has a modified logger in it which
 // will include key and value as fields in all its log output.
+func SetField(ctx context.Context, key string, value interface{}) context.Context {
 	logger := logging.GetProviderRootLogger(ctx)
 	if logger == nil {
 		// this essentially should never happen in production
@@ -26,7 +26,7 @@ func With(ctx context.Context, key string, value interface{}) context.Context {
 
 // Trace logs `msg` at the trace level to the logger in `ctx`, with optional
 // `additionalFields` structured key-value fields in the log output. Fields are
-// shallow merged with any defined on the logger, e.g. by the `With()` function,
+// shallow merged with any defined on the logger, e.g. by the `SetField()` function,
 // and across multiple maps.
 func Trace(ctx context.Context, msg string, additionalFields ...map[string]interface{}) {
 	logger := logging.GetProviderRootLogger(ctx)
@@ -49,7 +49,7 @@ func Trace(ctx context.Context, msg string, additionalFields ...map[string]inter
 
 // Debug logs `msg` at the debug level to the logger in `ctx`, with optional
 // `additionalFields` structured key-value fields in the log output. Fields are
-// shallow merged with any defined on the logger, e.g. by the `With()` function,
+// shallow merged with any defined on the logger, e.g. by the `SetField()` function,
 // and across multiple maps.
 func Debug(ctx context.Context, msg string, additionalFields ...map[string]interface{}) {
 	logger := logging.GetProviderRootLogger(ctx)
@@ -72,7 +72,7 @@ func Debug(ctx context.Context, msg string, additionalFields ...map[string]inter
 
 // Info logs `msg` at the info level to the logger in `ctx`, with optional
 // `additionalFields` structured key-value fields in the log output. Fields are
-// shallow merged with any defined on the logger, e.g. by the `With()` function,
+// shallow merged with any defined on the logger, e.g. by the `SetField()` function,
 // and across multiple maps.
 func Info(ctx context.Context, msg string, additionalFields ...map[string]interface{}) {
 	logger := logging.GetProviderRootLogger(ctx)
@@ -95,7 +95,7 @@ func Info(ctx context.Context, msg string, additionalFields ...map[string]interf
 
 // Warn logs `msg` at the warn level to the logger in `ctx`, with optional
 // `additionalFields` structured key-value fields in the log output. Fields are
-// shallow merged with any defined on the logger, e.g. by the `With()` function,
+// shallow merged with any defined on the logger, e.g. by the `SetField()` function,
 // and across multiple maps.
 func Warn(ctx context.Context, msg string, additionalFields ...map[string]interface{}) {
 	logger := logging.GetProviderRootLogger(ctx)
@@ -118,7 +118,7 @@ func Warn(ctx context.Context, msg string, additionalFields ...map[string]interf
 
 // Error logs `msg` at the error level to the logger in `ctx`, with optional
 // `additionalFields` structured key-value fields in the log output. Fields are
-// shallow merged with any defined on the logger, e.g. by the `With()` function,
+// shallow merged with any defined on the logger, e.g. by the `SetField()` function,
 // and across multiple maps.
 func Error(ctx context.Context, msg string, additionalFields ...map[string]interface{}) {
 	logger := logging.GetProviderRootLogger(ctx)
@@ -154,7 +154,7 @@ func omitOrMask(ctx context.Context, logger hclog.Logger, msg *string, additiona
 	return additionalArgs, false
 }
 
-// WithOmitLogWithFieldKeys returns a new context.Context that has a modified logger
+// OmitLogWithFieldKeys returns a new context.Context that has a modified logger
 // that will omit to write any log when any of the given keys is found
 // within its fields.
 //
@@ -169,7 +169,7 @@ func omitOrMask(ctx context.Context, logger hclog.Logger, msg *string, additiona
 //   log2 = `{ msg = "...", fields = { 'bar', '...' }`                 -> printed
 //   log3 = `{ msg = "...", fields = { 'baz`', '...', 'boo', '...' }`  -> omitted
 //
-func WithOmitLogWithFieldKeys(ctx context.Context, keys ...string) context.Context {
+func OmitLogWithFieldKeys(ctx context.Context, keys ...string) context.Context {
 	lOpts := logging.GetProviderRootTFLoggerOpts(ctx)
 
 	lOpts = logging.WithOmitLogWithFieldKeys(keys...)(lOpts)
@@ -177,7 +177,7 @@ func WithOmitLogWithFieldKeys(ctx context.Context, keys ...string) context.Conte
 	return logging.SetProviderRootTFLoggerOpts(ctx, lOpts)
 }
 
-// WithOmitLogWithMessageRegex returns a new context.Context that has a modified logger
+// OmitLogWithMessageRegexes returns a new context.Context that has a modified logger
 // that will omit to write any log that has a message matching any of the
 // given *regexp.Regexp.
 //
@@ -192,15 +192,15 @@ func WithOmitLogWithFieldKeys(ctx context.Context, keys ...string) context.Conte
 //   log2 = `{ msg = "pineapple mango", fields = {...}`      -> printed
 //   log3 = `{ msg = "pineapple mango bar", fields = {...}`  -> omitted
 //
-func WithOmitLogWithMessageRegex(ctx context.Context, expressions ...*regexp.Regexp) context.Context {
+func OmitLogWithMessageRegexes(ctx context.Context, expressions ...*regexp.Regexp) context.Context {
 	lOpts := logging.GetProviderRootTFLoggerOpts(ctx)
 
-	lOpts = logging.WithOmitLogWithMessageRegex(expressions...)(lOpts)
+	lOpts = logging.WithOmitLogWithMessageRegexes(expressions...)(lOpts)
 
 	return logging.SetProviderRootTFLoggerOpts(ctx, lOpts)
 }
 
-// WithOmitLogMatchingString  returns a new context.Context that has a modified logger
+// OmitLogWithMessageStrings  returns a new context.Context that has a modified logger
 // that will omit to write any log that matches any of the given string.
 //
 // Each call to this function is additive:
@@ -214,7 +214,7 @@ func WithOmitLogWithMessageRegex(ctx context.Context, expressions ...*regexp.Reg
 //   log2 = `{ msg = "pineapple mango", fields = {...}`      -> printed
 //   log3 = `{ msg = "pineapple mango bar", fields = {...}`  -> omitted
 //
-func WithOmitLogMatchingString(ctx context.Context, matchingStrings ...string) context.Context {
+func OmitLogWithMessageStrings(ctx context.Context, matchingStrings ...string) context.Context {
 	lOpts := logging.GetProviderRootTFLoggerOpts(ctx)
 
 	lOpts = logging.WithOmitLogWithMessageStrings(matchingStrings...)(lOpts)
@@ -222,7 +222,7 @@ func WithOmitLogMatchingString(ctx context.Context, matchingStrings ...string) c
 	return logging.SetProviderRootTFLoggerOpts(ctx, lOpts)
 }
 
-// WithMaskFieldValueWithFieldKeys returns a new context.Context that has a modified logger
+// MaskFieldValuesWithFieldKeys returns a new context.Context that has a modified logger
 // that masks (replaces) with asterisks (`***`) any field value where the
 // key matches one of the given keys.
 //
@@ -237,15 +237,15 @@ func WithOmitLogMatchingString(ctx context.Context, matchingStrings ...string) c
 //   log2 = `{ msg = "...", fields = { 'bar', '...' }`                 -> as-is value
 //   log3 = `{ msg = "...", fields = { 'baz`', '***', 'boo', '...' }`  -> masked value
 //
-func WithMaskFieldValueWithFieldKeys(ctx context.Context, keys ...string) context.Context {
+func MaskFieldValuesWithFieldKeys(ctx context.Context, keys ...string) context.Context {
 	lOpts := logging.GetProviderRootTFLoggerOpts(ctx)
 
-	lOpts = logging.WithMaskFieldValueWithFieldKeys(keys...)(lOpts)
+	lOpts = logging.WithMaskFieldValuesWithFieldKeys(keys...)(lOpts)
 
 	return logging.SetProviderRootTFLoggerOpts(ctx, lOpts)
 }
 
-// WithMaskMessageRegex returns a new context.Context that has a modified logger
+// MaskMessageRegexes returns a new context.Context that has a modified logger
 // that masks (replaces) with asterisks (`***`) all message substrings matching one
 // of the given strings.
 //
@@ -260,15 +260,15 @@ func WithMaskFieldValueWithFieldKeys(ctx context.Context, keys ...string) contex
 //   log2 = `{ msg = "pineapple mango", fields = {...}`      -> as-is
 //   log3 = `{ msg = "pineapple mango ***", fields = {...}`  -> masked portion
 //
-func WithMaskMessageRegex(ctx context.Context, expressions ...*regexp.Regexp) context.Context {
+func MaskMessageRegexes(ctx context.Context, expressions ...*regexp.Regexp) context.Context {
 	lOpts := logging.GetProviderRootTFLoggerOpts(ctx)
 
-	lOpts = logging.WithMaskMessageRegex(expressions...)(lOpts)
+	lOpts = logging.WithMaskMessageRegexes(expressions...)(lOpts)
 
 	return logging.SetProviderRootTFLoggerOpts(ctx, lOpts)
 }
 
-// WithMaskLogMatchingString returns a new context.Context that has a modified logger
+// MaskMessageStrings returns a new context.Context that has a modified logger
 // that masks (replace) with asterisks (`***`) all message substrings equal to one
 // of the given strings.
 //
@@ -283,7 +283,7 @@ func WithMaskMessageRegex(ctx context.Context, expressions ...*regexp.Regexp) co
 //   log2 = `{ msg = "pineapple mango", fields = {...}`      -> as-is
 //   log3 = `{ msg = "pineapple mango ***", fields = {...}`  -> masked portion
 //
-func WithMaskLogMatchingString(ctx context.Context, matchingStrings ...string) context.Context {
+func MaskMessageStrings(ctx context.Context, matchingStrings ...string) context.Context {
 	lOpts := logging.GetProviderRootTFLoggerOpts(ctx)
 
 	lOpts = logging.WithMaskMessageStrings(matchingStrings...)(lOpts)

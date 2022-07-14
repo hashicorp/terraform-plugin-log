@@ -14,7 +14,7 @@ func ExampleMultilineJSONDecode() {
 	ctx := RootLogger(context.Background(), &output)
 
 	// Root provider logger is now available for usage, such as writing
-	// entries, calling With(), or calling NewSubsystem().
+	// entries, calling SetField(), or calling NewSubsystem().
 	tflog.Trace(ctx, "entry 1")
 	tflog.Trace(ctx, "entry 2")
 

@@ -87,7 +87,7 @@ func TestSubsystemWith(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
 			ctx = tfsdklog.NewSubsystem(ctx, testSubsystem)
-			ctx = tfsdklog.SubsystemWith(ctx, testSubsystem, testCase.key, testCase.value)
+			ctx = tfsdklog.SubsystemSetField(ctx, testSubsystem, testCase.key, testCase.value)
 
 			tfsdklog.SubsystemTrace(ctx, testSubsystem, testCase.logMessage, testCase.additionalFields...)
 
@@ -574,7 +574,7 @@ func TestSubsystemError(t *testing.T) {
 	}
 }
 
-func TestSubsystemWithOmitLogWithFieldKeys(t *testing.T) {
+func TestSubsystemOmitLogWithFieldKeys(t *testing.T) {
 	testCases := map[string]struct {
 		msg              string
 		additionalFields []map[string]interface{}
@@ -643,7 +643,7 @@ func TestSubsystemWithOmitLogWithFieldKeys(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
 			ctx = tfsdklog.NewSubsystem(ctx, testSubsystem)
-			ctx = tfsdklog.SubsystemWithOmitLogWithFieldKeys(ctx, testSubsystem, testCase.omitLogKeys...)
+			ctx = tfsdklog.SubsystemOmitLogWithFieldKeys(ctx, testSubsystem, testCase.omitLogKeys...)
 
 			tfsdklog.SubsystemWarn(ctx, testSubsystem, testCase.msg, testCase.additionalFields...)
 
@@ -659,7 +659,7 @@ func TestSubsystemWithOmitLogWithFieldKeys(t *testing.T) {
 	}
 }
 
-func TestSubsystemWithOmitLogWithMessageRegex(t *testing.T) {
+func TestSubsystemOmitLogWithMessageRegexes(t *testing.T) {
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -728,7 +728,7 @@ func TestSubsystemWithOmitLogWithMessageRegex(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
 			ctx = tfsdklog.NewSubsystem(ctx, testSubsystem)
-			ctx = tfsdklog.SubsystemWithOmitLogWithMessageRegex(ctx, testSubsystem, testCase.omitLogMatchingRegexp...)
+			ctx = tfsdklog.SubsystemOmitLogWithMessageRegexes(ctx, testSubsystem, testCase.omitLogMatchingRegexp...)
 
 			tfsdklog.SubsystemDebug(ctx, testSubsystem, testCase.msg, testCase.additionalFields...)
 
@@ -744,7 +744,7 @@ func TestSubsystemWithOmitLogWithMessageRegex(t *testing.T) {
 	}
 }
 
-func TestSubsystemWithOmitLogMatchingString(t *testing.T) {
+func TestSubsystemOmitLogWithMessageStrings(t *testing.T) {
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -813,7 +813,7 @@ func TestSubsystemWithOmitLogMatchingString(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
 			ctx = tfsdklog.NewSubsystem(ctx, testSubsystem)
-			ctx = tfsdklog.SubsystemWithOmitLogMatchingString(ctx, testSubsystem, testCase.omitLogMatchingString...)
+			ctx = tfsdklog.SubsystemOmitLogWithMessageStrings(ctx, testSubsystem, testCase.omitLogMatchingString...)
 
 			tfsdklog.SubsystemDebug(ctx, testSubsystem, testCase.msg, testCase.additionalFields...)
 
@@ -829,7 +829,7 @@ func TestSubsystemWithOmitLogMatchingString(t *testing.T) {
 	}
 }
 
-func TestSubsystemWithMaskFieldValueWithFieldKeys(t *testing.T) {
+func TestSubsystemMaskFieldValuesWithFieldKeys(t *testing.T) {
 	testCases := map[string]struct {
 		msg              string
 		additionalFields []map[string]interface{}
@@ -906,7 +906,7 @@ func TestSubsystemWithMaskFieldValueWithFieldKeys(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
 			ctx = tfsdklog.NewSubsystem(ctx, testSubsystem)
-			ctx = tfsdklog.SubsystemWithMaskFieldValueWithFieldKeys(ctx, testSubsystem, testCase.maskLogKeys...)
+			ctx = tfsdklog.SubsystemMaskFieldValuesWithFieldKeys(ctx, testSubsystem, testCase.maskLogKeys...)
 
 			tfsdklog.SubsystemError(ctx, testSubsystem, testCase.msg, testCase.additionalFields...)
 
@@ -922,7 +922,7 @@ func TestSubsystemWithMaskFieldValueWithFieldKeys(t *testing.T) {
 	}
 }
 
-func TestSubsystemWithMaskMessageRegex(t *testing.T) {
+func TestSubsystemMaskMessageRegexes(t *testing.T) {
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -999,7 +999,7 @@ func TestSubsystemWithMaskMessageRegex(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
 			ctx = tfsdklog.NewSubsystem(ctx, testSubsystem)
-			ctx = tfsdklog.SubsystemWithMaskMessageRegex(ctx, testSubsystem, testCase.maskLogMatchingRegexp...)
+			ctx = tfsdklog.SubsystemMaskMessageRegexes(ctx, testSubsystem, testCase.maskLogMatchingRegexp...)
 
 			tfsdklog.SubsystemTrace(ctx, testSubsystem, testCase.msg, testCase.additionalFields...)
 
@@ -1015,7 +1015,7 @@ func TestSubsystemWithMaskMessageRegex(t *testing.T) {
 	}
 }
 
-func TestSubsystemWithMaskLogMatchingString(t *testing.T) {
+func TestSubsystemMaskMessageStrings(t *testing.T) {
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -1092,7 +1092,7 @@ func TestSubsystemWithMaskLogMatchingString(t *testing.T) {
 			ctx := context.Background()
 			ctx = loggertest.SDKRoot(ctx, &outputBuffer)
 			ctx = tfsdklog.NewSubsystem(ctx, testSubsystem)
-			ctx = tfsdklog.SubsystemWithMaskLogMatchingString(ctx, testSubsystem, testCase.maskLogMatchingString...)
+			ctx = tfsdklog.SubsystemMaskMessageStrings(ctx, testSubsystem, testCase.maskLogMatchingString...)
 
 			tfsdklog.SubsystemInfo(ctx, testSubsystem, testCase.msg, testCase.additionalFields...)
 

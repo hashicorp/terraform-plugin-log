@@ -26,7 +26,7 @@ func ExampleWith() {
 	exampleCtx := getExampleContext()
 
 	// non-example-setup code begins here
-	derivedCtx := With(exampleCtx, "foo", 123)
+	derivedCtx := SetField(exampleCtx, "foo", 123)
 
 	// all messages logged with derivedCtx will now have foo=123
 	// automatically included
