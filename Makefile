@@ -40,4 +40,13 @@ website/build-local:
 	@docker build https://github.com/hashicorp/terraform-website.git\#$(WEBSITE_BRANCH) \
 		-t $(WEBSITE_DOCKER_IMAGE_LOCAL)
 
-.PHONY: website website/local website/build-local
+lint:
+	golangci-lint run
+
+fmt:
+	gofmt -s -w -e .
+
+test:
+	go test -v -cover -timeout=120s -parallel=4 ./...
+
+.PHONY: lint fmt test website website/local website/build-local
