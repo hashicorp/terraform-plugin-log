@@ -1,111 +1,31 @@
 ```release-note:breaking-change
-tflog: renamed `With()` to `SetField()`
+tflog: renamed `With()` and `SubsystemWith()`, to `SetField()` and `SubsystemSetField()` respectively
 ```
 
 ```release-note:breaking-change
-tflog: renamed `WithOmitLogWithFieldKeys()` to `OmitLogWithFieldKeys()`
+tflog: renamed `WithOmitLogWithFieldKeys()` and `SubsystemWithOmitLogWithFieldKeys()`, to `OmitLogWithFieldKeys()` and `SubsystemOmitLogWithFieldKeys()` respectively
 ```
 
 ```release-note:breaking-change
-tflog: renamed `WithOmitLogWithMessageRegex()` to `OmitLogWithMessageRegexes()`
+tflog: renamed `WithOmitLogWithMessageRegex()` and `SubsystemWithOmitLogWithMessageRegex()`, to `OmitLogWithMessageRegexes()` and `SubsystemOmitLogWithMessageRegexes()` respectively
 ```
 
 ```release-note:breaking-change
-tflog: renamed `WithOmitLogMatchingString()` to `OmitLogWithMessageStrings()`
+tflog: renamed `WithOmitLogMatchingString()` and `SubsystemWithOmitLogMatchingString()`, to `OmitLogWithMessageStrings()` and `SubsystemOmitLogWithMessageStrings()` respectively
 ```
 
 ```release-note:breaking-change
-tflog: renamed `WithMaskFieldValueWithFieldKeys()` to `MaskFieldValuesWithFieldKeys()`
+tflog: renamed `WithMaskFieldValueWithFieldKeys()` and `SubsystemWithMaskFieldValueWithFieldKeys()`, to `MaskFieldValuesWithFieldKeys()` and `SubsystemMaskFieldValuesWithFieldKeys()` respectively
 ```
 
 ```release-note:breaking-change
-tflog: renamed `WithMaskMessageRegex()` to `MaskMessageRegexes()`
+tflog: renamed `WithMaskMessageRegex()` and `SubsystemWithMaskMessageRegex()`, to `MaskMessageRegexes()` and `SubsystemMaskMessageRegexes()` respectively
 ```
 
 ```release-note:breaking-change
-tflog: renamed `WithMaskLogMatchingString()` to `MaskMessageStrings()`
+tflog: renamed `WithMaskLogMatchingString()` and `SubsystemWithMaskLogMatchingString()`, to `MaskMessageStrings()` and `SubsystemMaskMessageStrings()` respectively
 ```
 
 ```release-note:breaking-change
-tflog: renamed `SubsystemWith()` to `SubsystemSetField()`
-```
-
-```release-note:breaking-change
-tflog: renamed `SubsystemWithOmitLogWithFieldKeys()` to `SubsystemOmitLogWithFieldKeys()`
-```
-
-```release-note:breaking-change
-tflog: renamed `SubsystemWithOmitLogWithMessageRegex()` to `SubsystemOmitLogWithMessageRegexes()`
-```
-
-```release-note:breaking-change
-tflog: renamed `SubsystemWithOmitLogMatchingString()` to `SubsystemOmitLogWithMessageStrings()`
-```
-
-```release-note:breaking-change
-tflog: renamed `SubsystemWithMaskFieldValueWithFieldKeys()` to `SubsystemMaskFieldValuesWithFieldKeys()`
-```
-
-```release-note:breaking-change
-tflog: renamed `SubsystemWithMaskMessageRegex()` to `SubsystemMaskMessageRegexes()`
-```
-
-```release-note:breaking-change
-tflog: renamed `SubsystemWithMaskLogMatchingString()` to `SubsystemMaskMessageStrings()`
-```
-
-```release-note:breaking-change
-tfsdklog: renamed `With()` to `SetField()`
-```
-
-```release-note:breaking-change
-tfsdklog: renamed `WithOmitLogWithFieldKeys()` to `OmitLogWithFieldKeys()`
-```
-
-```release-note:breaking-change
-tfsdklog: renamed `WithOmitLogWithMessageRegex()` to `OmitLogWithMessageRegexes()`
-```
-
-```release-note:breaking-change
-tfsdklog: renamed `WithOmitLogMatchingString()` to `OmitLogWithMessageStrings()`
-```
-
-```release-note:breaking-change
-tfsdklog: renamed `WithMaskFieldValueWithFieldKeys()` to `MaskFieldValuesWithFieldKeys()`
-```
-
-```release-note:breaking-change
-tfsdklog: renamed `WithMaskMessageRegex()` to `MaskMessageRegexes()`
-```
-
-```release-note:breaking-change
-tfsdklog: renamed `WithMaskLogMatchingString()` to `MaskMessageStrings()`
-```
-
-```release-note:breaking-change
-tfsdklog: renamed `SubsystemWith()` to `SubsystemSetField()`
-```
-
-```release-note:breaking-change
-tfsdklog: renamed `SubsystemWithOmitLogWithFieldKeys()` to `SubsystemOmitLogWithFieldKeys()`
-```
-
-```release-note:breaking-change
-tfsdklog: renamed `SubsystemWithOmitLogWithMessageRegex()` to `SubsystemOmitLogWithMessageRegexes()`
-```
-
-```release-note:breaking-change
-tfsdklog: renamed `SubsystemWithOmitLogMatchingString()` to `SubsystemOmitLogWithMessageStrings()`
-```
-
-```release-note:breaking-change
-tfsdklog: renamed `SubsystemWithMaskFieldValueWithFieldKeys()` to `SubsystemMaskFieldValuesWithFieldKeys()`
-```
-
-```release-note:breaking-change
-tfsdklog: renamed `SubsystemWithMaskMessageRegex()` to `SubsystemMaskMessageRegexes()`
-```
-
-```release-note:breaking-change
-tfsdklog: renamed `SubsystemWithMaskLogMatchingString()` to `SubsystemMaskMessageStrings()`
+tfsdklog: same renaming as for the `tflog` package
 ```
