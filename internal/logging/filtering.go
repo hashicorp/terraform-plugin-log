@@ -51,7 +51,7 @@ func (lo LoggerOpts) ApplyMask(msg *string, fieldMaps ...map[string]interface{})
 	if len(lo.MaskFieldValuesWithFieldKeys) > 0 {
 		for _, k := range lo.MaskFieldValuesWithFieldKeys {
 			for _, f := range fieldMaps {
-				for fk, _ := range f {
+				for fk := range f {
 					if k == fk {
 						f[k] = logMaskingReplacementString
 					}

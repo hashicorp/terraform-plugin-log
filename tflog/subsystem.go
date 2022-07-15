@@ -71,7 +71,7 @@ func NewSubsystem(ctx context.Context, subsystem string, options ...logging.Opti
 
 	// Set the subsystem LoggerOpts in the context
 	ctx = logging.SetProviderSubsystemTFLoggerOpts(ctx, subsystem, subLoggerTFLoggerOpts)
-	
+
 	return logging.SetProviderSubsystemLogger(ctx, subsystem, subLogger)
 }
 

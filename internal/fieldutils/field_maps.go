@@ -32,7 +32,7 @@ func FieldMapsToKeys(maps ...map[string]interface{}) []string {
 	case 1:
 		result := make([]string, 0, len(maps[0]))
 
-		for k, _ := range maps[0] {
+		for k := range maps[0] {
 			result = append(result, k)
 		}
 
