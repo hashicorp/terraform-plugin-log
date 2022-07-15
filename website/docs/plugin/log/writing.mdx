@@ -6,13 +6,13 @@ description: >-
 
 # Writing Log Output
 
-Use the [`tflog` package](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog) to write logs for your provider. SDKs like the `terraform-plugin-framework`, `terraform-plugin-go`, and `terraform-plugin-sdk/v2` set up logging for you, so you only need to write the logs themselves. You can write log output at varying verbosity levels, add variables to logs, and create subsystems to group logs that relate to distinct sections of code (e.g., the API client).
+Use the [`tflog` package](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog) to write logs for your provider. SDKs like the `terraform-plugin-framework`, `terraform-plugin-go`, and `terraform-plugin-sdk/v2` set up logging for you, so you only need to write the logs themselves. You can write log output at varying verbosity levels, add fields to logs, and create subsystems to group logs that relate to distinct sections of code (e.g., the API client).
 
 !> **Warning:** Do not use `fmt.Println` and similar methods to log to standard output (stdout). They will not generate visible output in older versions of Terraform and are truncated in recent versions of Terraform.
 
 ## Structured Logging
 
-The `tflog` package uses structured logging, based on [`go-hclog`](https://pkg.go.dev/github.com/hashicorp/go-hclog). Rather than writing logs as sentences with embedded variables and values, `tflog` takes a sentence describing the logging event and a set of variables to log. When variables are separate from the log description, you can use them to programmatically parse, filter, and search log output. This separation also allows other parts of the system to associate variables with downstream log output.
+The `tflog` package uses structured logging, based on [`go-hclog`](https://pkg.go.dev/github.com/hashicorp/go-hclog). Rather than writing logs as sentences with embedded fields and values, `tflog` takes a sentence describing the logging event and a set of fields to log. When fields are separate from the log description, you can use them to programmatically parse, filter, and search log output. This separation also allows other parts of the system to associate fields with downstream log output.
 
 ### Requirements
 
@@ -27,7 +27,7 @@ All calls to `tflog` package functionality must use an SDK provided `context.Con
 
 ### Log Levels
 
-You must choose a verbosity level for each line of log output. This lets consumers [specify a type of log output](/plugin/log/managing#log-levels) to write from your provider. For example, you can use environment variables to set your provider to write only logs of type `Warn` during a Terraform run.
+You must choose a verbosity level for each line of log output. This lets consumers [specify a type of log output](/plugin/log/managing#log-levels) to write from your provider. For example, you can use environment fields to set your provider to write only logs of type `Warn` during a Terraform run.
 
 #### Error
 
@@ -102,7 +102,7 @@ tflog.Trace(ctx, "executing API request", map[string]interface{}{
 
 Loggers are transported using a `context.Context` type, so injecting a variable into a logger returns a new `context.Context` containing the modified logger. Subsequent calls to `tflog` with that logger will implicitly include the variable.
 
-Use [`tflog.SetField()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SetField) to attach variables to a logger.
+Use [`tflog.SetField()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SetField) to attach fields to a logger.
 
 ```go
 // overwrite logger to include new `url` variable
@@ -112,7 +112,7 @@ ctx = tflog.SetField(ctx, "url", "https://www.example.com/my/endpoint")
 tflog.Debug(ctx, "Calling API")
 ```
 
-You can also conditionally attach the variables by creating a new context and injecting it into the logger.
+You can also conditionally attach the fields by creating a new context and injecting it into the logger.
 
 ```go
 // create new logger that includes `url` variable
@@ -127,7 +127,7 @@ tflog.Debug(apiContext, "Calling API")
 
 ### Subsystems
 
-You can create a subsystem to manage loggers for sections of code that are large, complex, or have distinct functionality. You can then configure environment variables that allow each subsystem to be included or excluded from log output. For example, you may want to create a subsystem for logs that relate to the API client so that you can turn them off when when debugging an unrelated issue.
+You can create a subsystem to manage loggers for sections of code that are large, complex, or have distinct functionality. You can then configure environment fields that allow each subsystem to be included or excluded from log output. For example, you may want to create a subsystem for logs that relate to the API client so that you can turn them off when when debugging an unrelated issue.
 
 #### Create Subsystems
 
@@ -155,7 +155,7 @@ ctx = tflog.NewSubsystem(ctx, "my-subsystem",
 
 #### Use Subsystems
 
-Logging or adding variables to subsystem loggers requires separate function calls for each [log level](#log-levels):
+Logging or adding fields to subsystem loggers requires separate function calls for each [log level](#log-levels):
 
 * [`tflog.SubsystemError()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SubsystemError): Equivalent to [`tflog.Error()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#Error), but using a subsystem logger.
 * [`tflog.SubsystemWarn()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SubsystemWarn): Equivalent to [`tflog.Warn()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#Warn), but using a subsystem logger.
@@ -172,7 +172,7 @@ tflog.SubsystemDebug(ctx, "my-subsystem", "writing to a subsystem", map[string]i
 })
 ```
 
-Use [`tflog.SubsystemSetField()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SubsystemSetField) to attach variables to a specific subsystem.
+Use [`tflog.SubsystemSetField()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SubsystemSetField) to attach fields to a specific subsystem.
 
 ```go
 // overwrite logger to include new `url` variable
@@ -182,7 +182,7 @@ ctx = tflog.SubsystemSetField(ctx, "my-subsystem", "url", "https://www.example.c
 tflog.SubsystemDebug(ctx, "my-subsystem", "Calling API")
 ```
 
-You can also conditionally attach variables by creating a new context and injecting it into the logger.
+You can also conditionally attach fields by creating a new context and injecting it into the logger.
 
 ```go
 // create new logger that includes `url` variable
@@ -201,7 +201,7 @@ Providers on older SDK versions should write logs via the Go standard library [`
 
 ### Legacy Log Levels
 
-You must choose a verbosity level for each line of log output. This lets consumers [specify a type of log output](/plugin/log/managing#log-levels) to write from your provider. For example, you can use environment variables to set your provider to write only logs at the warning or higher level during a Terraform run.
+You must choose a verbosity level for each line of log output. This lets consumers [specify a type of log output](/plugin/log/managing#log-levels) to write from your provider. For example, you can use environment fields to set your provider to write only logs at the warning or higher level during a Terraform run.
 
 Terraform has specific message formatting requirements to properly set the log level when using the `log` package:
 
