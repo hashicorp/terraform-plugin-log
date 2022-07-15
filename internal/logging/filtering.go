@@ -1,27 +1,23 @@
 package logging
 
 import (
-	"fmt"
 	"strings"
 
+	"github.com/hashicorp/terraform-plugin-log/internal/fieldutils"
 	"github.com/hashicorp/terraform-plugin-log/internal/hclogutils"
 )
 
 const logMaskingReplacementString = "***"
 
-// ShouldOmit takes a log's *string message and slices of arguments,
+// ShouldOmit takes a log's *string message and slices of fields,
 // and determines, based on the LoggerOpts configuration, if the
 // log should be omitted (i.e. prevent it to be printed on the final writer).
-func (lo LoggerOpts) ShouldOmit(msg *string, hclogArgSlices ...[]interface{}) bool {
-	// Omit log if any of the configured keys is found
-	// either in the logger implied arguments,
-	// or in the additional arguments
+func (lo LoggerOpts) ShouldOmit(msg *string, fieldMaps ...map[string]interface{}) bool {
+	// Omit log if any of the configured keys is found in the given fields
 	if len(lo.OmitLogWithFieldKeys) > 0 {
-		for _, args := range hclogArgSlices {
-			argKeys := hclogutils.ArgsToKeys(args)
-			if argKeysContain(argKeys, lo.OmitLogWithFieldKeys) {
-				return true
-			}
+		fieldsKeys := fieldutils.FieldMapsToKeys(fieldMaps...)
+		if argKeysContain(fieldsKeys, lo.OmitLogWithFieldKeys) {
+			return true
 		}
 	}
 
@@ -46,29 +42,18 @@ func (lo LoggerOpts) ShouldOmit(msg *string, hclogArgSlices ...[]interface{}) bo
 	return false
 }
 
-// ApplyMask takes a log's *string message and slices of arguments,
-// and applies masking of keys' values and/or message,
+// ApplyMask takes a log's *string message and slices of fields,
+// and applies masking to fields keys' values and/or to log message,
 // based on the LoggerOpts configuration.
 //
 // Note that the given input is changed-in-place by this method.
-func (lo LoggerOpts) ApplyMask(msg *string, hclogArgSlices ...[]interface{}) {
+func (lo LoggerOpts) ApplyMask(msg *string, fieldMaps ...map[string]interface{}) {
 	if len(lo.MaskFieldValuesWithFieldKeys) > 0 {
 		for _, k := range lo.MaskFieldValuesWithFieldKeys {
-			for _, args := range hclogArgSlices {
-				// Here we loop `i` with steps of 2, starting from position 1 (i.e. `1, 3, 5, 7...`).
-				// We then look up the key for each argument, by looking at `i-1`.
-				// This ensures that in case of malformed arg slices that don't have
-				// an even number of elements, we simply skip the last k/v pair.
-				for i := 1; i < len(args); i += 2 {
-					switch argK := args[i-1].(type) {
-					case string:
-						if k == argK {
-							args[i] = logMaskingReplacementString
-						}
-					default:
-						if k == fmt.Sprintf("%s", argK) {
-							args[i] = logMaskingReplacementString
-						}
+			for _, f := range fieldMaps {
+				for fk, _ := range f {
+					if k == fk {
+						f[k] = logMaskingReplacementString
 					}
 				}
 			}
@@ -90,6 +75,20 @@ func (lo LoggerOpts) ApplyMask(msg *string, hclogArgSlices ...[]interface{}) {
 			*msg = strings.ReplaceAll(*msg, s, logMaskingReplacementString)
 		}
 	}
+}
+
+func OmitOrMask(tfLoggerOpts LoggerOpts, msg *string, additionalFields []map[string]interface{}) ([]interface{}, bool) {
+	additionalFieldsMap := fieldutils.MergeFieldMaps(additionalFields...)
+
+	// Apply the provider root LoggerOpts to determine if this log should be omitted
+	if tfLoggerOpts.ShouldOmit(msg, tfLoggerOpts.Fields, additionalFieldsMap) {
+		return nil, true
+	}
+
+	// Apply the provider root LoggerOpts to apply masking to this log
+	tfLoggerOpts.ApplyMask(msg, tfLoggerOpts.Fields, additionalFieldsMap)
+
+	return hclogutils.FieldMapsToArgs(tfLoggerOpts.Fields, additionalFieldsMap), false
 }
 
 func argKeysContain(haystack []string, needles []string) bool {
