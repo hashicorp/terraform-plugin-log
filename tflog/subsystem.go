@@ -32,43 +32,45 @@ func NewSubsystem(ctx context.Context, subsystem string, options ...logging.Opti
 		return ctx
 	}
 
-	loggerOptions := logging.GetProviderRootLoggerOptions(ctx)
-	opts := logging.ApplyLoggerOpts(options...)
+	rootLoggerOptions := logging.GetProviderRootLoggerOptions(ctx)
+	subLoggerTFLoggerOpts := logging.ApplyLoggerOpts(options...)
 
-	// On the off-chance that the logger options are not available, fallback
-	// to creating a named logger. This will preserve the root logger options,
-	// but cannot make changes beyond the level due to the hclog.Logger
-	// interface.
-	if loggerOptions == nil {
-		subLogger := logger.Named(subsystem)
+	// If root logger options are not available,
+	// fallback to creating a logger named like the given subsystem.
+	// This will preserve the root logger options,
+	// but cannot make changes beyond setting the level
+	// due to limitations with the hclog.Logger interface.
+	var subLogger hclog.Logger
+	if rootLoggerOptions == nil {
+		subLogger = logger.Named(subsystem)
 
-		if opts.AdditionalLocationOffset != 1 {
+		if subLoggerTFLoggerOpts.AdditionalLocationOffset != 1 {
 			logger.Warn("Unable to create logging subsystem with AdditionalLocationOffset due to missing root logger options")
 		}
+	} else {
+		subLoggerOptions := hclogutils.LoggerOptionsCopy(rootLoggerOptions)
+		subLoggerOptions.Name = subLoggerOptions.Name + "." + subsystem
 
-		if opts.Level != hclog.NoLevel {
-			subLogger.SetLevel(opts.Level)
+		if subLoggerTFLoggerOpts.AdditionalLocationOffset != 1 {
+			subLoggerOptions.AdditionalLocationOffset = subLoggerTFLoggerOpts.AdditionalLocationOffset
 		}
 
-		return logging.SetProviderSubsystemLogger(ctx, subsystem, subLogger)
+		subLogger = hclog.New(subLoggerOptions)
 	}
 
-	subLoggerOptions := hclogutils.LoggerOptionsCopy(loggerOptions)
-	subLoggerOptions.Name = subLoggerOptions.Name + "." + subsystem
-
-	if opts.AdditionalLocationOffset != 1 {
-		subLoggerOptions.AdditionalLocationOffset = opts.AdditionalLocationOffset
+	// Set the configured log level
+	if subLoggerTFLoggerOpts.Level != hclog.NoLevel {
+		subLogger.SetLevel(subLoggerTFLoggerOpts.Level)
 	}
 
-	if opts.Level != hclog.NoLevel {
-		subLoggerOptions.Level = opts.Level
+	// Propagate root fields to the subsystem logger
+	if subLoggerTFLoggerOpts.IncludeRootFields {
+		loggerTFOpts := logging.GetProviderRootTFLoggerOpts(ctx)
+		subLoggerTFLoggerOpts = logging.WithFields(loggerTFOpts.Fields)(subLoggerTFLoggerOpts)
 	}
 
-	subLogger := hclog.New(subLoggerOptions)
-
-	if opts.IncludeRootFields {
-		subLogger = subLogger.With(logger.ImpliedArgs()...)
-	}
+	// Set the subsystem LoggerOpts in the context
+	ctx = logging.SetProviderSubsystemTFLoggerOpts(ctx, subsystem, subLoggerTFLoggerOpts)
 
 	return logging.SetProviderSubsystemLogger(ctx, subsystem, subLogger)
 }
@@ -76,18 +78,15 @@ func NewSubsystem(ctx context.Context, subsystem string, options ...logging.Opti
 // SubsystemSetField returns a new context.Context that has a modified logger for
 // the specified subsystem in it which will include key and value as fields
 // in all its log output.
+//
+// In case of the same key is used multiple times (i.e. key collision),
+// the last one set is the one that gets persisted and then outputted with the logs.
 func SubsystemSetField(ctx context.Context, subsystem, key string, value interface{}) context.Context {
-	logger := logging.GetProviderSubsystemLogger(ctx, subsystem)
-	if logger == nil {
-		if logging.GetProviderRootLogger(ctx) == nil {
-			// logging isn't set up, nothing we can do, just silently fail
-			// this should basically never happen in production
-			return ctx
-		}
-		// create a new logger if one doesn't exist
-		logger = logging.GetProviderSubsystemLogger(NewSubsystem(ctx, subsystem), subsystem).With("new_logger_warning", logging.NewProviderSubsystemLoggerWarning)
-	}
-	return logging.SetProviderSubsystemLogger(ctx, subsystem, logger.With(key, value))
+	lOpts := logging.GetProviderSubsystemTFLoggerOpts(ctx, subsystem)
+
+	lOpts = logging.WithField(key, value)(lOpts)
+
+	return logging.SetProviderSubsystemTFLoggerOpts(ctx, subsystem, lOpts)
 }
 
 // SubsystemTrace logs `msg` at the trace level to the subsystem logger
@@ -107,7 +106,7 @@ func SubsystemTrace(ctx context.Context, subsystem, msg string, additionalFields
 		logger = logging.GetProviderSubsystemLogger(NewSubsystem(ctx, subsystem), subsystem).With("new_logger_warning", logging.NewProviderSubsystemLoggerWarning)
 	}
 
-	additionalArgs, shouldOmit := subsystemOmitOrMask(ctx, logger, subsystem, &msg, additionalFields)
+	additionalArgs, shouldOmit := logging.OmitOrMask(logging.GetProviderSubsystemTFLoggerOpts(ctx, subsystem), &msg, additionalFields)
 	if shouldOmit {
 		return
 	}
@@ -132,7 +131,7 @@ func SubsystemDebug(ctx context.Context, subsystem, msg string, additionalFields
 		logger = logging.GetProviderSubsystemLogger(NewSubsystem(ctx, subsystem), subsystem).With("new_logger_warning", logging.NewProviderSubsystemLoggerWarning)
 	}
 
-	additionalArgs, shouldOmit := subsystemOmitOrMask(ctx, logger, subsystem, &msg, additionalFields)
+	additionalArgs, shouldOmit := logging.OmitOrMask(logging.GetProviderSubsystemTFLoggerOpts(ctx, subsystem), &msg, additionalFields)
 	if shouldOmit {
 		return
 	}
@@ -157,7 +156,7 @@ func SubsystemInfo(ctx context.Context, subsystem, msg string, additionalFields 
 		logger = logging.GetProviderSubsystemLogger(NewSubsystem(ctx, subsystem), subsystem).With("new_logger_warning", logging.NewProviderSubsystemLoggerWarning)
 	}
 
-	additionalArgs, shouldOmit := subsystemOmitOrMask(ctx, logger, subsystem, &msg, additionalFields)
+	additionalArgs, shouldOmit := logging.OmitOrMask(logging.GetProviderSubsystemTFLoggerOpts(ctx, subsystem), &msg, additionalFields)
 	if shouldOmit {
 		return
 	}
@@ -182,7 +181,7 @@ func SubsystemWarn(ctx context.Context, subsystem, msg string, additionalFields 
 		logger = logging.GetProviderSubsystemLogger(NewSubsystem(ctx, subsystem), subsystem).With("new_logger_warning", logging.NewProviderSubsystemLoggerWarning)
 	}
 
-	additionalArgs, shouldOmit := subsystemOmitOrMask(ctx, logger, subsystem, &msg, additionalFields)
+	additionalArgs, shouldOmit := logging.OmitOrMask(logging.GetProviderSubsystemTFLoggerOpts(ctx, subsystem), &msg, additionalFields)
 	if shouldOmit {
 		return
 	}
@@ -207,27 +206,12 @@ func SubsystemError(ctx context.Context, subsystem, msg string, additionalFields
 		logger = logging.GetProviderSubsystemLogger(NewSubsystem(ctx, subsystem), subsystem).With("new_logger_warning", logging.NewProviderSubsystemLoggerWarning)
 	}
 
-	additionalArgs, shouldOmit := subsystemOmitOrMask(ctx, logger, subsystem, &msg, additionalFields)
+	additionalArgs, shouldOmit := logging.OmitOrMask(logging.GetProviderSubsystemTFLoggerOpts(ctx, subsystem), &msg, additionalFields)
 	if shouldOmit {
 		return
 	}
 
 	logger.Error(msg, additionalArgs...)
-}
-
-func subsystemOmitOrMask(ctx context.Context, logger hclog.Logger, subsystem string, msg *string, additionalFields []map[string]interface{}) ([]interface{}, bool) {
-	tfLoggerOpts := logging.GetProviderSubsystemTFLoggerOpts(ctx, subsystem)
-	additionalArgs := hclogutils.MapsToArgs(additionalFields...)
-	impliedArgs := logger.ImpliedArgs()
-
-	// Apply the provider root LoggerOpts to determine if this log should be omitted
-	if tfLoggerOpts.ShouldOmit(msg, impliedArgs, additionalArgs) {
-		return nil, true
-	}
-
-	// Apply the provider root LoggerOpts to apply masking to this log
-	tfLoggerOpts.ApplyMask(msg, impliedArgs, additionalArgs)
-	return additionalArgs, false
 }
 
 // SubsystemOmitLogWithFieldKeys returns a new context.Context that has a modified logger

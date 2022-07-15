@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/internal/hclogutils"
 )
 
-func TestMapsToArgs(t *testing.T) {
+func TestFieldMapsToArgs(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
@@ -134,7 +134,7 @@ func TestMapsToArgs(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			got := hclogutils.MapsToArgs(testCase.maps...)
+			got := hclogutils.FieldMapsToArgs(testCase.maps...)
 
 			if len(got)%2 != 0 {
 				t.Fatalf("expected even number of key-value fields, got: %v", got)
@@ -166,145 +166,6 @@ func TestMapsToArgs(t *testing.T) {
 			}
 
 			if diff := cmp.Diff(sortedGot, testCase.expectedArgs); diff != "" {
-				t.Errorf("unexpected difference: %s", diff)
-			}
-		})
-	}
-}
-
-func TestArgsToKeys(t *testing.T) {
-	t.Parallel()
-
-	testCases := map[string]struct {
-		args         []interface{}
-		expectedKeys []string
-	}{
-		"nil": {
-			args:         []interface{}{},
-			expectedKeys: []string{},
-		},
-		"simple": {
-			args: []interface{}{
-				"map1-key1", "map1-value1",
-				"map1-key2", "map1-value2",
-				"map1-key3", "map1-value3",
-			},
-			expectedKeys: []string{
-				"map1-key1",
-				"map1-key2",
-				"map1-key3",
-			},
-		},
-		"non-even-number-of-args": {
-			args: []interface{}{
-				"map1-key1", "map1-value1",
-				"map1-key2", "map1-value2",
-				"map1-key3",
-			},
-			expectedKeys: []string{
-				"map1-key1",
-				"map1-key2",
-				"map1-key3",
-			},
-		},
-		"multiple-different-keys": {
-			args: []interface{}{
-				"map1-key1", "map1-value1",
-				"map1-key2", "map1-value2",
-				"map1-key3", "map1-value3",
-				"map2-key1", "map2-value1",
-				"map2-key2", "map2-value2",
-				"map2-key3", "map2-value3",
-			},
-			expectedKeys: []string{
-				"map1-key1",
-				"map1-key2",
-				"map1-key3",
-				"map2-key1",
-				"map2-key2",
-				"map2-key3",
-			},
-		},
-		"multiple-mixed-keys": {
-			args: []interface{}{
-				"key1", "map1-value1",
-				"key2", "map1-value2",
-				"key3", "map1-value3",
-				"key4", "map2-value4",
-				"key1", "map2-value1",
-				"key5", "map2-value5",
-			},
-			expectedKeys: []string{
-				"key1",
-				"key2",
-				"key3",
-				"key4",
-				"key1",
-				"key5",
-			},
-		},
-		"multiple-overlapping-keys": {
-			args: []interface{}{
-				"key1", "map1-value1",
-				"key2", "map1-value2",
-				"key3", "map1-value3",
-				"key1", "map2-value1",
-				"key2", "map2-value2",
-				"key3", "map2-value3",
-			},
-			expectedKeys: []string{
-				"key1",
-				"key2",
-				"key3",
-				"key1",
-				"key2",
-				"key3",
-			},
-		},
-		"multiple-overlapping-keys-shallow": {
-			args: []interface{}{
-				"key1", map[string]interface{}{
-					"submap-key1": "map1-value1",
-					"submap-key2": "map1-value2",
-					"submap-key3": "map1-value3",
-				},
-				"key2", "map1-value2",
-				"key3", "map1-value3",
-				"key1", map[string]interface{}{
-					"submap-key4": "map2-value4",
-					"submap-key5": "map2-value5",
-					"submap-key6": "map2-value6",
-				},
-				"key2", "map2-value2",
-				"key3", "map2-value3",
-			},
-			expectedKeys: []string{
-				"key1",
-				"key2",
-				"key3",
-				"key1",
-				"key2",
-				"key3",
-			},
-		},
-	}
-
-	for name, testCase := range testCases {
-		name, testCase := name, testCase
-
-		t.Run(name, func(t *testing.T) {
-			t.Parallel()
-
-			got := hclogutils.ArgsToKeys(testCase.args)
-
-			if got == nil && testCase.expectedKeys == nil {
-				return // sortedGot will return []interface{}{} below, nil is what we want
-			}
-
-			sort.Strings(got)
-			sort.Strings(testCase.expectedKeys)
-
-			if diff := cmp.Diff(got, testCase.expectedKeys); diff != "" {
 				t.Errorf("unexpected difference: %s", diff)
 			}
 		})

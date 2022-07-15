@@ -4,24 +4,20 @@ import (
 	"context"
 	"regexp"
 
-	"github.com/hashicorp/go-hclog"
-	"github.com/hashicorp/terraform-plugin-log/internal/hclogutils"
 	"github.com/hashicorp/terraform-plugin-log/internal/logging"
 )
 
 // SetField returns a new context.Context that has a modified logger in it which
 // will include key and value as fields in all its log output.
+//
+// In case of the same key is used multiple times (i.e. key collision),
+// the last one set is the one that gets persisted and then outputted with the logs.
 func SetField(ctx context.Context, key string, value interface{}) context.Context {
-	logger := logging.GetProviderRootLogger(ctx)
-	if logger == nil {
-		// this essentially should never happen in production
-		// the root logger for provider code should be injected
-		// by whatever SDK the provider developer is using, so
-		// really this is only likely in unit tests, at most
-		// so just making this a no-op is fine
-		return ctx
-	}
-	return logging.SetProviderRootLogger(ctx, logger.With(key, value))
+	lOpts := logging.GetProviderRootTFLoggerOpts(ctx)
+
+	lOpts = logging.WithField(key, value)(lOpts)
+
+	return logging.SetProviderRootTFLoggerOpts(ctx, lOpts)
 }
 
 // Trace logs `msg` at the trace level to the logger in `ctx`, with optional
@@ -39,7 +35,7 @@ func Trace(ctx context.Context, msg string, additionalFields ...map[string]inter
 		return
 	}
 
-	additionalArgs, shouldOmit := omitOrMask(ctx, logger, &msg, additionalFields)
+	additionalArgs, shouldOmit := logging.OmitOrMask(logging.GetProviderRootTFLoggerOpts(ctx), &msg, additionalFields)
 	if shouldOmit {
 		return
 	}
@@ -62,7 +58,7 @@ func Debug(ctx context.Context, msg string, additionalFields ...map[string]inter
 		return
 	}
 
-	additionalArgs, shouldOmit := omitOrMask(ctx, logger, &msg, additionalFields)
+	additionalArgs, shouldOmit := logging.OmitOrMask(logging.GetProviderRootTFLoggerOpts(ctx), &msg, additionalFields)
 	if shouldOmit {
 		return
 	}
@@ -85,7 +81,7 @@ func Info(ctx context.Context, msg string, additionalFields ...map[string]interf
 		return
 	}
 
-	additionalArgs, shouldOmit := omitOrMask(ctx, logger, &msg, additionalFields)
+	additionalArgs, shouldOmit := logging.OmitOrMask(logging.GetProviderRootTFLoggerOpts(ctx), &msg, additionalFields)
 	if shouldOmit {
 		return
 	}
@@ -108,7 +104,7 @@ func Warn(ctx context.Context, msg string, additionalFields ...map[string]interf
 		return
 	}
 
-	additionalArgs, shouldOmit := omitOrMask(ctx, logger, &msg, additionalFields)
+	additionalArgs, shouldOmit := logging.OmitOrMask(logging.GetProviderRootTFLoggerOpts(ctx), &msg, additionalFields)
 	if shouldOmit {
 		return
 	}
@@ -131,27 +127,12 @@ func Error(ctx context.Context, msg string, additionalFields ...map[string]inter
 		return
 	}
 
-	additionalArgs, shouldOmit := omitOrMask(ctx, logger, &msg, additionalFields)
+	additionalArgs, shouldOmit := logging.OmitOrMask(logging.GetProviderRootTFLoggerOpts(ctx), &msg, additionalFields)
 	if shouldOmit {
 		return
 	}
 
 	logger.Error(msg, additionalArgs...)
-}
-
-func omitOrMask(ctx context.Context, logger hclog.Logger, msg *string, additionalFields []map[string]interface{}) ([]interface{}, bool) {
-	tfLoggerOpts := logging.GetProviderRootTFLoggerOpts(ctx)
-	additionalArgs := hclogutils.MapsToArgs(additionalFields...)
-	impliedArgs := logger.ImpliedArgs()
-
-	// Apply the provider root LoggerOpts to determine if this log should be omitted
-	if tfLoggerOpts.ShouldOmit(msg, impliedArgs, additionalArgs) {
-		return nil, true
-	}
-
-	// Apply the provider root LoggerOpts to apply masking to this log
-	tfLoggerOpts.ApplyMask(msg, impliedArgs, additionalArgs)
-	return additionalArgs, false
 }
 
 // OmitLogWithFieldKeys returns a new context.Context that has a modified logger

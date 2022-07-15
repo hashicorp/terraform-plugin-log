@@ -35,11 +35,14 @@ type LoggerOpts struct {
 	// easy to mess up on accident.
 	Output io.Writer
 
-	// IncludeTime indicates whether logs should incude the time they were
+	// IncludeTime indicates whether logs should include the time they were
 	// written or not. It should only be set to true when testing tflog or
 	// tfsdklog; providers and SDKs should always include the time logs
 	// were written as part of the log.
 	IncludeTime bool
+
+	// Fields indicates the key/value pairs to be added to each of its log output.
+	Fields map[string]interface{}
 
 	// IncludeRootFields indicates whether a new subsystem logger should
 	// copy existing fields from the root logger. This is only performed
@@ -161,6 +164,43 @@ func WithAdditionalLocationOffset(additionalLocationOffset int) Option {
 func WithOutput(output io.Writer) Option {
 	return func(l LoggerOpts) LoggerOpts {
 		l.Output = output
+		return l
+	}
+}
+
+// WithField sets the provided key/value pair, onto the LoggerOpts.Fields field.
+//
+// Behind the scene, fields are stored in a map[string]interface{}:
+// this means that in case the same key is used multiple times (key collision),
+// the last one set is the one that gets persisted and then outputted with the logs.
+func WithField(key string, value interface{}) Option {
+	return func(l LoggerOpts) LoggerOpts {
+		// Lazily create this map, on first assignment
+		if l.Fields == nil {
+			l.Fields = make(map[string]interface{})
+		}
+
+		l.Fields[key] = value
+		return l
+	}
+}
+
+// WithFields sets all the provided key/value pairs, onto the LoggerOpts.Fields field.
+//
+// Behind the scene, fields are stored in a map[string]interface{}:
+// this means that in case the same key is used multiple times (key collision),
+// the last one set is the one that gets persisted and then outputted with the logs.
+func WithFields(fields map[string]interface{}) Option {
+	return func(l LoggerOpts) LoggerOpts {
+		// Lazily create this map, on first assignment
+		if l.Fields == nil {
+			l.Fields = make(map[string]interface{})
+		}
+
+		for k, v := range fields {
+			l.Fields[k] = v
+		}
+
 		return l
 	}
 }
