@@ -100,28 +100,28 @@ tflog.Trace(ctx, "executing API request", map[string]interface{}{
 
 #### Multiple Log Fields
 
-Loggers are transported using a `context.Context` type, so injecting a variable into a logger returns a new `context.Context` containing the modified logger. Subsequent calls to `tflog` with that logger will implicitly include the variable.
+Loggers are transported using a `context.Context` type, so injecting a field into a logger returns a new `context.Context` containing the modified logger. Subsequent calls to `tflog` with that logger will implicitly include the field.
 
 Use [`tflog.SetField()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SetField) to attach fields to a logger.
 
 ```go
-// overwrite logger to include new `url` variable
+// overwrite logger to include new `url` field
 ctx = tflog.SetField(ctx, "url", "https://www.example.com/my/endpoint")
 
-// will include the `url` variable
+// will include the `url` field
 tflog.Debug(ctx, "Calling API")
 ```
 
 You can also conditionally attach the fields by creating a new context and injecting it into the logger.
 
 ```go
-// create new logger that includes `url` variable
+// create new logger that includes `url` field
 apiContext := tflog.SetField(ctx, "url", "https://www.example.com/my/endpoint")
 
-// will not include the `url` variable
+// will not include the `url` field
 tflog.Debug(ctx, "Calling database")
 
-// will include the `url` variable
+// will include the `url` field
 tflog.Debug(apiContext, "Calling API")
 ```
 
@@ -145,7 +145,7 @@ Optionally, specify a [log level](#log-levels) for the subsystem.
 ctx = tflog.NewSubsystem(ctx, "my-subsystem", hclog.Debug)
 ```
 
-You can also create an environment variable to control the logging level instead of hardcoding it into the subsystem.
+You can also create an environment field to control the logging level instead of hardcoding it into the subsystem.
 
 ```go
 // read the level from TF_LOG_PROVIDER_MYPROVIDER_CLIENT
@@ -175,23 +175,23 @@ tflog.SubsystemDebug(ctx, "my-subsystem", "writing to a subsystem", map[string]i
 Use [`tflog.SubsystemSetField()`](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SubsystemSetField) to attach fields to a specific subsystem.
 
 ```go
-// overwrite logger to include new `url` variable
+// overwrite logger to include new `url` field
 ctx = tflog.SubsystemSetField(ctx, "my-subsystem", "url", "https://www.example.com/my/endpoint")
 
-// will include the `url` variable
+// will include the `url` field
 tflog.SubsystemDebug(ctx, "my-subsystem", "Calling API")
 ```
 
 You can also conditionally attach fields by creating a new context and injecting it into the logger.
 
 ```go
-// create new logger that includes `url` variable
+// create new logger that includes `url` field
 apiContext := tflog.SubsystemSetField(ctx, "my-subsystem", "url", "https://www.example.com/my/endpoint")
 
-// will not include the `url` variable
+// will not include the `url` field
 tflog.SubsystemDebug(ctx, "my-subsystem", "Calling database")
 
-// will include the `url` variable
+// will include the `url` field
 tflog.SubsystemDebug(apiContext, "my-subsystem", "Calling API")
 ```
 
