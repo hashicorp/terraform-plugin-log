@@ -1,3 +1,16 @@
+# 0.6.0 (July 15, 2022)
+
+BREAKING CHANGES:
+
+* tflog: renamed `With()` and `SubsystemWith()`, to `SetField()` and `SubsystemSetField()` respectively ([#78](https://github.com/hashicorp/terraform-plugin-log/issues/78))
+* tflog: renamed `WithMaskFieldValueWithFieldKeys()` and `SubsystemWithMaskFieldValueWithFieldKeys()`, to `MaskFieldValuesWithFieldKeys()` and `SubsystemMaskFieldValuesWithFieldKeys()` respectively ([#78](https://github.com/hashicorp/terraform-plugin-log/issues/78))
+* tflog: renamed `WithMaskLogMatchingString()` and `SubsystemWithMaskLogMatchingString()`, to `MaskMessageStrings()` and `SubsystemMaskMessageStrings()` respectively ([#78](https://github.com/hashicorp/terraform-plugin-log/issues/78))
+* tflog: renamed `WithMaskMessageRegex()` and `SubsystemWithMaskMessageRegex()`, to `MaskMessageRegexes()` and `SubsystemMaskMessageRegexes()` respectively ([#78](https://github.com/hashicorp/terraform-plugin-log/issues/78))
+* tflog: renamed `WithOmitLogMatchingString()` and `SubsystemWithOmitLogMatchingString()`, to `OmitLogWithMessageStrings()` and `SubsystemOmitLogWithMessageStrings()` respectively ([#78](https://github.com/hashicorp/terraform-plugin-log/issues/78))
+* tflog: renamed `WithOmitLogWithFieldKeys()` and `SubsystemWithOmitLogWithFieldKeys()`, to `OmitLogWithFieldKeys()` and `SubsystemOmitLogWithFieldKeys()` respectively ([#78](https://github.com/hashicorp/terraform-plugin-log/issues/78))
+* tflog: renamed `WithOmitLogWithMessageRegex()` and `SubsystemWithOmitLogWithMessageRegex()`, to `OmitLogWithMessageRegexes()` and `SubsystemOmitLogWithMessageRegexes()` respectively ([#78](https://github.com/hashicorp/terraform-plugin-log/issues/78))
+* tfsdklog: same renaming as for the `tflog` package ([#78](https://github.com/hashicorp/terraform-plugin-log/issues/78))
+
 # 0.5.0 (July 14, 2022)
 
 FEATURES:
