@@ -166,7 +166,7 @@ Use the [`tflog.OmitLogWithFieldKeys()` function](https://pkg.go.dev/github.com/
 ```go
 tflog.OmitLogWithFieldKeys(ctx, "my-sensitive-field")
 
-// Will output: example message: my-sensitive-field=***
+// Will not be output
 tflog.Trace(ctx, "example message", map[string]interface{}{"my-sensitive-field": "some-sensitive-data"})
 ```
 
