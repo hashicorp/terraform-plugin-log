@@ -393,7 +393,7 @@ func MaskMessageRegexes(ctx context.Context, expressions ...*regexp.Regexp) cont
 //
 //   configuration = `['foo', 'bar']`
 //
-//   log1 = `{ msg = "banana apple ***", fields = { 'k1': '***, ***, baz' }`  -> masked portion
+//   log1 = `{ msg = "banana apple ***", fields = { 'k1': 'foo, bar, baz' }`  -> masked portion
 //   log2 = `{ msg = "pineapple mango", fields = {...}`                       -> as-is
 //   log3 = `{ msg = "pineapple mango ***", fields = {...}`                   -> masked portion
 //

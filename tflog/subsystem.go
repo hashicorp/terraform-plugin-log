@@ -389,7 +389,7 @@ func SubsystemMaskMessageRegexes(ctx context.Context, subsystem string, expressi
 //
 //   configuration = `['foo', 'bar']`
 //
-//   log1 = `{ msg = "banana apple ***", fields = { 'k1': '***, ***, baz' }`  -> masked portion
+//   log1 = `{ msg = "banana apple ***", fields = { 'k1': 'foo, bar, baz' }`  -> masked portion
 //   log2 = `{ msg = "pineapple mango", fields = {...}`                       -> as-is
 //   log3 = `{ msg = "pineapple mango ***", fields = {...}`                   -> masked portion
 //
