@@ -909,6 +909,190 @@ func TestMaskFieldValuesWithFieldKeys(t *testing.T) {
 	}
 }
 
+func TestMaskAllFieldValuesRegexes(t *testing.T) {
+	testCases := map[string]struct {
+		msg              string
+		additionalFields []map[string]interface{}
+		expressions      []*regexp.Regexp
+		expectedOutput   []map[string]interface{}
+	}{
+		"no-masking": {
+			msg: testLogMsg,
+			additionalFields: []map[string]interface{}{
+				{
+					"k1": "v1",
+					"k2": "v2",
+				},
+			},
+			expressions: []*regexp.Regexp{},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":   "trace",
+					"@message": "System FOO has caused error BAR because of incorrectly configured BAZ",
+					"@module":  "provider",
+					"k1":       "v1",
+					"k2":       "v2",
+				},
+			},
+		},
+		"no-matches": {
+			msg: testLogMsg,
+			additionalFields: []map[string]interface{}{
+				{
+					"k1": "v1",
+					"k2": "v2",
+				},
+			},
+			expressions: []*regexp.Regexp{regexp.MustCompile("v3"), regexp.MustCompile("v4")},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":   "trace",
+					"@message": "System FOO has caused error BAR because of incorrectly configured BAZ",
+					"@module":  "provider",
+					"k1":       "v1",
+					"k2":       "v2",
+				},
+			},
+		},
+		"mask-matching-regexp": {
+			msg: testLogMsg,
+			additionalFields: []map[string]interface{}{
+				{
+					"k1": "v1 plus text",
+					"k2": "v2 more text",
+				},
+			},
+			expressions: []*regexp.Regexp{regexp.MustCompile("v1|v2")},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":   "trace",
+					"@message": "System FOO has caused error BAR because of incorrectly configured BAZ",
+					"@module":  "provider",
+					"k1":       "*** plus text",
+					"k2":       "*** more text",
+				},
+			},
+		},
+	}
+
+	for name, testCase := range testCases {
+		name, testCase := name, testCase
+
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			var outputBuffer bytes.Buffer
+
+			ctx := context.Background()
+			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
+			ctx = tflog.MaskAllFieldValuesRegexes(ctx, testCase.expressions...)
+
+			tflog.Trace(ctx, testCase.msg, testCase.additionalFields...)
+
+			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
+			if err != nil {
+				t.Fatalf("unable to read multiple line JSON: %s", err)
+			}
+
+			if diff := cmp.Diff(testCase.expectedOutput, got); diff != "" {
+				t.Errorf("unexpected output difference: %s", diff)
+			}
+		})
+	}
+}
+
+func TestMaskAllFieldValuesStrings(t *testing.T) {
+	testCases := map[string]struct {
+		msg              string
+		additionalFields []map[string]interface{}
+		matchingStrings  []string
+		expectedOutput   []map[string]interface{}
+	}{
+		"no-masking": {
+			msg: testLogMsg,
+			additionalFields: []map[string]interface{}{
+				{
+					"k1": "v1",
+					"k2": "v2",
+				},
+			},
+			matchingStrings: []string{},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":   "trace",
+					"@message": "System FOO has caused error BAR because of incorrectly configured BAZ",
+					"@module":  "provider",
+					"k1":       "v1",
+					"k2":       "v2",
+				},
+			},
+		},
+		"no-matches": {
+			msg: testLogMsg,
+			additionalFields: []map[string]interface{}{
+				{
+					"k1": "v1",
+					"k2": "v2",
+				},
+			},
+			matchingStrings: []string{"v3", "v4"},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":   "trace",
+					"@message": "System FOO has caused error BAR because of incorrectly configured BAZ",
+					"@module":  "provider",
+					"k1":       "v1",
+					"k2":       "v2",
+				},
+			},
+		},
+		"mask-matching-strings": {
+			msg: testLogMsg,
+			additionalFields: []map[string]interface{}{
+				{
+					"k1": "v1 plus text",
+					"k2": "v2 more text",
+				},
+			},
+			matchingStrings: []string{"v1", "v2"},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":   "trace",
+					"@message": "System FOO has caused error BAR because of incorrectly configured BAZ",
+					"@module":  "provider",
+					"k1":       "*** plus text",
+					"k2":       "*** more text",
+				},
+			},
+		},
+	}
+
+	for name, testCase := range testCases {
+		name, testCase := name, testCase
+
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			var outputBuffer bytes.Buffer
+
+			ctx := context.Background()
+			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
+			ctx = tflog.MaskAllFieldValuesStrings(ctx, testCase.matchingStrings...)
+
+			tflog.Trace(ctx, testCase.msg, testCase.additionalFields...)
+
+			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
+			if err != nil {
+				t.Fatalf("unable to read multiple line JSON: %s", err)
+			}
+
+			if diff := cmp.Diff(testCase.expectedOutput, got); diff != "" {
+				t.Errorf("unexpected output difference: %s", diff)
+			}
+		})
+	}
+}
+
 func TestMaskMessageRegexes(t *testing.T) {
 	testCases := map[string]struct {
 		msg                   string
@@ -1080,6 +1264,190 @@ func TestMaskMessageStrings(t *testing.T) {
 			ctx = tflog.MaskMessageStrings(ctx, testCase.maskLogMatchingString...)
 
 			tflog.Info(ctx, testCase.msg, testCase.additionalFields...)
+
+			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
+			if err != nil {
+				t.Fatalf("unable to read multiple line JSON: %s", err)
+			}
+
+			if diff := cmp.Diff(testCase.expectedOutput, got); diff != "" {
+				t.Errorf("unexpected output difference: %s", diff)
+			}
+		})
+	}
+}
+
+func TestMaskLogRegexes(t *testing.T) {
+	testCases := map[string]struct {
+		msg              string
+		additionalFields []map[string]interface{}
+		expressions      []*regexp.Regexp
+		expectedOutput   []map[string]interface{}
+	}{
+		"no-masking": {
+			msg: testLogMsg,
+			additionalFields: []map[string]interface{}{
+				{
+					"k1": "v1",
+					"k2": "v2",
+				},
+			},
+			expressions: []*regexp.Regexp{},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":   "trace",
+					"@message": "System FOO has caused error BAR because of incorrectly configured BAZ",
+					"@module":  "provider",
+					"k1":       "v1",
+					"k2":       "v2",
+				},
+			},
+		},
+		"no-matches": {
+			msg: testLogMsg,
+			additionalFields: []map[string]interface{}{
+				{
+					"k1": "v1",
+					"k2": "v2",
+				},
+			},
+			expressions: []*regexp.Regexp{regexp.MustCompile("v3"), regexp.MustCompile("v4"), regexp.MustCompile("(?i)BaAnAnA")},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":   "trace",
+					"@message": "System FOO has caused error BAR because of incorrectly configured BAZ",
+					"@module":  "provider",
+					"k1":       "v1",
+					"k2":       "v2",
+				},
+			},
+		},
+		"mask-matching-regexp": {
+			msg: testLogMsg,
+			additionalFields: []map[string]interface{}{
+				{
+					"k1": "v1 plus text",
+					"k2": "v2 more text",
+				},
+			},
+			expressions: []*regexp.Regexp{regexp.MustCompile("v1|v2"), regexp.MustCompile("FOO|BAR|BAZ")},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":   "trace",
+					"@message": "System *** has caused error *** because of incorrectly configured ***",
+					"@module":  "provider",
+					"k1":       "*** plus text",
+					"k2":       "*** more text",
+				},
+			},
+		},
+	}
+
+	for name, testCase := range testCases {
+		name, testCase := name, testCase
+
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			var outputBuffer bytes.Buffer
+
+			ctx := context.Background()
+			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
+			ctx = tflog.MaskLogRegexes(ctx, testCase.expressions...)
+
+			tflog.Trace(ctx, testCase.msg, testCase.additionalFields...)
+
+			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
+			if err != nil {
+				t.Fatalf("unable to read multiple line JSON: %s", err)
+			}
+
+			if diff := cmp.Diff(testCase.expectedOutput, got); diff != "" {
+				t.Errorf("unexpected output difference: %s", diff)
+			}
+		})
+	}
+}
+
+func TestMaskLogStrings(t *testing.T) {
+	testCases := map[string]struct {
+		msg              string
+		additionalFields []map[string]interface{}
+		matchingStrings  []string
+		expectedOutput   []map[string]interface{}
+	}{
+		"no-masking": {
+			msg: testLogMsg,
+			additionalFields: []map[string]interface{}{
+				{
+					"k1": "v1",
+					"k2": "v2",
+				},
+			},
+			matchingStrings: []string{},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":   "trace",
+					"@message": "System FOO has caused error BAR because of incorrectly configured BAZ",
+					"@module":  "provider",
+					"k1":       "v1",
+					"k2":       "v2",
+				},
+			},
+		},
+		"no-matches": {
+			msg: testLogMsg,
+			additionalFields: []map[string]interface{}{
+				{
+					"k1": "v1",
+					"k2": "v2",
+				},
+			},
+			matchingStrings: []string{"v3", "v4"},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":   "trace",
+					"@message": "System FOO has caused error BAR because of incorrectly configured BAZ",
+					"@module":  "provider",
+					"k1":       "v1",
+					"k2":       "v2",
+				},
+			},
+		},
+		"mask-matching-strings": {
+			msg: testLogMsg,
+			additionalFields: []map[string]interface{}{
+				{
+					"k1": "v1 plus text",
+					"k2": "v2 more text",
+				},
+			},
+			matchingStrings: []string{"v1", "v2", "FOO", "BAR", "BAZ"},
+			expectedOutput: []map[string]interface{}{
+				{
+					"@level":   "trace",
+					"@message": "System *** has caused error *** because of incorrectly configured ***",
+					"@module":  "provider",
+					"k1":       "*** plus text",
+					"k2":       "*** more text",
+				},
+			},
+		},
+	}
+
+	for name, testCase := range testCases {
+		name, testCase := name, testCase
+
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			var outputBuffer bytes.Buffer
+
+			ctx := context.Background()
+			ctx = loggertest.ProviderRoot(ctx, &outputBuffer)
+			ctx = tflog.MaskLogStrings(ctx, testCase.matchingStrings...)
+
+			tflog.Trace(ctx, testCase.msg, testCase.additionalFields...)
 
 			got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 			if err != nil {

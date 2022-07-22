@@ -228,6 +228,56 @@ func ExampleSubsystemMaskFieldValuesWithFieldKeys() {
 	// {"@level":"trace","@message":"example log message","@module":"provider.my-subsystem","field1":"***","field2":456}
 }
 
+func ExampleSubsystemMaskAllFieldValuesRegexes() {
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
+	exampleCtx := getExampleContext()
+
+	// non-example-setup code begins here
+	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
+	exampleCtx = SubsystemMaskAllFieldValuesRegexes(exampleCtx, "my-subsystem", regexp.MustCompile("v1|v2"))
+
+	// all messages logged with exampleCtx will now have field values matching
+	// the above regular expressions, replaced with ***
+	SubsystemTrace(exampleCtx, "my-subsystem", "example log message", map[string]interface{}{
+		"k1": "v1 plus some text",
+		"k2": "v2 plus more text",
+	})
+
+	// Output:
+	// {"@level":"trace","@message":"example log message","@module":"provider.my-subsystem","k1":"*** plus some text","k2":"*** plus more text"}
+}
+
+func ExampleSubsystemMaskAllFieldValuesStrings() {
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
+	exampleCtx := getExampleContext()
+
+	// non-example-setup code begins here
+	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
+	exampleCtx = SubsystemMaskAllFieldValuesStrings(exampleCtx, "my-subsystem", "v1", "v2")
+
+	// all messages logged with exampleCtx will now have field values equal
+	// the above strings, replaced with ***
+	SubsystemTrace(exampleCtx, "my-subsystem", "example log message", map[string]interface{}{
+		"k1": "v1 plus some text",
+		"k2": "v2 plus more text",
+	})
+
+	// Output:
+	// {"@level":"trace","@message":"example log message","@module":"provider.my-subsystem","k1":"*** plus some text","k2":"*** plus more text"}
+}
+
 func ExampleSubsystemMaskMessageStrings() {
 	// virtually no plugin developers will need to worry about
 	// instantiating loggers, as the libraries they're using will take care
@@ -338,4 +388,54 @@ func ExampleSubsystemOmitLogWithMessageRegexes() {
 
 	// Output:
 	//
+}
+
+func ExampleSubsystemMaskLogRegexes() {
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
+	exampleCtx := getExampleContext()
+
+	// non-example-setup code begins here
+	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
+	exampleCtx = SubsystemMaskLogRegexes(exampleCtx, "my-subsystem", regexp.MustCompile("v1|v2"), regexp.MustCompile("message"))
+
+	// all messages logged with exampleCtx will now have message content
+	// and field values matching the above regular expressions, replaced with ***
+	SubsystemTrace(exampleCtx, "my-subsystem", "example log message", map[string]interface{}{
+		"k1": "v1 plus some text",
+		"k2": "v2 plus more text",
+	})
+
+	// Output:
+	// {"@level":"trace","@message":"example log ***","@module":"provider.my-subsystem","k1":"*** plus some text","k2":"*** plus more text"}
+}
+
+func ExampleSubsystemMaskLogStrings() {
+	// virtually no plugin developers will need to worry about
+	// instantiating loggers, as the libraries they're using will take care
+	// of that, but we're not using those libraries in these examples. So
+	// we need to do the injection ourselves. Plugin developers will
+	// basically never need to do this, so the next line can safely be
+	// considered setup for the example and ignored. Instead, use the
+	// context passed in by the framework or library you're using.
+	exampleCtx := getExampleContext()
+
+	// non-example-setup code begins here
+	exampleCtx = NewSubsystem(exampleCtx, "my-subsystem")
+	exampleCtx = SubsystemMaskLogStrings(exampleCtx, "my-subsystem", "v1", "v2", "message")
+
+	// all messages logged with exampleCtx will now have message content
+	// and field values equal the above strings, replaced with ***
+	SubsystemTrace(exampleCtx, "my-subsystem", "example log message", map[string]interface{}{
+		"k1": "v1 plus some text",
+		"k2": "v2 plus more text",
+	})
+
+	// Output:
+	// {"@level":"trace","@message":"example log ***","@module":"provider.my-subsystem","k1":"*** plus some text","k2":"*** plus more text"}
 }
