@@ -215,6 +215,50 @@ func TestApplyMask(t *testing.T) {
 				},
 			},
 		},
+		"mask-log-and-fields-matching-regexp": {
+			lOpts: logging.LoggerOpts{
+				MaskMessageRegexes: []*regexp.Regexp{
+					regexp.MustCompile("incorrectly configured BAZ"),
+				},
+				MaskAllFieldValuesRegexes: []*regexp.Regexp{
+					regexp.MustCompile("v1|v2"),
+				},
+			},
+			msg: testLogMsg,
+			fieldMaps: []map[string]interface{}{
+				{
+					"k1": "v1 with some extra text",
+					"k2": "v2 with more extra text",
+				},
+			},
+			expectedMsg: "System FOO has caused error BAR because of ***",
+			expectedFieldMaps: []map[string]interface{}{
+				{
+					"k1": "*** with some extra text",
+					"k2": "*** with more extra text",
+				},
+			},
+		},
+		"mask-log-and-fields-matching-strings": {
+			lOpts: logging.LoggerOpts{
+				MaskMessageStrings:        []string{"FOO", "BAR", "BAZ"},
+				MaskAllFieldValuesStrings: []string{"v1", "v2"},
+			},
+			msg: testLogMsg,
+			fieldMaps: []map[string]interface{}{
+				{
+					"k1": "v1 with some extra text",
+					"k2": "v2 with more extra text",
+				},
+			},
+			expectedMsg: "System *** has caused error *** because of incorrectly configured ***",
+			expectedFieldMaps: []map[string]interface{}{
+				{
+					"k1": "*** with some extra text",
+					"k2": "*** with more extra text",
+				},
+			},
+		},
 		"mask-log-by-key-and-matching-regexp": {
 			lOpts: logging.LoggerOpts{
 				MaskMessageRegexes:           []*regexp.Regexp{regexp.MustCompile("incorrectly configured BAZ")},

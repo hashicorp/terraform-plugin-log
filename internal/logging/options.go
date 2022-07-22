@@ -56,9 +56,9 @@ type LoggerOpts struct {
 	//
 	//   OmitLogWithFieldKeys = `['foo', 'baz']`
 	//
-	//   log1 = `{ msg = "...", fields = { 'foo', '...', 'bar', '...' }`   -> omitted
-	//   log2 = `{ msg = "...", fields = { 'bar', '...' }`                 -> printed
-	//   log3 = `{ msg = "...", fields = { 'baz`', '...', 'boo', '...' }`  -> omitted
+	//   log1 = `{ msg = "...", fields = { 'foo': '...', 'bar': '...' }`  -> omitted
+	//   log2 = `{ msg = "...", fields = { 'bar': '...' }`                -> printed
+	//   log3 = `{ msg = "...", fields = { 'baz': '...', 'boo': '...' }`  -> omitted
 	//
 	OmitLogWithFieldKeys []string
 
@@ -95,11 +95,40 @@ type LoggerOpts struct {
 	//
 	//   MaskFieldValuesWithFieldKeys = `['foo', 'baz']`
 	//
-	//   log1 = `{ msg = "...", fields = { 'foo', '***', 'bar', '...' }`   -> masked value
-	//   log2 = `{ msg = "...", fields = { 'bar', '...' }`                 -> as-is value
-	//   log3 = `{ msg = "...", fields = { 'baz`', '***', 'boo', '...' }`  -> masked value
+	//   log1 = `{ msg = "...", fields = { 'foo': '***', 'bar': '...' }`  -> masked value
+	//   log2 = `{ msg = "...", fields = { 'bar': '...' }`                -> as-is value
+	//   log3 = `{ msg = "...", fields = { 'baz': '***', 'boo': '...' }`  -> masked value
 	//
 	MaskFieldValuesWithFieldKeys []string
+
+	// MaskAllFieldValuesRegexes indicates that the logger should replace, within
+	// all the log field values, the portion matching one of the given *regexp.Regexp.
+	//
+	// Note that the replacement will happen, only for field values that are of type string.
+	//
+	// Example:
+	//
+	//   MaskAllFieldValuesRegexes = `[regexp.MustCompile("(foo|bar)")]`
+	//
+	//   log1 = `{ msg = "...", fields = { 'k1': '***', 'k2': '***', 'k3': 'baz' }`  -> masked value
+	//   log2 = `{ msg = "...", fields = { 'k1': 'boo', 'k2': 'far', 'k3': 'baz' }`  -> as-is value
+	//   log2 = `{ msg = "...", fields = { 'k1': '*** *** baz' }`                    -> masked value
+	//
+	MaskAllFieldValuesRegexes []*regexp.Regexp
+
+	// MaskAllFieldValuesStrings indicates that the logger should replace, within
+	// all the log field values, the portion equal to one of the given strings.
+	//
+	// Note that the replacement will happen, only for field values that are of type string.
+	//
+	// Example:
+	//
+	//   MaskAllFieldValuesStrings = `['foo', 'baz']`
+	//
+	//   log1 = `{ msg = "...", fields = { 'k1': '***', 'k2': 'bar', 'k3': '***' }`  -> masked value
+	//   log2 = `{ msg = "...", fields = { 'k1': 'boo', 'k2': 'far', 'k3': '***' }`  -> as-is value
+	//   log2 = `{ msg = "...", fields = { 'k1': '*** bar ***' }`                    -> masked value
+	MaskAllFieldValuesStrings []string
 
 	// MaskMessageRegexes indicates that the logger should replace, within
 	// a log message, the portion matching one of the given *regexp.Regexp.
@@ -108,20 +137,20 @@ type LoggerOpts struct {
 	//
 	//   MaskMessageRegexes = `[regexp.MustCompile("(foo|bar)")]`
 	//
-	//   log1 = `{ msg = "banana apple ***", fields = {...}`     -> masked portion
+	//   log1 = `{ msg = "banana apple ***", fields = { ... }`   -> masked portion
 	//   log2 = `{ msg = "pineapple mango", fields = {...}`      -> as-is
 	//   log3 = `{ msg = "pineapple mango ***", fields = {...}`  -> masked portion
 	//
 	MaskMessageRegexes []*regexp.Regexp
 
 	// MaskMessageStrings indicates that the logger should replace, within
-	// a log message, the portion matching one of the given strings.
+	// a log message, the portion equal to one of the given strings.
 	//
 	// Example:
 	//
 	//   MaskMessageStrings = `['foo', 'bar']`
 	//
-	//   log1 = `{ msg = "banana apple ***", fields = {...}`     -> masked portion
+	//   log1 = `{ msg = "banana apple ***", fields = { ... }`   -> masked portion
 	//   log2 = `{ msg = "pineapple mango", fields = {...}`      -> as-is
 	//   log3 = `{ msg = "pineapple mango ***", fields = {...}`  -> masked portion
 	//
@@ -262,6 +291,22 @@ func WithOmitLogWithMessageStrings(matchingStrings ...string) Option {
 func WithMaskFieldValuesWithFieldKeys(keys ...string) Option {
 	return func(l LoggerOpts) LoggerOpts {
 		l.MaskFieldValuesWithFieldKeys = append(l.MaskFieldValuesWithFieldKeys, keys...)
+		return l
+	}
+}
+
+// WithMaskAllFieldValuesRegexes appends keys to the LoggerOpts.MaskAllFieldValuesRegexes field.
+func WithMaskAllFieldValuesRegexes(expressions ...*regexp.Regexp) Option {
+	return func(l LoggerOpts) LoggerOpts {
+		l.MaskAllFieldValuesRegexes = append(l.MaskAllFieldValuesRegexes, expressions...)
+		return l
+	}
+}
+
+// WithMaskAllFieldValuesStrings appends keys to the LoggerOpts.MaskAllFieldValuesStrings field.
+func WithMaskAllFieldValuesStrings(matchingStrings ...string) Option {
+	return func(l LoggerOpts) LoggerOpts {
+		l.MaskAllFieldValuesStrings = append(l.MaskAllFieldValuesStrings, matchingStrings...)
 		return l
 	}
 }
