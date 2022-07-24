@@ -137,7 +137,7 @@ type LoggerOpts struct {
 	//
 	//   MaskMessageRegexes = `[regexp.MustCompile("(foo|bar)")]`
 	//
-	//   log1 = `{ msg = "banana apple ***", fields = { ... }`   -> masked portion
+	//   log1 = `{ msg = "banana apple ***", fields = {...}`     -> masked portion
 	//   log2 = `{ msg = "pineapple mango", fields = {...}`      -> as-is
 	//   log3 = `{ msg = "pineapple mango ***", fields = {...}`  -> masked portion
 	//
@@ -150,7 +150,7 @@ type LoggerOpts struct {
 	//
 	//   MaskMessageStrings = `['foo', 'bar']`
 	//
-	//   log1 = `{ msg = "banana apple ***", fields = { ... }`   -> masked portion
+	//   log1 = `{ msg = "banana apple ***", fields = {...}`     -> masked portion
 	//   log2 = `{ msg = "pineapple mango", fields = {...}`      -> as-is
 	//   log3 = `{ msg = "pineapple mango ***", fields = {...}`  -> masked portion
 	//
