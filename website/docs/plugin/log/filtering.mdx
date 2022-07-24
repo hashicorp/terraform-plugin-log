@@ -98,6 +98,60 @@ tflog.MaskFieldValuesWithFieldKeys(ctx, sensitiveFields...)
 tflog.MaskFieldValuesWithFieldKeys(ctx, "yet-another-sensitive-field", "final-sensitive-field")
 ```
 
+### Masking Field Values Via Regular Expressions
+
+Use the [`tflog.MaskAllFieldValuesRegexes()` function](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#MaskAllFieldValuesRegexes) before writing logs:
+
+```go
+tflog.MaskAllFieldValuesRegexes(ctx, regexp.MustCompile(`(\w{3}_SECRET)`))
+
+// Will output: example message: contains-secret=my-super-***
+tflog.Trace(ctx, "example message", map[string]interface{}{"contains-secret": "my-super-TOP_SECRET"})
+```
+
+For subsystems, use the [`tflog.SubsystemMaskAllFieldValuesRegexes()` function](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SubsystemMaskAllFieldValuesRegexes) before writing logs:
+
+```go
+tflog.SubsystemMaskAllFieldValuesRegexes(ctx, "my-subsystem", regexp.MustCompile(`(\w{3}_SECRET)`))
+```
+
+Both functions can accept multiple string values at once to simplify filtering implementations.
+
+### Masking Field Values Via Exact Strings
+
+Use the [`tflog.MaskAllFieldValuesStrings()` function](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#MaskAllFieldValuesStrings) before writing logs:
+
+```go
+tflog.MaskAllFieldValuesStrings(ctx, "TOP_SECRET")
+
+// Will output: example message: contains-secret=my-super-***
+tflog.Trace(ctx, "example message", map[string]interface{}{"contains-secret": "my-super-TOP_SECRET"})
+```
+
+For subsystems, use the [`tflog.SubsystemMaskAllFieldValuesStrings()` function](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SubsystemMaskAllFieldValuesStrings) before writing logs:
+
+```go
+tflog.SubsystemMaskAllFieldValuesStrings(ctx, "my-subsystem", "TOP_SECRET")
+```
+
+Both functions can accept multiple string values at once to simplify filtering implementations.
+
+### Masking Messages and Field Values via Regular Expressions
+
+Use the [`tflog.MaskLogRegexes()` function](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#MaskLogRegexes) to
+obtain the same configuration and behaviour as if you had used the same input on `tflog.MaskMessageRegexes()` and `tflog.MaskAllFieldValuesRegexes()`.
+
+The same applies, respectively, for [`tflog.SubsystemMaskLogRegexes()` function](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SubsystemMaskLogRegexes),
+and the functions `tflog.SubsystemMaskMessageRegexes()` and `tflog.SubsystemMaskAllFieldValuesRegexes()`.
+
+### Masking Messages and Field Values via Exact Strings
+
+Use the [`tflog.MaskLogStrings()` function](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#MaskLogStrings) to
+obtain the same configuration and behaviour as if you had used the same input on `tflog.MaskMessageStrings()` and `tflog.MaskAllFieldValuesStrings()`.
+
+The same applies, respectively, for [`tflog.SubsystemMaskLogStrings()` function](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog#SubsystemMaskLogStrings),
+and the functions `tflog.SubsystemMaskMessageStrings()` and `tflog.SubsystemMaskAllFieldValuesStrings()`.
+
 ## Omitting Log Output
 
 Omitting logs is the process of skipping the entire output of a log message and its fields when encountering sensitive data.
