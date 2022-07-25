@@ -1,3 +1,11 @@
+# 0.7.0 (July 25, 2022)
+
+FEATURES:
+ 
+* tflog: Added `MaskAllFieldValuesRegexes()`, `MaskAllFieldValuesStrings()`, `MaskLogRegexes()` and `MaskLogStrings()` functions, which extend further the log masking filtering, for the provider root logger ([#87](https://github.com/hashicorp/terraform-plugin-log/issues/87))
+* tflog: Added `SubsystemMaskAllFieldValuesRegexes()`, `SubsystemMaskAllFieldValuesStrings()`, `SubsystemMaskLogRegexes()` and `SubsystemMaskLogStrings()` functions, which extend further the log masking filtering, for provider subsystem loggers ([#87](https://github.com/hashicorp/terraform-plugin-log/issues/87))
+* tfsdklog: Same functions added to the `tflog` package ([#87](https://github.com/hashicorp/terraform-plugin-log/issues/87))
+
 # 0.6.0 (July 15, 2022)
 
 BREAKING CHANGES:
