@@ -223,12 +223,11 @@ func SubsystemError(ctx context.Context, subsystem, msg string, additionalFields
 //
 // Example:
 //
-//   configuration = `['foo', 'baz']`
+//	configuration = `['foo', 'baz']`
 //
-//   log1 = `{ msg = "...", fields = { 'foo': '...', 'bar': '...' }`  -> omitted
-//   log2 = `{ msg = "...", fields = { 'bar': '...' }`                -> printed
-//   log3 = `{ msg = "...", fields = { 'baz': '...', 'boo': '...' }`  -> omitted
-//
+//	log1 = `{ msg = "...", fields = { 'foo': '...', 'bar': '...' }`  -> omitted
+//	log2 = `{ msg = "...", fields = { 'bar': '...' }`                -> printed
+//	log3 = `{ msg = "...", fields = { 'baz': '...', 'boo': '...' }`  -> omitted
 func SubsystemOmitLogWithFieldKeys(ctx context.Context, subsystem string, keys ...string) context.Context {
 	lOpts := logging.GetSDKSubsystemTFLoggerOpts(ctx, subsystem)
 
@@ -246,12 +245,11 @@ func SubsystemOmitLogWithFieldKeys(ctx context.Context, subsystem string, keys .
 //
 // Example:
 //
-//   configuration = `[regexp.MustCompile("(foo|bar)")]`
+//	configuration = `[regexp.MustCompile("(foo|bar)")]`
 //
-//   log1 = `{ msg = "banana apple foo", fields = {...}`     -> omitted
-//   log2 = `{ msg = "pineapple mango", fields = {...}`      -> printed
-//   log3 = `{ msg = "pineapple mango bar", fields = {...}`  -> omitted
-//
+//	log1 = `{ msg = "banana apple foo", fields = {...}`     -> omitted
+//	log2 = `{ msg = "pineapple mango", fields = {...}`      -> printed
+//	log3 = `{ msg = "pineapple mango bar", fields = {...}`  -> omitted
 func SubsystemOmitLogWithMessageRegexes(ctx context.Context, subsystem string, expressions ...*regexp.Regexp) context.Context {
 	lOpts := logging.GetSDKSubsystemTFLoggerOpts(ctx, subsystem)
 
@@ -268,12 +266,11 @@ func SubsystemOmitLogWithMessageRegexes(ctx context.Context, subsystem string, e
 //
 // Example:
 //
-//   configuration = `['foo', 'bar']`
+//	configuration = `['foo', 'bar']`
 //
-//   log1 = `{ msg = "banana apple foo", fields = {...}`     -> omitted
-//   log2 = `{ msg = "pineapple mango", fields = {...}`      -> printed
-//   log3 = `{ msg = "pineapple mango bar", fields = {...}`  -> omitted
-//
+//	log1 = `{ msg = "banana apple foo", fields = {...}`     -> omitted
+//	log2 = `{ msg = "pineapple mango", fields = {...}`      -> printed
+//	log3 = `{ msg = "pineapple mango bar", fields = {...}`  -> omitted
 func SubsystemOmitLogWithMessageStrings(ctx context.Context, subsystem string, matchingStrings ...string) context.Context {
 	lOpts := logging.GetSDKSubsystemTFLoggerOpts(ctx, subsystem)
 
@@ -291,12 +288,11 @@ func SubsystemOmitLogWithMessageStrings(ctx context.Context, subsystem string, m
 //
 // Example:
 //
-//   configuration = `['foo', 'baz']`
+//	configuration = `['foo', 'baz']`
 //
-//   log1 = `{ msg = "...", fields = { 'foo': '***', 'bar': '...' }`  -> masked value
-//   log2 = `{ msg = "...", fields = { 'bar': '...' }`                -> as-is value
-//   log3 = `{ msg = "...", fields = { 'baz': '***', 'boo': '...' }`  -> masked value
-//
+//	log1 = `{ msg = "...", fields = { 'foo': '***', 'bar': '...' }`  -> masked value
+//	log2 = `{ msg = "...", fields = { 'bar': '...' }`                -> as-is value
+//	log3 = `{ msg = "...", fields = { 'baz': '***', 'boo': '...' }`  -> masked value
 func SubsystemMaskFieldValuesWithFieldKeys(ctx context.Context, subsystem string, keys ...string) context.Context {
 	lOpts := logging.GetSDKSubsystemTFLoggerOpts(ctx, subsystem)
 
@@ -314,12 +310,11 @@ func SubsystemMaskFieldValuesWithFieldKeys(ctx context.Context, subsystem string
 //
 // Example:
 //
-//   configuration = `[regexp.MustCompile("(foo|bar)")]`
+//	configuration = `[regexp.MustCompile("(foo|bar)")]`
 //
-//   log1 = `{ msg = "...", fields = { 'k1': '***', 'k2': '***', 'k3': 'baz' }`  -> masked value
-//   log2 = `{ msg = "...", fields = { 'k1': 'boo', 'k2': 'far', 'k3': 'baz' }`  -> as-is value
-//   log2 = `{ msg = "...", fields = { 'k1': '*** *** baz' }`                    -> masked value
-//
+//	log1 = `{ msg = "...", fields = { 'k1': '***', 'k2': '***', 'k3': 'baz' }`  -> masked value
+//	log2 = `{ msg = "...", fields = { 'k1': 'boo', 'k2': 'far', 'k3': 'baz' }`  -> as-is value
+//	log2 = `{ msg = "...", fields = { 'k1': '*** *** baz' }`                    -> masked value
 func SubsystemMaskAllFieldValuesRegexes(ctx context.Context, subsystem string, expressions ...*regexp.Regexp) context.Context {
 	lOpts := logging.GetSDKSubsystemTFLoggerOpts(ctx, subsystem)
 
@@ -337,12 +332,11 @@ func SubsystemMaskAllFieldValuesRegexes(ctx context.Context, subsystem string, e
 //
 // Example:
 //
-//   configuration = `[regexp.MustCompile("(foo|bar)")]`
+//	configuration = `[regexp.MustCompile("(foo|bar)")]`
 //
-//   log1 = `{ msg = "...", fields = { 'k1': '***', 'k2': '***', 'k3': 'baz' }`  -> masked value
-//   log2 = `{ msg = "...", fields = { 'k1': 'boo', 'k2': 'far', 'k3': 'baz' }`  -> as-is value
-//   log2 = `{ msg = "...", fields = { 'k1': '*** *** baz' }`                    -> masked value
-//
+//	log1 = `{ msg = "...", fields = { 'k1': '***', 'k2': '***', 'k3': 'baz' }`  -> masked value
+//	log2 = `{ msg = "...", fields = { 'k1': 'boo', 'k2': 'far', 'k3': 'baz' }`  -> as-is value
+//	log2 = `{ msg = "...", fields = { 'k1': '*** *** baz' }`                    -> masked value
 func SubsystemMaskAllFieldValuesStrings(ctx context.Context, subsystem string, matchingStrings ...string) context.Context {
 	lOpts := logging.GetSDKSubsystemTFLoggerOpts(ctx, subsystem)
 
@@ -360,12 +354,11 @@ func SubsystemMaskAllFieldValuesStrings(ctx context.Context, subsystem string, m
 //
 // Example:
 //
-//   configuration = `[regexp.MustCompile("(foo|bar)")]`
+//	configuration = `[regexp.MustCompile("(foo|bar)")]`
 //
-//   log1 = `{ msg = "banana apple ***", fields = {...}`     -> masked portion
-//   log2 = `{ msg = "pineapple mango", fields = {...}`      -> as-is
-//   log3 = `{ msg = "pineapple mango ***", fields = {...}`  -> masked portion
-//
+//	log1 = `{ msg = "banana apple ***", fields = {...}`     -> masked portion
+//	log2 = `{ msg = "pineapple mango", fields = {...}`      -> as-is
+//	log3 = `{ msg = "pineapple mango ***", fields = {...}`  -> masked portion
 func SubsystemMaskMessageRegexes(ctx context.Context, subsystem string, expressions ...*regexp.Regexp) context.Context {
 	lOpts := logging.GetSDKSubsystemTFLoggerOpts(ctx, subsystem)
 
@@ -383,12 +376,11 @@ func SubsystemMaskMessageRegexes(ctx context.Context, subsystem string, expressi
 //
 // Example:
 //
-//   configuration = `['foo', 'bar']`
+//	configuration = `['foo', 'bar']`
 //
-//   log1 = `{ msg = "banana apple ***", fields = { 'k1': 'foo, bar, baz' }`  -> masked portion
-//   log2 = `{ msg = "pineapple mango", fields = {...}`                       -> as-is
-//   log3 = `{ msg = "pineapple mango ***", fields = {...}`                   -> masked portion
-//
+//	log1 = `{ msg = "banana apple ***", fields = { 'k1': 'foo, bar, baz' }`  -> masked portion
+//	log2 = `{ msg = "pineapple mango", fields = {...}`                       -> as-is
+//	log3 = `{ msg = "pineapple mango ***", fields = {...}`                   -> masked portion
 func SubsystemMaskMessageStrings(ctx context.Context, subsystem string, matchingStrings ...string) context.Context {
 	lOpts := logging.GetSDKSubsystemTFLoggerOpts(ctx, subsystem)
 
