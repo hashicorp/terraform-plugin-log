@@ -4,3 +4,4 @@ website-preview
 # Jetbrains IDEs
 .idea/
 *.iws
+.git/
