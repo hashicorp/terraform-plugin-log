@@ -575,6 +575,8 @@ func TestSubsystemError(t *testing.T) {
 }
 
 func TestSubsystemOmitLogWithFieldKeys(t *testing.T) {
+	t.Parallel()
+
 	testCases := map[string]struct {
 		msg              string
 		additionalFields []map[string]interface{}
@@ -660,6 +662,8 @@ func TestSubsystemOmitLogWithFieldKeys(t *testing.T) {
 }
 
 func TestSubsystemOmitLogWithMessageRegexes(t *testing.T) {
+	t.Parallel()
+
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -745,6 +749,8 @@ func TestSubsystemOmitLogWithMessageRegexes(t *testing.T) {
 }
 
 func TestSubsystemOmitLogWithMessageStrings(t *testing.T) {
+	t.Parallel()
+
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -830,6 +836,8 @@ func TestSubsystemOmitLogWithMessageStrings(t *testing.T) {
 }
 
 func TestSubsystemMaskFieldValuesWithFieldKeys(t *testing.T) {
+	t.Parallel()
+
 	testCases := map[string]struct {
 		msg              string
 		additionalFields []map[string]interface{}
@@ -923,6 +931,8 @@ func TestSubsystemMaskFieldValuesWithFieldKeys(t *testing.T) {
 }
 
 func TestSubsystemMaskAllFieldValuesRegexes(t *testing.T) {
+	t.Parallel()
+
 	testCases := map[string]struct {
 		msg              string
 		additionalFields []map[string]interface{}
@@ -1016,6 +1026,8 @@ func TestSubsystemMaskAllFieldValuesRegexes(t *testing.T) {
 }
 
 func TestSubsystemMaskAllFieldValuesStrings(t *testing.T) {
+	t.Parallel()
+
 	testCases := map[string]struct {
 		msg              string
 		additionalFields []map[string]interface{}
@@ -1109,6 +1121,8 @@ func TestSubsystemMaskAllFieldValuesStrings(t *testing.T) {
 }
 
 func TestSubsystemMaskMessageRegexes(t *testing.T) {
+	t.Parallel()
+
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -1202,6 +1216,8 @@ func TestSubsystemMaskMessageRegexes(t *testing.T) {
 }
 
 func TestSubsystemMaskMessageStrings(t *testing.T) {
+	t.Parallel()
+
 	testCases := map[string]struct {
 		msg                   string
 		additionalFields      []map[string]interface{}
@@ -1295,6 +1311,8 @@ func TestSubsystemMaskMessageStrings(t *testing.T) {
 }
 
 func TestSubsystemMaskLogRegexes(t *testing.T) {
+	t.Parallel()
+
 	testCases := map[string]struct {
 		msg              string
 		additionalFields []map[string]interface{}
@@ -1388,6 +1406,8 @@ func TestSubsystemMaskLogRegexes(t *testing.T) {
 }
 
 func TestSubsystemMaskLogStrings(t *testing.T) {
+	t.Parallel()
+
 	testCases := map[string]struct {
 		msg              string
 		additionalFields []map[string]interface{}
