@@ -151,6 +151,7 @@ func TestFieldMapsToArgs(t *testing.T) {
 			gotValues := make(map[string]interface{}, len(got)/2)
 
 			for i := 0; i < len(got); i += 2 {
+				//nolint:forcetypeassert // Not needed in test of log mapping
 				k, v := got[i].(string), got[i+1]
 				gotKeys = append(gotKeys, k)
 				gotValues[k] = v
