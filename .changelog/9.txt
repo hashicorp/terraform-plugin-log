@@ -1,7 +1,0 @@
-```release-note:breaking-change
-Provider log outputs now default to being named "provider" unless another name is provided.
-```
-
-```release-note:feature
-Added a `tfsdklog.RegisterTestSink` function that will turn on a logging sink appropriate for use in testing. When a logging sink is activated, all downstream provider and SDK loggers (i.e., all loggers created after `tfsdklog.RegisterTestSink` is called) will be sub-loggers of the sink. The sink respects the `TF_LOG`, `TF_LOG_PATH`, `TF_ACC_LOG_PATH`, and `TF_LOG_PATH_MASK` environment variables, by default discards logs, and when only `TF_LOG` is set writes to stderr. It is meant to replicate Terraform's log aggregation and filtering capabilities for test frameworks.
-```

@@ -1,7 +1,0 @@
-```release-note:breaking-change
-tflog: The `Trace()`, `Debug()`, `Info()`, `Warn()`, and `Error()` functions and `Subsystem` equivalents now use `...map[string]interface{}` as the final optional parameter, where the `string` is the structured logging key, rather than expecting matched `key interface{}, value interface{}` pairs. If multiple maps contain the same key, the value is shallow merged.
-```
-
-```release-note:breaking-change
-tfsdklog: The `Trace()`, `Debug()`, `Info()`, `Warn()`, and `Error()` functions and `Subsystem` equivalents now use `...map[string]interface{}` as the final optional parameter, where the `string` is the structured logging key, rather than expecting matched `key interface{}, value interface{}` pairs. If multiple maps contain the same key, the value is shallow merged.
-```

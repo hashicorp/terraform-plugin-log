@@ -1,3 +1,0 @@
-```release-note:note
-The `gopkg.in/yaml.v3` dependency has been updated to address CVE-2022-28948
-```

@@ -108,6 +108,8 @@ attaching use cases to an issue first before raising a pull request.
   commands). Where possible it is better to raise a separate pull request with
   just dependency changes as it's easier to review such PR(s).
 
+- [ ] **Changelog**: Refer to the [changelog](#changelog) section for more information about how to create changelog entries.
+
 ### Cosmetic changes, code formatting, and typos
 
 In general we do not accept PRs containing only the following changes:
@@ -124,9 +126,84 @@ maintainers must attend to.
 
 #### Exceptions
 
-We belive that one should "leave the campsite cleaner than you found it", so
+We believe that one should "leave the campsite cleaner than you found it", so
 you are welcome to clean up cosmetic issues in the neighbourhood when
 submitting a patch that makes functional changes or fixes.
+
+### Changelog
+
+HashiCorp’s open-source projects have always maintained user-friendly, readable CHANGELOGs that allow practitioners and developers to tell at a glance whether a release should have any effect on them, and to gauge the risk of an upgrade.
+
+We follow Terraform Plugin
+[changelog specifications](https://www.terraform.io/plugin/sdkv2/best-practices/versioning#changelog-specification).
+
+#### Changie Automation Tool
+This project uses the [Changie](https://changie.dev/) automation tool for changelog automation.
+
+To add a new entry to the `CHANGELOG`, install Changie using the following [instructions](https://changie.dev/guide/installation/)
+
+After Changie is installed on your local machine, run:
+```bash
+changie new
+```
+and choose a `kind` of change corresponding to the Terraform Plugin [changelog categories](https://developer.hashicorp.com/terraform/plugin/sdkv2/best-practices/versioning#categorization)
+
+Fill out the body field following the entry format. Changie will then prompt for a Github issue or pull request number.
+
+Repeat this process for any additional changes. The `.yaml` files created in the `.changes/unreleased` folder
+should be pushed the repository along with any code changes.
+
+#### Pull Request Types to CHANGELOG
+
+The CHANGELOG is intended to show developer-impacting changes to the codebase for a particular version. If every change or commit to the code resulted in an entry, the CHANGELOG would become less useful for developers. The lists below are general guidelines and examples for when a decision needs to be made to decide whether a change should have an entry.
+
+##### Changes that should not have a CHANGELOG entry
+
+- Documentation updates
+- Testing updates
+- Code refactoring
+
+##### Changes that may have a CHANGELOG entry
+
+- Dependency updates: If the update contains relevant bug fixes or enhancements that affect developers, those should be called out.
+
+##### Changes that should have a CHANGELOG entry
+
+###### Major Features
+
+A major feature entry should use the `FEATURES` kind.
+
+``````markdown
+Added `great` package, which solves all the problems
+
+``````
+
+###### Bug Fixes
+
+A new bug entry should use the `BUG FIXES` kind and have a prefix indicating the sub-package it corresponds to, a colon, then followed by a brief summary. Use a `all` prefix should the fix apply to all sub-packages.
+
+``````markdown
+tfsdk: Prevented potential panic in `Example()` function
+
+``````
+
+###### Enhancements
+
+A new enhancement entry should use the `ENHANCEMENTS` kind and have a prefix indicating the sub-package it corresponds to, a colon, then followed by a brief summary. Use a `all` prefix for enchancements that apply to all sub-packages.
+
+``````markdown
+attr: Added `Great` interface for doing great things
+
+``````
+
+###### Deprecations
+
+A deprecation entry should use the `NOTES` kind and have a prefix indicating the sub-package it corresponds to, a colon, then followed by a brief summary. Use a `all` prefix for changes that apply to all sub-packages.
+
+``````markdown
+diag: The `Old()` function is being deprecated in favor of the `New()` function
+
+``````
 
 ## Linting
 
@@ -221,30 +298,13 @@ This section is dedicated to the maintainers of this project.
 
 ### Releases
 
-Before running a release, the changelog must be constructed from unreleased entries in the `.changelog` directory.
+To cut a release, go to the repository in Github and click on the `Actions` tab.
 
-Install the latest version of the [`changelog-build`](https://pkg.go.dev/github.com/hashicorp/go-changelog/cmd/changelog-build) command, if it not already available:
+Select the `Release` workflow on the left-hand menu.
 
-```shell
-go install github.com/hashicorp/go-changelog/cmd/changelog-build
-```
+Click on the `Run workflow` button.
 
-Run the [`changelog-build`](https://pkg.go.dev/github.com/hashicorp/go-changelog/cmd/changelog-build) command from the root directory of the repository:
+Select the branch to cut the release from (default is main).
 
-```shell
-changelog-build -changelog-template .changelog.tmpl -entries-dir .changelog -last-release $(git describe --tags --abbrev=0) -note-template .changelog-note.tmpl -this-release HEAD
-```
-
-This will generate a section of Markdown text for the next release. Open the `CHANGELOG.md` file, add a `# X.Y.Z` header as the first line, then add the output from the `changelog-build` command.
-
-Commit, push, create a release Git tag, and push the tag:
-
-```shell
-git add CHANGELOG.md
-git commit -m "Update CHANGELOG for v1.2.3"
-git push
-git tag v1.2.3
-git push --tags
-```
-
-GitHub Actions will pick up the new release tag and kick off the release workflow.
+Input the `Release version number` which is the Semantic Release number including
+the `v` prefix (i.e. `v1.4.0`) and click `Run workflow` to kickoff the release.

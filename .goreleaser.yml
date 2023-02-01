@@ -1,8 +1,0 @@
-project_name: terraform-plugin-log
-build:
-  skip: true
-milestones:
-  - close: true
-release:
-  ids:
-    - 'none'
