@@ -1,3 +1,0 @@
-```release-note:bug
-tfsdklog: Consolidated multiple invalid log level messages and added missing newline
-```
