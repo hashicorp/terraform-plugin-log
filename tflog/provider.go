@@ -15,7 +15,9 @@ import (
 func SetField(ctx context.Context, key string, value interface{}) context.Context {
 	lOpts := logging.GetProviderRootTFLoggerOpts(ctx)
 
-	lOpts = logging.WithField(key, value)(lOpts)
+	// Copy to prevent slice/map aliasing issues.
+	// Reference: https://github.com/hashicorp/terraform-plugin-log/issues/131
+	lOpts = logging.WithField(key, value)(lOpts.Copy())
 
 	return logging.SetProviderRootTFLoggerOpts(ctx, lOpts)
 }
@@ -152,7 +154,9 @@ func Error(ctx context.Context, msg string, additionalFields ...map[string]inter
 func OmitLogWithFieldKeys(ctx context.Context, keys ...string) context.Context {
 	lOpts := logging.GetProviderRootTFLoggerOpts(ctx)
 
-	lOpts = logging.WithOmitLogWithFieldKeys(keys...)(lOpts)
+	// Copy to prevent slice/map aliasing issues.
+	// Reference: https://github.com/hashicorp/terraform-plugin-log/issues/131
+	lOpts = logging.WithOmitLogWithFieldKeys(keys...)(lOpts.Copy())
 
 	return logging.SetProviderRootTFLoggerOpts(ctx, lOpts)
 }
@@ -174,7 +178,9 @@ func OmitLogWithFieldKeys(ctx context.Context, keys ...string) context.Context {
 func OmitLogWithMessageRegexes(ctx context.Context, expressions ...*regexp.Regexp) context.Context {
 	lOpts := logging.GetProviderRootTFLoggerOpts(ctx)
 
-	lOpts = logging.WithOmitLogWithMessageRegexes(expressions...)(lOpts)
+	// Copy to prevent slice/map aliasing issues.
+	// Reference: https://github.com/hashicorp/terraform-plugin-log/issues/131
+	lOpts = logging.WithOmitLogWithMessageRegexes(expressions...)(lOpts.Copy())
 
 	return logging.SetProviderRootTFLoggerOpts(ctx, lOpts)
 }
@@ -195,7 +201,9 @@ func OmitLogWithMessageRegexes(ctx context.Context, expressions ...*regexp.Regex
 func OmitLogWithMessageStrings(ctx context.Context, matchingStrings ...string) context.Context {
 	lOpts := logging.GetProviderRootTFLoggerOpts(ctx)
 
-	lOpts = logging.WithOmitLogWithMessageStrings(matchingStrings...)(lOpts)
+	// Copy to prevent slice/map aliasing issues.
+	// Reference: https://github.com/hashicorp/terraform-plugin-log/issues/131
+	lOpts = logging.WithOmitLogWithMessageStrings(matchingStrings...)(lOpts.Copy())
 
 	return logging.SetProviderRootTFLoggerOpts(ctx, lOpts)
 }
@@ -217,7 +225,9 @@ func OmitLogWithMessageStrings(ctx context.Context, matchingStrings ...string) c
 func MaskFieldValuesWithFieldKeys(ctx context.Context, keys ...string) context.Context {
 	lOpts := logging.GetProviderRootTFLoggerOpts(ctx)
 
-	lOpts = logging.WithMaskFieldValuesWithFieldKeys(keys...)(lOpts)
+	// Copy to prevent slice/map aliasing issues.
+	// Reference: https://github.com/hashicorp/terraform-plugin-log/issues/131
+	lOpts = logging.WithMaskFieldValuesWithFieldKeys(keys...)(lOpts.Copy())
 
 	return logging.SetProviderRootTFLoggerOpts(ctx, lOpts)
 }
@@ -241,7 +251,9 @@ func MaskFieldValuesWithFieldKeys(ctx context.Context, keys ...string) context.C
 func MaskAllFieldValuesRegexes(ctx context.Context, expressions ...*regexp.Regexp) context.Context {
 	lOpts := logging.GetProviderRootTFLoggerOpts(ctx)
 
-	lOpts = logging.WithMaskAllFieldValuesRegexes(expressions...)(lOpts)
+	// Copy to prevent slice/map aliasing issues.
+	// Reference: https://github.com/hashicorp/terraform-plugin-log/issues/131
+	lOpts = logging.WithMaskAllFieldValuesRegexes(expressions...)(lOpts.Copy())
 
 	return logging.SetProviderRootTFLoggerOpts(ctx, lOpts)
 }
@@ -265,7 +277,9 @@ func MaskAllFieldValuesRegexes(ctx context.Context, expressions ...*regexp.Regex
 func MaskAllFieldValuesStrings(ctx context.Context, matchingStrings ...string) context.Context {
 	lOpts := logging.GetProviderRootTFLoggerOpts(ctx)
 
-	lOpts = logging.WithMaskAllFieldValuesStrings(matchingStrings...)(lOpts)
+	// Copy to prevent slice/map aliasing issues.
+	// Reference: https://github.com/hashicorp/terraform-plugin-log/issues/131
+	lOpts = logging.WithMaskAllFieldValuesStrings(matchingStrings...)(lOpts.Copy())
 
 	return logging.SetProviderRootTFLoggerOpts(ctx, lOpts)
 }
@@ -287,7 +301,9 @@ func MaskAllFieldValuesStrings(ctx context.Context, matchingStrings ...string) c
 func MaskMessageRegexes(ctx context.Context, expressions ...*regexp.Regexp) context.Context {
 	lOpts := logging.GetProviderRootTFLoggerOpts(ctx)
 
-	lOpts = logging.WithMaskMessageRegexes(expressions...)(lOpts)
+	// Copy to prevent slice/map aliasing issues.
+	// Reference: https://github.com/hashicorp/terraform-plugin-log/issues/131
+	lOpts = logging.WithMaskMessageRegexes(expressions...)(lOpts.Copy())
 
 	return logging.SetProviderRootTFLoggerOpts(ctx, lOpts)
 }
@@ -309,7 +325,9 @@ func MaskMessageRegexes(ctx context.Context, expressions ...*regexp.Regexp) cont
 func MaskMessageStrings(ctx context.Context, matchingStrings ...string) context.Context {
 	lOpts := logging.GetProviderRootTFLoggerOpts(ctx)
 
-	lOpts = logging.WithMaskMessageStrings(matchingStrings...)(lOpts)
+	// Copy to prevent slice/map aliasing issues.
+	// Reference: https://github.com/hashicorp/terraform-plugin-log/issues/131
+	lOpts = logging.WithMaskMessageStrings(matchingStrings...)(lOpts.Copy())
 
 	return logging.SetProviderRootTFLoggerOpts(ctx, lOpts)
 }
