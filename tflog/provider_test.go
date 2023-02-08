@@ -1502,8 +1502,8 @@ func TestMaskMessageRegexes_NewContext(t *testing.T) {
 
 	tflog.Trace(originalCtx, "original should be masked")
 	tflog.Trace(originalCtx, "new should be preserved")
-	tflog.Trace(newCtx, "new should be masked")
-	tflog.Trace(newCtx, "original should be masked")
+	tflog.Debug(newCtx, "new should be masked")
+	tflog.Debug(newCtx, "original should be masked")
 
 	got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -1523,12 +1523,12 @@ func TestMaskMessageRegexes_NewContext(t *testing.T) {
 			"@module":  "provider",
 		},
 		{
-			"@level":   "trace",
+			"@level":   "debug",
 			"@message": "*** should be masked",
 			"@module":  "provider",
 		},
 		{
-			"@level":   "trace",
+			"@level":   "debug",
 			"@message": "*** should be masked",
 			"@module":  "provider",
 		},
@@ -1647,8 +1647,8 @@ func TestMaskMessageStrings_NewContext(t *testing.T) {
 
 	tflog.Trace(originalCtx, "original should be masked")
 	tflog.Trace(originalCtx, "new should be preserved")
-	tflog.Trace(newCtx, "new should be masked")
-	tflog.Trace(newCtx, "original should be masked")
+	tflog.Debug(newCtx, "new should be masked")
+	tflog.Debug(newCtx, "original should be masked")
 
 	got, err := loggertest.MultilineJSONDecode(&outputBuffer)
 
@@ -1668,12 +1668,12 @@ func TestMaskMessageStrings_NewContext(t *testing.T) {
 			"@module":  "provider",
 		},
 		{
-			"@level":   "trace",
+			"@level":   "debug",
 			"@message": "*** should be masked",
 			"@module":  "provider",
 		},
 		{
-			"@level":   "trace",
+			"@level":   "debug",
 			"@message": "*** should be masked",
 			"@module":  "provider",
 		},
