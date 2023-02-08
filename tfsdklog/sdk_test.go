@@ -98,6 +98,49 @@ func TestSetField(t *testing.T) {
 	}
 }
 
+// Reference: https://github.com/hashicorp/terraform-plugin-log/issues/131
+func TestSetField_NewContext(t *testing.T) {
+	t.Parallel()
+
+	var outputBuffer bytes.Buffer
+
+	originalCtx := context.Background()
+	originalCtx = loggertest.SDKRoot(originalCtx, &outputBuffer)
+	originalCtx = tfsdklog.SetField(originalCtx, "key1", "value1")
+
+	newCtx := tfsdklog.SetField(originalCtx, "key2", "value2")
+
+	tfsdklog.Trace(originalCtx, "original logger")
+	tfsdklog.Trace(newCtx, "new logger")
+
+	got, err := loggertest.MultilineJSONDecode(&outputBuffer)
+
+	if err != nil {
+		t.Fatalf("unable to read multiple line JSON: %s", err)
+	}
+
+	expectedOutput := []map[string]any{
+		{
+			"@level":   "trace",
+			"@message": "original logger",
+			"@module":  "sdk",
+			"key1":     "value1",
+			// should not contain key2 field
+		},
+		{
+			"@level":   "trace",
+			"@message": "new logger",
+			"@module":  "sdk",
+			"key1":     "value1",
+			"key2":     "value2",
+		},
+	}
+
+	if diff := cmp.Diff(expectedOutput, got); diff != "" {
+		t.Errorf("unexpected new logger output difference: %s", diff)
+	}
+}
+
 func TestTrace(t *testing.T) {
 	t.Parallel()
 
@@ -651,6 +694,43 @@ func TestOmitLogWithFieldKeys(t *testing.T) {
 	}
 }
 
+// Reference: https://github.com/hashicorp/terraform-plugin-log/issues/131
+func TestOmitLogWithFieldKeys_NewContext(t *testing.T) {
+	t.Parallel()
+
+	var outputBuffer bytes.Buffer
+
+	originalCtx := context.Background()
+	originalCtx = loggertest.SDKRoot(originalCtx, &outputBuffer)
+	originalCtx = tfsdklog.OmitLogWithFieldKeys(originalCtx, "key1")
+
+	newCtx := tfsdklog.OmitLogWithFieldKeys(originalCtx, "key2")
+
+	tfsdklog.Trace(originalCtx, "original logger", map[string]any{"key2": "value2"})
+	tfsdklog.Trace(newCtx, "new logger", map[string]any{"key1": "value1"})
+	tfsdklog.Trace(newCtx, "new logger", map[string]any{"key2": "value2"})
+
+	got, err := loggertest.MultilineJSONDecode(&outputBuffer)
+
+	if err != nil {
+		t.Fatalf("unable to read multiple line JSON: %s", err)
+	}
+
+	expectedOutput := []map[string]any{
+		{
+			"@level":   "trace",
+			"@message": "original logger",
+			"@module":  "sdk",
+			"key2":     "value2",
+		},
+		// should omit new logger entries
+	}
+
+	if diff := cmp.Diff(expectedOutput, got); diff != "" {
+		t.Errorf("unexpected new logger output difference: %s", diff)
+	}
+}
+
 func TestOmitLogWithMessageRegexes(t *testing.T) {
 	t.Parallel()
 
@@ -737,6 +817,43 @@ func TestOmitLogWithMessageRegexes(t *testing.T) {
 	}
 }
 
+// Reference: https://github.com/hashicorp/terraform-plugin-log/issues/131
+func TestOmitLogWithMessageRegexes_NewContext(t *testing.T) {
+	t.Parallel()
+
+	var outputBuffer bytes.Buffer
+
+	originalCtx := context.Background()
+	originalCtx = loggertest.SDKRoot(originalCtx, &outputBuffer)
+	originalCtx = tfsdklog.OmitLogWithMessageRegexes(originalCtx, regexp.MustCompile("original"))
+
+	newCtx := tfsdklog.OmitLogWithMessageRegexes(originalCtx, regexp.MustCompile("new"))
+
+	tfsdklog.Trace(originalCtx, "original should not be preserved")
+	tfsdklog.Trace(originalCtx, "new should be preserved")
+	tfsdklog.Trace(newCtx, "new should not be preserved")
+	tfsdklog.Trace(newCtx, "original should not be preserved")
+
+	got, err := loggertest.MultilineJSONDecode(&outputBuffer)
+
+	if err != nil {
+		t.Fatalf("unable to read multiple line JSON: %s", err)
+	}
+
+	expectedOutput := []map[string]any{
+		{
+			"@level":   "trace",
+			"@message": "new should be preserved",
+			"@module":  "sdk",
+		},
+		// should omit other logger entries
+	}
+
+	if diff := cmp.Diff(expectedOutput, got); diff != "" {
+		t.Errorf("unexpected new logger output difference: %s", diff)
+	}
+}
+
 func TestOmitLogWithMessageStrings(t *testing.T) {
 	t.Parallel()
 
@@ -820,6 +937,43 @@ func TestOmitLogWithMessageStrings(t *testing.T) {
 				t.Errorf("unexpected output difference: %s", diff)
 			}
 		})
+	}
+}
+
+// Reference: https://github.com/hashicorp/terraform-plugin-log/issues/131
+func TestOmitLogWithMessageStrings_NewContext(t *testing.T) {
+	t.Parallel()
+
+	var outputBuffer bytes.Buffer
+
+	originalCtx := context.Background()
+	originalCtx = loggertest.SDKRoot(originalCtx, &outputBuffer)
+	originalCtx = tfsdklog.OmitLogWithMessageStrings(originalCtx, "original")
+
+	newCtx := tfsdklog.OmitLogWithMessageStrings(originalCtx, "new")
+
+	tfsdklog.Trace(originalCtx, "original should not be preserved")
+	tfsdklog.Trace(originalCtx, "new should be preserved")
+	tfsdklog.Trace(newCtx, "new should not be preserved")
+	tfsdklog.Trace(newCtx, "original should not be preserved")
+
+	got, err := loggertest.MultilineJSONDecode(&outputBuffer)
+
+	if err != nil {
+		t.Fatalf("unable to read multiple line JSON: %s", err)
+	}
+
+	expectedOutput := []map[string]any{
+		{
+			"@level":   "trace",
+			"@message": "new should be preserved",
+			"@module":  "sdk",
+		},
+		// should omit other logger entries
+	}
+
+	if diff := cmp.Diff(expectedOutput, got); diff != "" {
+		t.Errorf("unexpected new logger output difference: %s", diff)
 	}
 }
 
@@ -917,6 +1071,51 @@ func TestMaskFieldValuesWithFieldKeys(t *testing.T) {
 	}
 }
 
+// Reference: https://github.com/hashicorp/terraform-plugin-log/issues/131
+func TestMaskFieldValuesWithFieldKeys_NewContext(t *testing.T) {
+	t.Parallel()
+
+	var outputBuffer bytes.Buffer
+
+	originalCtx := context.Background()
+	originalCtx = loggertest.SDKRoot(originalCtx, &outputBuffer)
+	originalCtx = tfsdklog.SetField(originalCtx, "key1", "value1")
+	originalCtx = tfsdklog.SetField(originalCtx, "key2", "value2")
+	originalCtx = tfsdklog.MaskFieldValuesWithFieldKeys(originalCtx, "key1")
+
+	newCtx := tfsdklog.MaskFieldValuesWithFieldKeys(originalCtx, "key2")
+
+	tfsdklog.Trace(originalCtx, "original logger")
+	tfsdklog.Trace(newCtx, "new logger")
+
+	got, err := loggertest.MultilineJSONDecode(&outputBuffer)
+
+	if err != nil {
+		t.Fatalf("unable to read multiple line JSON: %s", err)
+	}
+
+	expectedOutput := []map[string]any{
+		{
+			"@level":   "trace",
+			"@message": "original logger",
+			"@module":  "sdk",
+			"key1":     "***",
+			"key2":     "value2",
+		},
+		{
+			"@level":   "trace",
+			"@message": "new logger",
+			"@module":  "sdk",
+			"key1":     "***",
+			"key2":     "***",
+		},
+	}
+
+	if diff := cmp.Diff(expectedOutput, got); diff != "" {
+		t.Errorf("unexpected new logger output difference: %s", diff)
+	}
+}
+
 func TestMaskAllFieldValuesRegexes(t *testing.T) {
 	t.Parallel()
 
@@ -1008,6 +1207,51 @@ func TestMaskAllFieldValuesRegexes(t *testing.T) {
 				t.Errorf("unexpected output difference: %s", diff)
 			}
 		})
+	}
+}
+
+// Reference: https://github.com/hashicorp/terraform-plugin-log/issues/131
+func TestMaskAllFieldValuesRegexes_NewContext(t *testing.T) {
+	t.Parallel()
+
+	var outputBuffer bytes.Buffer
+
+	originalCtx := context.Background()
+	originalCtx = loggertest.SDKRoot(originalCtx, &outputBuffer)
+	originalCtx = tfsdklog.SetField(originalCtx, "key1", "value1")
+	originalCtx = tfsdklog.SetField(originalCtx, "key2", "value2")
+	originalCtx = tfsdklog.MaskAllFieldValuesRegexes(originalCtx, regexp.MustCompile("value1"))
+
+	newCtx := tfsdklog.MaskAllFieldValuesRegexes(originalCtx, regexp.MustCompile("value2"))
+
+	tfsdklog.Trace(originalCtx, "original logger")
+	tfsdklog.Trace(newCtx, "new logger")
+
+	got, err := loggertest.MultilineJSONDecode(&outputBuffer)
+
+	if err != nil {
+		t.Fatalf("unable to read multiple line JSON: %s", err)
+	}
+
+	expectedOutput := []map[string]any{
+		{
+			"@level":   "trace",
+			"@message": "original logger",
+			"@module":  "sdk",
+			"key1":     "***",
+			"key2":     "value2",
+		},
+		{
+			"@level":   "trace",
+			"@message": "new logger",
+			"@module":  "sdk",
+			"key1":     "***",
+			"key2":     "***",
+		},
+	}
+
+	if diff := cmp.Diff(expectedOutput, got); diff != "" {
+		t.Errorf("unexpected new logger output difference: %s", diff)
 	}
 }
 
@@ -1105,6 +1349,51 @@ func TestMaskAllFieldValuesStrings(t *testing.T) {
 	}
 }
 
+// Reference: https://github.com/hashicorp/terraform-plugin-log/issues/131
+func TestMaskAllFieldValuesStrings_NewContext(t *testing.T) {
+	t.Parallel()
+
+	var outputBuffer bytes.Buffer
+
+	originalCtx := context.Background()
+	originalCtx = loggertest.SDKRoot(originalCtx, &outputBuffer)
+	originalCtx = tfsdklog.SetField(originalCtx, "key1", "value1")
+	originalCtx = tfsdklog.SetField(originalCtx, "key2", "value2")
+	originalCtx = tfsdklog.MaskAllFieldValuesStrings(originalCtx, "value1")
+
+	newCtx := tfsdklog.MaskAllFieldValuesStrings(originalCtx, "value2")
+
+	tfsdklog.Trace(originalCtx, "original logger")
+	tfsdklog.Trace(newCtx, "new logger")
+
+	got, err := loggertest.MultilineJSONDecode(&outputBuffer)
+
+	if err != nil {
+		t.Fatalf("unable to read multiple line JSON: %s", err)
+	}
+
+	expectedOutput := []map[string]any{
+		{
+			"@level":   "trace",
+			"@message": "original logger",
+			"@module":  "sdk",
+			"key1":     "***",
+			"key2":     "value2",
+		},
+		{
+			"@level":   "trace",
+			"@message": "new logger",
+			"@module":  "sdk",
+			"key1":     "***",
+			"key2":     "***",
+		},
+	}
+
+	if diff := cmp.Diff(expectedOutput, got); diff != "" {
+		t.Errorf("unexpected new logger output difference: %s", diff)
+	}
+}
+
 func TestMaskMessageRegexes(t *testing.T) {
 	t.Parallel()
 
@@ -1199,6 +1488,57 @@ func TestMaskMessageRegexes(t *testing.T) {
 	}
 }
 
+// Reference: https://github.com/hashicorp/terraform-plugin-log/issues/131
+func TestMaskMessageRegexes_NewContext(t *testing.T) {
+	t.Parallel()
+
+	var outputBuffer bytes.Buffer
+
+	originalCtx := context.Background()
+	originalCtx = loggertest.SDKRoot(originalCtx, &outputBuffer)
+	originalCtx = tfsdklog.MaskMessageRegexes(originalCtx, regexp.MustCompile("original"))
+
+	newCtx := tfsdklog.MaskMessageRegexes(originalCtx, regexp.MustCompile("new"))
+
+	tfsdklog.Trace(originalCtx, "original should be masked")
+	tfsdklog.Trace(originalCtx, "new should be preserved")
+	tfsdklog.Debug(newCtx, "new should be masked")
+	tfsdklog.Debug(newCtx, "original should be masked")
+
+	got, err := loggertest.MultilineJSONDecode(&outputBuffer)
+
+	if err != nil {
+		t.Fatalf("unable to read multiple line JSON: %s", err)
+	}
+
+	expectedOutput := []map[string]any{
+		{
+			"@level":   "trace",
+			"@message": "*** should be masked",
+			"@module":  "sdk",
+		},
+		{
+			"@level":   "trace",
+			"@message": "new should be preserved",
+			"@module":  "sdk",
+		},
+		{
+			"@level":   "debug",
+			"@message": "*** should be masked",
+			"@module":  "sdk",
+		},
+		{
+			"@level":   "debug",
+			"@message": "*** should be masked",
+			"@module":  "sdk",
+		},
+	}
+
+	if diff := cmp.Diff(expectedOutput, got); diff != "" {
+		t.Errorf("unexpected new logger output difference: %s", diff)
+	}
+}
+
 func TestMaskMessageStrings(t *testing.T) {
 	t.Parallel()
 
@@ -1290,6 +1630,57 @@ func TestMaskMessageStrings(t *testing.T) {
 				t.Errorf("unexpected output difference: %s", diff)
 			}
 		})
+	}
+}
+
+// Reference: https://github.com/hashicorp/terraform-plugin-log/issues/131
+func TestMaskMessageStrings_NewContext(t *testing.T) {
+	t.Parallel()
+
+	var outputBuffer bytes.Buffer
+
+	originalCtx := context.Background()
+	originalCtx = loggertest.SDKRoot(originalCtx, &outputBuffer)
+	originalCtx = tfsdklog.MaskMessageStrings(originalCtx, "original")
+
+	newCtx := tfsdklog.MaskMessageStrings(originalCtx, "new")
+
+	tfsdklog.Trace(originalCtx, "original should be masked")
+	tfsdklog.Trace(originalCtx, "new should be preserved")
+	tfsdklog.Debug(newCtx, "new should be masked")
+	tfsdklog.Debug(newCtx, "original should be masked")
+
+	got, err := loggertest.MultilineJSONDecode(&outputBuffer)
+
+	if err != nil {
+		t.Fatalf("unable to read multiple line JSON: %s", err)
+	}
+
+	expectedOutput := []map[string]any{
+		{
+			"@level":   "trace",
+			"@message": "*** should be masked",
+			"@module":  "sdk",
+		},
+		{
+			"@level":   "trace",
+			"@message": "new should be preserved",
+			"@module":  "sdk",
+		},
+		{
+			"@level":   "debug",
+			"@message": "*** should be masked",
+			"@module":  "sdk",
+		},
+		{
+			"@level":   "debug",
+			"@message": "*** should be masked",
+			"@module":  "sdk",
+		},
+	}
+
+	if diff := cmp.Diff(expectedOutput, got); diff != "" {
+		t.Errorf("unexpected new logger output difference: %s", diff)
 	}
 }
 
