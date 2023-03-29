@@ -21,7 +21,7 @@ One of the following SDK versions is required to properly output structured logs
 - [`terraform-plugin-framework`](/terraform/plugin/framework) version 0.6.0 or later
 - [`terraform-plugin-sdk`](/terraform/plugin/sdkv2) version 2.10.0 or later
 
-Follow the [legacy logging](#legacy-logging) instructions to write logs with older versions.
+Follow the [legacy logging](#legacy-logging) instructions to write logs with older versions. You may also have to use [legacy logging](#legacy-logging) if you are using functions that do not pass context into the function, for instance [SchemaStateFunc](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-sdk/helper/schema#SchemaStateFunc).
 
 All calls to `tflog` package functionality must use an SDK provided `context.Context`, which stores the logging implementation. Every `terraform-plugin-framework` method implemented by providers automatically includes the correct `context.Context`. Providers written with `terraform-plugin-sdk` must use context-aware functionality, such as the [`helper/schema.Resource` type `ReadContext` field](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema#Resource.ReadContext).
 
