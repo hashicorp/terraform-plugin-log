@@ -1,6 +1,0 @@
-kind: ENHANCEMENTS
-body: 'tfsdklog: Improved logging performance 20x when logs would be skipped due to
-  logging level'
-time: 2023-04-18T20:19:52.460485-04:00
-custom:
-  Issue: "149"
