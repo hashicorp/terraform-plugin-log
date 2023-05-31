@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-log/internal/loggertest"
 	"github.com/hashicorp/terraform-plugin-log/tfsdklog"
 )
@@ -15,6 +16,26 @@ const (
 	testSubsystem       = "test_subsystem"
 	testSubsystemModule = "sdk." + testSubsystem
 )
+
+func BenchmarkSubsystemTraceDisabled(b *testing.B) {
+	benchmarkSubsystemTrace(b, hclog.Debug)
+}
+
+func BenchmarkSubsystemTraceEnabled(b *testing.B) {
+	benchmarkSubsystemTrace(b, hclog.Trace)
+}
+
+func benchmarkSubsystemTrace(b *testing.B, setLevel hclog.Level) {
+	var outputBuffer bytes.Buffer
+
+	ctx := context.Background()
+	ctx = loggertest.SDKRoot(ctx, &outputBuffer)
+	ctx = tfsdklog.NewSubsystem(ctx, b.Name(), tfsdklog.WithLevel(setLevel))
+
+	for n := 0; n < b.N; n++ {
+		tfsdklog.SubsystemTrace(ctx, b.Name(), "test message")
+	}
+}
 
 func TestSubsystemSetField(t *testing.T) {
 	t.Parallel()
