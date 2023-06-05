@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package tflog_test
 
 import (
@@ -32,7 +35,7 @@ func TestWithAdditionalLocationOffset(t *testing.T) {
 				{
 					// Caller line (number after colon) should match
 					// tflog.SubsystemTrace() line in test case implementation.
-					"@caller":  "/tflog/options_test.go:29",
+					"@caller":  "/tflog/options_test.go:32",
 					"@level":   "trace",
 					"@message": "test message",
 					"@module":  testSubsystemModule,
@@ -49,7 +52,7 @@ func TestWithAdditionalLocationOffset(t *testing.T) {
 					// Caller line (number after colon) should match
 					// tflog.SubsystemTrace() line in testSubsystemTraceHelper
 					// function implementation.
-					"@caller":  "/tflog/options_test.go:15",
+					"@caller":  "/tflog/options_test.go:18",
 					"@level":   "trace",
 					"@message": "test message",
 					"@module":  testSubsystemModule,
@@ -66,7 +69,7 @@ func TestWithAdditionalLocationOffset(t *testing.T) {
 					// Caller line (number after colon) should match
 					// testSubsystemTraceHelper() line in test case
 					// implementation.
-					"@caller":  "/tflog/options_test.go:62",
+					"@caller":  "/tflog/options_test.go:65",
 					"@level":   "trace",
 					"@message": "test message",
 					"@module":  testSubsystemModule,
