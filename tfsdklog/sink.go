@@ -70,7 +70,7 @@ var invalidLogLevelMessage sync.Once
 // RegisterTestSink must be called prior to any loggers being setup or
 // instantiated.
 func RegisterTestSink(ctx context.Context, t testing.T) context.Context {
-	logger, loggerOptions := newSink(t)
+	logger, loggerOptions := newTestSink(t)
 
 	ctx = logging.SetSink(ctx, logger)
 	ctx = logging.SetSinkOptions(ctx, loggerOptions)
@@ -78,7 +78,7 @@ func RegisterTestSink(ctx context.Context, t testing.T) context.Context {
 	return ctx
 }
 
-func newSink(t testing.T) (hclog.Logger, *hclog.LoggerOptions) {
+func newTestSink(t testing.T) (hclog.Logger, *hclog.LoggerOptions) {
 	logOutput := io.Writer(os.Stderr)
 	var json bool
 	var logLevel hclog.Level
