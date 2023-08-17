@@ -134,7 +134,7 @@ submitting a patch that makes functional changes or fixes.
 
 ### Changelog
 
-HashiCorp’s open-source projects have always maintained user-friendly, readable CHANGELOGs that allow practitioners and developers to tell at a glance whether a release should have any effect on them, and to gauge the risk of an upgrade.
+HashiCorp’s projects have always maintained user-friendly, readable CHANGELOGs that allow practitioners and developers to tell at a glance whether a release should have any effect on them, and to gauge the risk of an upgrade.
 
 We follow Terraform Plugin
 [changelog specifications](https://www.terraform.io/plugin/sdkv2/best-practices/versioning#changelog-specification).
