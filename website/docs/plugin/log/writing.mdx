@@ -4,6 +4,9 @@ description: >-
   Write logs from your provider that help users debug issues and understand operations.
 ---
 
+> [!IMPORTANT]  
+> **Documentation Update:** Product documentation previously located in `/website` has moved to the [`hashicorp/web-unified-docs`](https://github.com/hashicorp/web-unified-docs) repository, where all product documentation is now centralized. Please make contributions directly to `web-unified-docs`, since changes to `/website` in this repository will not appear on developer.hashicorp.com.
+
 # Writing Log Output
 
 Use the [`tflog` package](https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog) to write logs for your provider. SDKs like the `terraform-plugin-framework`, `terraform-plugin-go`, and `terraform-plugin-sdk/v2` set up logging for you, so you only need to write the logs themselves. You can write log output at varying verbosity levels, add fields to logs, and create subsystems to group logs that relate to distinct sections of code (e.g., the API client).
