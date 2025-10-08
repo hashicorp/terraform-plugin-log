@@ -1,10 +1,10 @@
 module github.com/hashicorp/terraform-plugin-log
 
-go 1.19
+go 1.24.0
 
 require (
-	github.com/google/go-cmp v0.5.9
-	github.com/hashicorp/go-hclog v1.5.0
+	github.com/google/go-cmp v0.7.0
+	github.com/hashicorp/go-hclog v1.6.3
 	github.com/mitchellh/go-testing-interface v1.14.1
 )
 
