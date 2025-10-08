@@ -69,8 +69,13 @@ var invalidLogLevelMessage sync.Once
 //
 // RegisterTestSink must be called prior to any loggers being setup or
 // instantiated.
+//
+// Deprecated: RegisterTestSink will be removed in a future release in order to
+// drop the dependency on github.com/mitchellh/go-testing-interface, which is
+// no longer maintained. Use ContextWithTestLogging instead of
+// RegisterTestSink.
 func RegisterTestSink(ctx context.Context, t testing.T) context.Context {
-	logger, loggerOptions := newSink(t)
+	logger, loggerOptions := newSink(t.Name())
 
 	ctx = logging.SetSink(ctx, logger)
 	ctx = logging.SetSinkOptions(ctx, loggerOptions)
@@ -78,7 +83,25 @@ func RegisterTestSink(ctx context.Context, t testing.T) context.Context {
 	return ctx
 }
 
-func newSink(t testing.T) (hclog.Logger, *hclog.LoggerOptions) {
+// ContextWithTestLogging sets up a logging sink, for use with test frameworks
+// and other cases where plugin logs don't get routed through Terraform. This
+// applies the same filtering and file output behaviors that Terraform does.
+//
+// ContextWithTestLogging should only ever be called by test frameworks,
+// providers should never call it.
+//
+// ContextWithTestLogging must be called prior to any loggers being setup or
+// instantiated.
+func ContextWithTestLogging(ctx context.Context, testName string) context.Context {
+	logger, loggerOptions := newSink(testName)
+
+	ctx = logging.SetSink(ctx, logger)
+	ctx = logging.SetSinkOptions(ctx, loggerOptions)
+
+	return ctx
+}
+
+func newSink(testName string) (hclog.Logger, *hclog.LoggerOptions) {
 	logOutput := io.Writer(os.Stderr)
 	var json bool
 	var logLevel hclog.Level
@@ -102,7 +125,7 @@ func newSink(t testing.T) (hclog.Logger, *hclog.LoggerOptions) {
 	// if TF_LOG_PATH_MASK is set, use a test-name specific logging file,
 	// instead
 	if logPathMask := os.Getenv(envLogPathMask); logPathMask != "" {
-		testName := strings.Replace(t.Name(), "/", "__", -1)
+		testName := strings.Replace(testName, "/", "__", -1)
 		logFile = fmt.Sprintf(logPathMask, testName)
 	}
 
