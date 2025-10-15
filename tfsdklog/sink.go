@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"strings"
 	"sync"
@@ -75,7 +76,7 @@ var invalidLogLevelMessage sync.Once
 // no longer maintained. Use ContextWithTestLogging instead of
 // RegisterTestSink.
 func RegisterTestSink(ctx context.Context, t testing.T) context.Context {
-	logger, loggerOptions := newSink(t.Name())
+	logger, loggerOptions := newTestSink(t.Name())
 
 	ctx = logging.SetSink(ctx, logger)
 	ctx = logging.SetSinkOptions(ctx, loggerOptions)
@@ -93,7 +94,7 @@ func RegisterTestSink(ctx context.Context, t testing.T) context.Context {
 // ContextWithTestLogging must be called prior to any loggers being setup or
 // instantiated.
 func ContextWithTestLogging(ctx context.Context, testName string) context.Context {
-	logger, loggerOptions := newSink(testName)
+	logger, loggerOptions := newTestSink(testName)
 
 	ctx = logging.SetSink(ctx, logger)
 	ctx = logging.SetSinkOptions(ctx, loggerOptions)
@@ -101,7 +102,7 @@ func ContextWithTestLogging(ctx context.Context, testName string) context.Contex
 	return ctx
 }
 
-func newSink(testName string) (hclog.Logger, *hclog.LoggerOptions) {
+func newTestSink(testName string) (hclog.Logger, *hclog.LoggerOptions) {
 	logOutput := io.Writer(os.Stderr)
 	var json bool
 	var logLevel hclog.Level
@@ -175,4 +176,31 @@ func isValidLogLevel(level string) bool {
 	}
 
 	return false
+}
+
+// RegisterStdlogSink sets up a logging sink for use with test sweepers and
+// other cases where plugin logs don't get routed through Terraform and the
+// built-in Go `log` package is also used.
+//
+// RegisterStdlogSink should only ever be called by test sweepers, providers
+// should never call it.
+//
+// RegisterStdlogSink must be called prior to any loggers being setup or
+// instantiated.
+func RegisterStdlogSink(ctx context.Context) context.Context {
+	logger, loggerOptions := newStdlogSink()
+
+	ctx = logging.SetSink(ctx, logger)
+	ctx = logging.SetSinkOptions(ctx, loggerOptions)
+
+	return ctx
+}
+
+func newStdlogSink() (hclog.Logger, *hclog.LoggerOptions) {
+	loggerOptions := &hclog.LoggerOptions{
+		IndependentLevels: true,
+		JSONFormat:        false,
+	}
+
+	return hclog.FromStandardLogger(log.Default(), loggerOptions), loggerOptions
 }
