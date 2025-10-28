@@ -84,6 +84,24 @@ func RegisterTestSink(ctx context.Context, t testing.T) context.Context {
 	return ctx
 }
 
+// ContextWithStdlibLogging sets up a logging sink for use with test sweepers and
+// other cases where plugin logs don't get routed through Terraform and the
+// built-in Go `log` package is also used.
+//
+// ContextWithStdlibLogging should only ever be called by test sweepers, providers
+// should never call it.
+//
+// ContextWithStdlibLogging must be called prior to any loggers being setup or
+// instantiated.
+func ContextWithStdlibLogging(ctx context.Context, testName string) context.Context {
+	logger, loggerOptions := newStdlogSink()
+
+	ctx = logging.SetSink(ctx, logger)
+	ctx = logging.SetSinkOptions(ctx, loggerOptions)
+
+	return ctx
+}
+
 // ContextWithTestLogging sets up a logging sink, for use with test frameworks
 // and other cases where plugin logs don't get routed through Terraform. This
 // applies the same filtering and file output behaviors that Terraform does.
@@ -187,6 +205,9 @@ func isValidLogLevel(level string) bool {
 //
 // RegisterStdlogSink must be called prior to any loggers being setup or
 // instantiated.
+
+// Deprecated: RegisterStdlogSink will be removed in a future release.
+// Use ContextWithStdlibLogging instead of RegisterStdlogSink.
 func RegisterStdlogSink(ctx context.Context) context.Context {
 	logger, loggerOptions := newStdlogSink()
 
