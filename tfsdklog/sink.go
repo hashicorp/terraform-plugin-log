@@ -196,27 +196,6 @@ func isValidLogLevel(level string) bool {
 	return false
 }
 
-// RegisterStdlogSink sets up a logging sink for use with test sweepers and
-// other cases where plugin logs don't get routed through Terraform and the
-// built-in Go `log` package is also used.
-//
-// RegisterStdlogSink should only ever be called by test sweepers, providers
-// should never call it.
-//
-// RegisterStdlogSink must be called prior to any loggers being setup or
-// instantiated.
-
-// Deprecated: RegisterStdlogSink will be removed in a future release.
-// Use ContextWithStdlibLogging instead of RegisterStdlogSink.
-func RegisterStdlogSink(ctx context.Context) context.Context {
-	logger, loggerOptions := newStdlogSink()
-
-	ctx = logging.SetSink(ctx, logger)
-	ctx = logging.SetSinkOptions(ctx, loggerOptions)
-
-	return ctx
-}
-
 func newStdlogSink() (hclog.Logger, *hclog.LoggerOptions) {
 	loggerOptions := &hclog.LoggerOptions{
 		IndependentLevels: true,
