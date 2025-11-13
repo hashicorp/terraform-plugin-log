@@ -1,3 +1,14 @@
+## 0.10.0 (November 13, 2025)
+
+NOTES:
+
+* This Go module has been updated to Go 1.24 per the [Go support policy](https://golang.org/doc/devel/release.html#policy). Any consumers building on earlier Go versions may experience errors. ([#263](https://github.com/hashicorp/terraform-plugin-log/issues/263))
+* tfsdklog.RegisterTestSink is deprecated in favor or tfsdklog.ContextWithTestLogging ([#264](https://github.com/hashicorp/terraform-plugin-log/issues/264))
+
+FEATURES:
+
+* Added `tfsdklog.ContextWithStandardLogging()` for test sweeper logging ([#162](https://github.com/hashicorp/terraform-plugin-log/issues/162))
+
 ## 0.9.0 (May 31, 2023)
 
 NOTES:
