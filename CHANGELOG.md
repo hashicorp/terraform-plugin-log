@@ -4,6 +4,13 @@ NOTES:
 
 * This Go module has been updated to Go 1.25 per the [Go support policy](https://golang.org/doc/devel/release.html#policy). Any consumers building on earlier Go versions may experience errors. ([#285](https://github.com/hashicorp/terraform-plugin-log/issues/285))
 
+ENHANCEMENTS:
+
+* tflog: Added `IsTrace()`, `IsDebug()`, `IsInfo()`, `IsWarn()` and `IsError()` functions, which report whether the provider root logger would emit a log at the given level ([#299](https://github.com/hashicorp/terraform-plugin-log/issues/299))
+* tflog: Added `SubsystemIsTrace()`, `SubsystemIsDebug()`, `SubsystemIsInfo()`, `SubsystemIsWarn()` and `SubsystemIsError()` functions, which report whether a provider subsystem logger would emit a log at the given level ([#299](https://github.com/hashicorp/terraform-plugin-log/issues/299))
+* tfsdklog: Added `IsTrace()`, `IsDebug()`, `IsInfo()`, `IsWarn()` and `IsError()` functions, which report whether the root SDK logger would emit a log at the given level ([#299](https://github.com/hashicorp/terraform-plugin-log/issues/299))
+* tfsdklog: Added `SubsystemIsTrace()`, `SubsystemIsDebug()`, `SubsystemIsInfo()`, `SubsystemIsWarn()` and `SubsystemIsError()` functions, which report whether an SDK subsystem logger would emit a log at the given level ([#299](https://github.com/hashicorp/terraform-plugin-log/issues/299))
+
 ## 0.10.0 (November 13, 2025)
 
 NOTES:
