@@ -1,0 +1,5 @@
+kind: BUG FIXES
+body: 'Support `JSON` log level value'
+time: 2026-10-18T21:55:00.000000Z
+custom:
+  Issue: "110"

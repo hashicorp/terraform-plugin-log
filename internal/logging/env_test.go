@@ -58,6 +58,14 @@ func TestParseLogLevel(t *testing.T) {
 			raw:      "OFF",
 			expected: hclog.Off,
 		},
+		"json-uppercase": {
+			raw:      "JSON",
+			expected: hclog.Trace,
+		},
+		"json-lowercase": {
+			raw:      "json",
+			expected: hclog.Trace,
+		},
 	}
 
 	for name, testCase := range testCases {
@@ -232,6 +240,12 @@ func TestResolveRootSDKEnvLevel(t *testing.T) {
 			},
 			expected: hclog.Debug,
 		},
+		"tf-log-json-fallback": {
+			env: map[string]string{
+				"TF_LOG": "JSON",
+			},
+			expected: hclog.Trace,
+		},
 		"tf-acc-log-path-fallback": {
 			env: map[string]string{
 				"TF_ACC_LOG_PATH": "/tmp/acc.log",
@@ -299,6 +313,12 @@ func TestResolveRootProviderEnvLevel(t *testing.T) {
 				"TF_LOG": "DEBUG",
 			},
 			expected: hclog.Debug,
+		},
+		"tf-log-json-fallback": {
+			env: map[string]string{
+				"TF_LOG": "JSON",
+			},
+			expected: hclog.Trace,
 		},
 		"tf-acc-log-path-fallback": {
 			env: map[string]string{

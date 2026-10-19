@@ -61,6 +61,45 @@ func TestWithLevelFromEnv(t *testing.T) {
 			expectedRootIsTrace:      false,
 			expectedSubsystemIsTrace: false,
 		},
+		"tf-log-json-fallback-trace": {
+			env: map[string]string{
+				"TF_LOG": "JSON",
+			},
+			rootOption:      tfsdklog.WithLevelFromEnv("TF_LOG_SDK"),
+			subsystemOption: tfsdklog.WithLevelFromEnv("TF_LOG_SDK", "framework"),
+			expectedRootOutput: []map[string]interface{}{
+				{
+					"@level":    "trace",
+					"@message":  "root trace",
+					"@module":   "sdk",
+					"tf_req_id": "123",
+				},
+				{
+					"@level":    "debug",
+					"@message":  "root debug",
+					"@module":   "sdk",
+					"tf_req_id": "123",
+				},
+			},
+			expectedSubsystemOutput: []map[string]interface{}{
+				{
+					"@level":    "trace",
+					"@message":  "subsystem trace",
+					"@module":   "sdk.framework",
+					"tf_req_id": "123",
+					"sub_key":   "sub_val",
+				},
+				{
+					"@level":    "debug",
+					"@message":  "subsystem debug",
+					"@module":   "sdk.framework",
+					"tf_req_id": "123",
+					"sub_key":   "sub_val",
+				},
+			},
+			expectedRootIsTrace:      true,
+			expectedSubsystemIsTrace: true,
+		},
 		"tf-log-provider-fallback-debug": {
 			env: map[string]string{
 				"TF_LOG_PROVIDER": "DEBUG",

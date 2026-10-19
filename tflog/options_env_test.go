@@ -81,6 +81,39 @@ func TestWithLevelFromEnv(t *testing.T) {
 			expectedRootIsTrace:      false,
 			expectedSubsystemIsTrace: false,
 		},
+		"tf-log-provider-example-json": {
+			env: map[string]string{
+				"TF_LOG_PROVIDER_EXAMPLE": "JSON",
+			},
+			rootOptions:      []logging.Option{tflog.WithLevelFromEnv("TF_LOG_PROVIDER", "example")},
+			subsystemOptions: []logging.Option{tflog.WithLevelFromEnv("TF_LOG_PROVIDER", "example", "my_subsystem")},
+			expectedRootOutput: []map[string]interface{}{
+				{
+					"@level":   "trace",
+					"@message": "root trace",
+					"@module":  "provider",
+				},
+				{
+					"@level":   "debug",
+					"@message": "root debug",
+					"@module":  "provider",
+				},
+			},
+			expectedSubsystemOutput: []map[string]interface{}{
+				{
+					"@level":   "trace",
+					"@message": "subsystem trace",
+					"@module":  "provider.my_subsystem",
+				},
+				{
+					"@level":   "debug",
+					"@message": "subsystem debug",
+					"@module":  "provider.my_subsystem",
+				},
+			},
+			expectedRootIsTrace:      true,
+			expectedSubsystemIsTrace: true,
+		},
 		"subsystem-override-trace-when-root-off": {
 			env: map[string]string{
 				"TF_LOG_PROVIDER_EXAMPLE_MY_SUBSYSTEM": "TRACE",

@@ -20,12 +20,17 @@ const (
 // ParseLogLevel parses a Terraform log level environment variable value into
 // an hclog.Level.
 //
-// Valid values are TRACE, DEBUG, INFO, WARN, ERROR, and OFF. Empty or
-// unrecognized values return hclog.NoLevel.
+// Valid values are TRACE, DEBUG, INFO, WARN, ERROR, OFF, and the Terraform
+// JSON pseudo-level (which maps to hclog.Trace). Empty or unrecognized values
+// return hclog.NoLevel.
 func ParseLogLevel(raw string) hclog.Level {
 	trimmed := strings.TrimSpace(raw)
 	if trimmed == "" {
 		return hclog.NoLevel
+	}
+
+	if strings.EqualFold(trimmed, "JSON") {
+		return hclog.Trace
 	}
 
 	return hclog.LevelFromString(trimmed)
