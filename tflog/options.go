@@ -4,9 +4,6 @@
 package tflog
 
 import (
-	"os"
-	"strings"
-
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-log/internal/logging"
 )
@@ -26,24 +23,20 @@ func WithAdditionalLocationOffset(additionalLocationOffset int) logging.Option {
 // WithLevelFromEnv returns an option that will set the level of the logger
 // based on the string in an environment variable. The environment variable
 // checked will be `name` and `subsystems`, joined by _ and in all caps.
+//
+// Valid environment variable values are TRACE, DEBUG, INFO, WARN, ERROR, and
+// OFF. For root provider loggers, if the
+// target environment variable is unset, the level falls back to
+// TF_LOG_PROVIDER, TF_LOG, and TF_ACC_LOG_PATH before defaulting to hclog.Off.
+// For subsystem loggers, an unset environment variable inherits the root
+// logger's level.
 func WithLevelFromEnv(name string, subsystems ...string) logging.Option {
-	return func(l logging.LoggerOpts) logging.LoggerOpts {
-		envVar := strings.Join(subsystems, "_")
-		if envVar != "" {
-			envVar = "_" + envVar
-		}
-		envVar = strings.ToUpper(name + envVar)
-		l.Level = hclog.LevelFromString(os.Getenv(envVar))
-		return l
-	}
+	return logging.WithLevelFromEnv(name, subsystems...)
 }
 
 // WithLevel returns an option that will set the level of the logger.
 func WithLevel(level hclog.Level) logging.Option {
-	return func(l logging.LoggerOpts) logging.LoggerOpts {
-		l.Level = level
-		return l
-	}
+	return logging.WithLevel(level)
 }
 
 // WithRootFields enables the copying of root logger fields to a new subsystem
