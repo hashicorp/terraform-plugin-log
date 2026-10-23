@@ -19,6 +19,7 @@ func NewRootSDKLogger(ctx context.Context, options ...logging.Option) context.Co
 	if opts.Name == "" {
 		opts.Name = logging.DefaultSDKRootLoggerName
 	}
+
 	if sink := logging.GetSink(ctx); sink != nil {
 		logger := sink.Named(opts.Name)
 		sinkLoggerOptions := logging.GetSinkOptions(ctx)
@@ -28,7 +29,18 @@ func NewRootSDKLogger(ctx context.Context, options ...logging.Option) context.Co
 		if opts.Level != hclog.NoLevel {
 			logger.SetLevel(opts.Level)
 			sdkLoggerOptions.Level = opts.Level
+		} else if opts.LevelFromEnv && sinkLoggerOptions.Level != hclog.NoLevel {
+			opts.Level = logging.ResolveRootSDKEnvLevel()
+			logger.SetLevel(opts.Level)
+			sdkLoggerOptions.Level = opts.Level
 		}
+
+		// Cache root logger level outside context for performance reasons.
+		rootLevelMutex.Lock()
+
+		rootLevel = sdkLoggerOptions.Level
+
+		rootLevelMutex.Unlock()
 
 		ctx = logging.SetSDKRootLogger(ctx, logger)
 		ctx = logging.SetSDKRootLoggerOptions(ctx, sdkLoggerOptions)
@@ -36,7 +48,11 @@ func NewRootSDKLogger(ctx context.Context, options ...logging.Option) context.Co
 		return ctx
 	}
 	if opts.Level == hclog.NoLevel {
-		opts.Level = hclog.Trace
+		if opts.LevelFromEnv {
+			opts.Level = logging.ResolveRootSDKEnvLevel()
+		} else {
+			opts.Level = hclog.Trace
+		}
 	}
 
 	// Cache root logger level outside context for performance reasons.
@@ -70,6 +86,7 @@ func NewRootProviderLogger(ctx context.Context, options ...logging.Option) conte
 	if opts.Name == "" {
 		opts.Name = logging.DefaultProviderRootLoggerName
 	}
+
 	if sink := logging.GetSink(ctx); sink != nil {
 		logger := sink.Named(opts.Name)
 		sinkLoggerOptions := logging.GetSinkOptions(ctx)
@@ -77,6 +94,10 @@ func NewRootProviderLogger(ctx context.Context, options ...logging.Option) conte
 		providerLoggerOptions.Name = opts.Name
 
 		if opts.Level != hclog.NoLevel {
+			logger.SetLevel(opts.Level)
+			providerLoggerOptions.Level = opts.Level
+		} else if opts.LevelFromEnv && sinkLoggerOptions.Level != hclog.NoLevel {
+			opts.Level = logging.ResolveRootProviderEnvLevel()
 			logger.SetLevel(opts.Level)
 			providerLoggerOptions.Level = opts.Level
 		}
@@ -87,7 +108,11 @@ func NewRootProviderLogger(ctx context.Context, options ...logging.Option) conte
 		return ctx
 	}
 	if opts.Level == hclog.NoLevel {
-		opts.Level = hclog.Trace
+		if opts.LevelFromEnv {
+			opts.Level = logging.ResolveRootProviderEnvLevel()
+		} else {
+			opts.Level = hclog.Trace
+		}
 	}
 	loggerOptions := &hclog.LoggerOptions{
 		Name:                     opts.Name,

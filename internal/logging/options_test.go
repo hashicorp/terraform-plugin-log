@@ -27,6 +27,7 @@ func TestLoggerOptsCopy(t *testing.T) {
 		IncludeRootFields:            true,
 		IncludeTime:                  true,
 		Level:                        hclog.Error,
+		LevelFromEnv:                 true,
 		MaskAllFieldValuesRegexes:    []*regexp.Regexp{regex1},
 		MaskAllFieldValuesStrings:    []string{"string1"},
 		MaskFieldValuesWithFieldKeys: []string{"string1"},
@@ -47,6 +48,7 @@ func TestLoggerOptsCopy(t *testing.T) {
 		IncludeRootFields:            true,
 		IncludeTime:                  true,
 		Level:                        hclog.Error,
+		LevelFromEnv:                 true,
 		MaskAllFieldValuesRegexes:    []*regexp.Regexp{regex1},
 		MaskAllFieldValuesStrings:    []string{"string1"},
 		MaskFieldValuesWithFieldKeys: []string{"string1"},
@@ -70,6 +72,7 @@ func TestLoggerOptsCopy(t *testing.T) {
 	originalLoggerOpts.IncludeRootFields = false
 	originalLoggerOpts.IncludeTime = false
 	originalLoggerOpts.Level = hclog.Debug
+	originalLoggerOpts.LevelFromEnv = false
 	originalLoggerOpts.MaskAllFieldValuesRegexes = append(originalLoggerOpts.MaskAllFieldValuesRegexes, regex2)
 	originalLoggerOpts.MaskAllFieldValuesStrings = append(originalLoggerOpts.MaskAllFieldValuesStrings, "string2")
 	originalLoggerOpts.MaskFieldValuesWithFieldKeys = append(originalLoggerOpts.MaskFieldValuesWithFieldKeys, "string2")

@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"regexp"
+	"strings"
 
 	"github.com/hashicorp/go-hclog"
 )
@@ -21,6 +22,13 @@ type LoggerOpts struct {
 
 	// Level is the most verbose level that a logger will write logs for.
 	Level hclog.Level
+
+	// LevelFromEnv indicates whether the logger level was configured via
+	// WithLevelFromEnv. When true and Level is hclog.NoLevel (the target
+	// environment variable is unset or empty), root loggers resolve their
+	// effective level from Terraform's standard environment variable hierarchy
+	// (defaulting to hclog.Off when all TF_LOG* variables are unset).
+	LevelFromEnv bool
 
 	// IncludeLocation indicates whether logs should include the location
 	// of the logging statement or not.
@@ -171,6 +179,7 @@ func (o LoggerOpts) Copy() LoggerOpts {
 		IncludeRootFields:            o.IncludeRootFields,
 		IncludeTime:                  o.IncludeTime,
 		Level:                        o.Level,
+		LevelFromEnv:                 o.LevelFromEnv,
 		MaskAllFieldValuesRegexes:    make([]*regexp.Regexp, len(o.MaskAllFieldValuesRegexes)),
 		MaskAllFieldValuesStrings:    make([]string, len(o.MaskAllFieldValuesStrings)),
 		MaskFieldValuesWithFieldKeys: make([]string, len(o.MaskFieldValuesWithFieldKeys)),
@@ -226,6 +235,30 @@ func ApplyLoggerOpts(opts ...Option) LoggerOpts {
 func WithAdditionalLocationOffset(additionalLocationOffset int) Option {
 	return func(l LoggerOpts) LoggerOpts {
 		l.AdditionalLocationOffset = additionalLocationOffset + 1
+		return l
+	}
+}
+
+// WithLevelFromEnv sets the logger level based on the string in an environment
+// variable formed by joining name and subsystems with "_" in uppercase.
+func WithLevelFromEnv(name string, subsystems ...string) Option {
+	return func(l LoggerOpts) LoggerOpts {
+		envVar := strings.Join(subsystems, "_")
+		if envVar != "" {
+			envVar = "_" + envVar
+		}
+		envVar = strings.ToUpper(name + envVar)
+		l.Level, _ = parseEnvLogLevel(envVar)
+		l.LevelFromEnv = true
+		return l
+	}
+}
+
+// WithLevel sets the level of the logger explicitly.
+func WithLevel(level hclog.Level) Option {
+	return func(l LoggerOpts) LoggerOpts {
+		l.Level = level
+		l.LevelFromEnv = false
 		return l
 	}
 }
