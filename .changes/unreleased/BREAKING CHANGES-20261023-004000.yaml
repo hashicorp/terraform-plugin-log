@@ -1,0 +1,5 @@
+kind: BREAKING CHANGES
+body: '`NewRootSDKLogger` and `NewRootProviderLogger` configured with `WithLevelFromEnv` such as Terraform providers now default to `hclog.Off` instead of `hclog.Trace` when no environment variables such as `TF_LOG` are set. Callers that do not use `WithLevelFromEnv` continue to default to `hclog.Trace`, and callers that require unconditional trace logging can pass `WithLevel(hclog.Trace)` or set `TF_LOG=TRACE`'
+time: 2026-10-23T00:40:00.000000Z
+custom:
+  Issue: "307"

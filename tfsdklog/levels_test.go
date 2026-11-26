@@ -96,6 +96,64 @@ func TestSubsystemWouldLog(t *testing.T) {
 	}
 }
 
+func TestSubsystemIsOff(t *testing.T) {
+	t.Parallel()
+
+	t.Run("unregistered", func(t *testing.T) {
+		t.Parallel()
+
+		if got := subsystemIsOff(t.Name()); got {
+			t.Errorf("expected false for unregistered subsystem, got true")
+		}
+	})
+
+	testCases := map[string]struct {
+		subsystemLevel hclog.Level
+		expected       bool
+	}{
+		"nolevel": {
+			subsystemLevel: hclog.NoLevel,
+			expected:       false,
+		},
+		"trace": {
+			subsystemLevel: hclog.Trace,
+			expected:       false,
+		},
+		"error": {
+			subsystemLevel: hclog.Error,
+			expected:       false,
+		},
+		"off": {
+			subsystemLevel: hclog.Off,
+			expected:       true,
+		},
+	}
+
+	for name, testCase := range testCases {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			subsystemLevelsMutex.Lock()
+
+			subsystemLevels[t.Name()] = testCase.subsystemLevel
+
+			subsystemLevelsMutex.Unlock()
+
+			got := subsystemIsOff(t.Name())
+
+			subsystemLevelsMutex.Lock()
+
+			delete(subsystemLevels, t.Name())
+
+			subsystemLevelsMutex.Unlock()
+
+			if diff := cmp.Diff(got, testCase.expected); diff != "" {
+				t.Errorf("unexpected difference: %s", diff)
+			}
+		})
+	}
+}
+
 func TestWouldLog(t *testing.T) {
 	t.Parallel()
 

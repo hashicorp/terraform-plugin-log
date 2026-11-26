@@ -60,6 +60,27 @@ func subsystemWouldLog(subsystem string, level hclog.Level) bool {
 	return wouldLog(setLevel, level)
 }
 
+// subsystemIsOff returns true if the subsystem SDK logger has been initialized
+// to hclog.Off and will not emit logs at any level (even hclog.Error).
+//
+// SubsystemSetField uses this outside-context check to avoid allocating a
+// context lookup key string and cloning LoggerOpts/Fields maps when the
+// subsystem logger is disabled. If the subsystem has not yet been registered in
+// subsystemLevels, it returns false as a safe default.
+func subsystemIsOff(subsystem string) bool {
+	subsystemLevelsMutex.RLock()
+
+	setLevel, ok := subsystemLevels[subsystem]
+
+	subsystemLevelsMutex.RUnlock()
+
+	if !ok {
+		return false
+	}
+
+	return !wouldLog(setLevel, hclog.Error)
+}
+
 // rootWouldLog returns true if the root SDK logger would emit a log at the
 // given level. This is performed outside the context-based logger for
 // performance.

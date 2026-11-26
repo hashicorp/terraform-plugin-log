@@ -61,10 +61,17 @@ func NewSubsystem(ctx context.Context, subsystem string, options ...logging.Opti
 		subLogger = hclog.New(subLoggerOptions)
 	}
 
+	// Inherit the root SDK logger level when no explicit subsystem level is set
+	// so outside-context level checks accurately reflect the effective level.
+	effectiveLevel := subLoggerTFLoggerOpts.Level
+	if effectiveLevel == hclog.NoLevel && rootLoggerOptions != nil {
+		effectiveLevel = rootLoggerOptions.Level
+	}
+
 	// Cache subsystem logger level outside context for performance reasons.
 	subsystemLevelsMutex.Lock()
 
-	subsystemLevels[subsystem] = subLoggerTFLoggerOpts.Level
+	subsystemLevels[subsystem] = effectiveLevel
 
 	subsystemLevelsMutex.Unlock()
 
@@ -92,6 +99,10 @@ func NewSubsystem(ctx context.Context, subsystem string, options ...logging.Opti
 // In case of the same key is used multiple times (i.e. key collision),
 // the last one set is the one that gets persisted and then outputted with the logs.
 func SubsystemSetField(ctx context.Context, subsystem, key string, value interface{}) context.Context {
+	if subsystemIsOff(subsystem) {
+		return ctx
+	}
+
 	lOpts := logging.GetSDKSubsystemTFLoggerOpts(ctx, subsystem)
 
 	// Copy to prevent slice/map aliasing issues.

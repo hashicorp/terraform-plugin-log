@@ -1,0 +1,5 @@
+kind: BUG FIXES
+body: Respect hierarchical logging for root loggers, instead of relying on top-level filtering
+time: 2026-10-18T21:12:28.210068832Z
+custom:
+  Issue: "72"
